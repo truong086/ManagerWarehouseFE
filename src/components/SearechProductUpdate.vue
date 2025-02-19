@@ -1,5 +1,8 @@
 <template>
     <div>
+        <div>
+            <h1>Search Product Code</h1>
+        </div>
         <input type="text" v-model="searchName" style="padding: 5px 5px; border-radius: 10px;">
         <button class="btn" style="border: 1px solid greenyellow; margin: 0 10px;" @click="findOneData">Search</button>
     </div>

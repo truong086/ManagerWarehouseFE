@@ -29,6 +29,13 @@
                             <span class="hide-menu">{{ t('Search Location By Code') }}</span>
                         </router-link>
                         </li>
+
+                        <li class="b4" v-on:click="SwapBackGroupColor('b4')">
+                          <router-link to="/AllPlanUpdatePage" class="waves-effect waves-dark" aria-expanded="false">
+                            <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                            <span class="hide-menu">{{ t('Find All Plan') }}</span>
+                        </router-link>
+                        </li>
                         <!----<li> <a class="waves-effect waves-dark" href="pages-error-404.html" aria-expanded="false"><i
                                     class="fa fa-question-circle"></i><span class="hide-menu">404</span></a>
                         </li> ---->

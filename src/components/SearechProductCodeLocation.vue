@@ -1,7 +1,9 @@
 <template>
     <main>
+      
       <h6>{{ filteredProducts.length }} results</h6>
       <div>
+        
         <input type="text" v-model="searchName" style="padding: 5px 0; outline: none; border-radius: 5px;">
         <button class="btn" style="border: 1px solid green; margin: 0 15px;" @click="searchData">Search</button>
       </div>
