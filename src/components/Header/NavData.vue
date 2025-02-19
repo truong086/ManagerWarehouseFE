@@ -23,7 +23,7 @@
                         </router-link>
                         </li>
 
-                        <li class="b2" v-on:click="SwapBackGroupColor('b2')">
+                        <li class="b3" v-on:click="SwapBackGroupColor('b3')">
                           <router-link to="/SearchLocationUpdatePage" class="waves-effect waves-dark" aria-expanded="false">
                             <i class="fa fa-search" aria-hidden="true"></i>
                             <span class="hide-menu">{{ t('Search Location By Code') }}</span>
