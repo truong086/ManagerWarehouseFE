@@ -9,20 +9,26 @@
         <button @click="downloadData" class="btn" style="border: 1px solid greenyellow; margin: 0 10px;">Download Excel</button>
     </div>
 
-    <div v-if="dataProduct.length > 0" style="width: 100%; cursor: pointer; display: flex; flex-wrap: wrap;">
-        <div style="border: 1px solid black; width: 200px; border-radius: 10px; margin: 0 auto;" v-for="(itemData, indexData) in dataProduct" :key="indexData">
-            <div>
-                <h2>{{ itemData.title }}</h2>
-            </div>
-            <div>
-                <p> 
-                    {{ itemData.area }} => {{ itemData.line }} => {{ itemData.shelf }}
-
-                    => {{ itemData.code }}
-                </p>
-            </div>
-            <div v-if="itemData?.history?.length > 0">
-                <h3>Histoty: </h3>
+    <div v-if="dataProduct.length > 0" style="margin: 20px 0;">
+        <table class="table">
+        <thead>
+          <tr>
+            <th class="title">Title</th>
+            <th class="title">Area</th>
+            <th class="title">Line</th>
+            <th class="title">Shelf</th>
+            <th class="title">Location</th>
+            <!-- <th class="title">History</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(itemData, indexData) in dataProduct" :key="indexData">
+            <td>{{ itemData.title }}</td>
+            <td>{{ itemData.area }}</td>
+            <td>{{ itemData.line }}</td>
+            <td>{{ itemData.shelf }}</td>
+            <td>{{ itemData.code }}</td>
+            <!-- <td v-if="itemData?.history?.length > 0">
                 <div v-for="(item, index) in itemData?.history" :key="index">
                     <p > 
                     {{ item.area }} => {{ item.line }} => {{ item.shelf }}
@@ -31,9 +37,10 @@
                 </p>
                 <span v-if="index != itemData?.history.length - 1">⏫</span>
                 </div>
-                
-            </div>
-        </div>
+            </td> -->
+          </tr>
+        </tbody>
+      </table>
         
     </div>
 
@@ -123,3 +130,75 @@ import {ref, getCurrentInstance, watch} from 'vue';
     document.body.style.overflow = "auto";
   }
 </script>
+
+<style>
+.table-page {
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #4CAF50;
+}
+
+.table-container {
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.table-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #4CAF50;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.title {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #555;
+  background-color: #f2f2f2;
+  padding: 10px;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+}
+
+.table td {
+  background-color: #fff;
+  color: #666;
+}
+
+.table tr:nth-child(even) td {
+  background-color: #f9f9f9;
+}
+
+.table tr:hover td {
+  background-color: #e1e1e1;
+  cursor: pointer;
+}
+</style>

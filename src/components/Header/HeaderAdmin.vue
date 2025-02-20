@@ -104,7 +104,7 @@
               <li><a class="dropdown-item" href="#">Notification 3</a></li>
             </ul>
           </li>
-          <li class="nav-item dropdown u-pro">
+          <!-- <li class="nav-item dropdown u-pro">
             <a
               class="nav-link dropdown-toggle waves-effect waves-dark profile-pic"
               href="#"
@@ -136,7 +136,7 @@
                 </a>
               </li>
             </ul>
-          </li>
+          </li> -->
         </ul>
       </div>
     </nav>
@@ -406,18 +406,18 @@ const closeImage = () => {
 const Toast = useToast();
 const { proxy } = getCurrentInstance();
 const hostName = proxy?.hostname;
-const logout = async () => {
-  // const res = await axios.post(
-  //   hostName + "/api/Account/Logout",
-  //   {},
-  //   getTokens()
-  // );
-  // if (res.data.success) {
-  //   Toast.success("Thành công");
-  // }
-  // router.push("/login");
-  store.clearStore();
-};
+// const logout = async () => {
+//   // const res = await axios.post(
+//   //   hostName + "/api/Account/Logout",
+//   //   {},
+//   //   getTokens()
+//   // );
+//   // if (res.data.success) {
+//   //   Toast.success("Thành công");
+//   // }
+//   // router.push("/login");
+//   store.clearStore();
+// };
 const openChatBox = async (id) => {
   // activeProfile.value = profileName;
   // const profile = this.profiles.find(p => p.name === profileName);

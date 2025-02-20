@@ -7,31 +7,41 @@
         <button class="btn" style="border: 1px solid greenyellow; margin: 0 10px;" @click="findOneData">Search</button>
     </div>
 
-    <div v-if="dataProduct.title != undefined" style="width: 100%; cursor: pointer;">
-        <div style="border: 1px solid black; width: 200px; border-radius: 10px; margin: 0 auto;">
-            <div>
-                <h2>{{ dataProduct.title }}</h2>
-            </div>
-            <div v-if="dataProduct?.dataLocations?.length > 0">
-                <p> 
-                    {{ dataProduct.dataLocations[0].area }} => {{ dataProduct.dataLocations[0].line }} => {{ dataProduct.dataLocations[0].shelf }}
-
-                    => {{ dataProduct.dataLocations[0].code }}
-                </p>
-            </div>
-            <div v-if="dataProduct?.history?.length > 0">
-                <h3>Histoty: </h3>
+    <div v-if="dataProduct.title != undefined" style="width: 100%; margin: 20px 0; cursor: pointer;">
+        <table class="table">
+        <thead>
+          <tr>
+            <th class="title">Title</th>
+            <th class="title">Area</th>
+            <th class="title">Line</th>
+            <th class="title">Shelf</th>
+            <th class="title">Location</th>
+            <th class="title" v-if="dataProduct?.history?.length > 0">History</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ dataProduct.title }}</td>
+            <td>{{ dataProduct.dataLocations[0].area }}</td>
+            <td>{{ dataProduct.dataLocations[0].line }}</td>
+            <td>{{ dataProduct.dataLocations[0].shelf }}</td>
+            <td>{{ dataProduct.dataLocations[0].code }}</td>
+            <td v-if="dataProduct?.history?.length > 0">
                 <div v-for="(item, index) in dataProduct?.history" :key="index">
-                    <p > 
-                    {{ item.area }} => {{ item.line }} => {{ item.shelf }}
+                    <!-- <p > 
+                    {{ item.area }} {{ item.line }} {{ item.shelf }}
 
-                    => {{ item.code_location_addr }}
+                     {{ item.code_location_addr }}
+                </p> -->
+                <p>
+                    {{ item.code_location_addr }}
                 </p>
-                <span v-if="index != dataProduct?.history.length - 1">⏫</span>
+                <!-- <span v-if="index != itemData?.history.length - 1">⏫</span> -->
                 </div>
-                
-            </div>
-        </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
         
     </div>
     
@@ -71,3 +81,75 @@ import {ref, getCurrentInstance} from 'vue';
   document.body.style.overflow = "auto";
   }
 </script>
+
+<style>
+.table-page {
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #4CAF50;
+}
+
+.table-container {
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.table-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #4CAF50;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.title {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #555;
+  background-color: #f2f2f2;
+  padding: 10px;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+}
+
+.table td {
+  background-color: #fff;
+  color: #666;
+}
+
+.table tr:nth-child(even) td {
+  background-color: #f9f9f9;
+}
+
+.table tr:hover td {
+  background-color: #e1e1e1;
+  cursor: pointer;
+}
+</style>
