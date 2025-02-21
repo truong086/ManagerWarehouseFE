@@ -7,6 +7,22 @@
         <input type="text" v-model="valueE" style="padding: 5px 5px; border-radius: 10px;">
         <button class="btn" style="border: 1px solid greenyellow; margin: 0 10px;" @click="findOneData(valueE, page)">Search</button>
         <button @click="downloadData" class="btn" style="border: 1px solid greenyellow; margin: 0 10px;">Download Excel</button>
+        
+        <select style="margin: 0 10px;" v-model="currentArea" @change="searchLine">
+          <option v-for="(item, index) in DataArea" :key="index" :value="item">{{ item }}</option>
+        </select>
+
+        <select v-model="currentLine" @change="searchShelf">
+          <option v-for="(item, index) in DataLine" :key="index" :value="item">{{ item }}</option>
+        </select>
+
+        <select style="margin: 0 10px;" v-model="currentShelf" @change="searchLocation">
+          <option v-for="(item, index) in DataShelf" :key="index" :value="item.shelf">{{ item.shelf }}</option>
+        </select>
+
+        <select v-model="currentLocation" @change="ClickData">
+          <option v-for="(item, index) in dataUpdateLocation" :key="index" :value="item">{{ item }}</option>
+        </select>
     </div>
 
     <div v-if="dataProduct.length > 0" style="margin: 20px 0;">
@@ -22,7 +38,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(itemData, indexData) in dataProduct" :key="indexData">
+          <tr v-for="(itemData, indexData) in dataProduct" :key="indexData"  @click="showData(itemData.id)">
             <td>{{ itemData.title }}</td>
             <td>{{ itemData.area }}</td>
             <td>{{ itemData.line }}</td>
@@ -50,11 +66,78 @@
       <div class="spinner"></div>
       <p>Đang tải...</p>
     </div>
+
+    <div v-if="frameVisibleNew" class="frame-popup">
+        <div
+          class="frame-content"
+          :style="{ maxWidth: '800' + 'px', justifyContent: 'flex-start' }"
+        >
+        <button class="btn" style="border: 1px solid black;" @click="closeFaram">
+          close
+        </button>
+
+        <button class="btn" @click="dowloadExcelOneData(Dataframe.title)" style="border: 1px solid greenyellow;">
+          DowLoad Excel
+        </button>
+
+        <div v-if="Dataframe?.history?.length > 0">
+                <div v-for="(itemData, indexData) in Dataframe?.history" :key="indexData">
+                    <!-- <p > 
+                    {{ item.area }} {{ item.line }} {{ item.shelf }}
+
+                     {{ item.code_location_addr }}
+                </p> -->
+                <p>
+                    {{ itemData.code_location_addr }}
+                </p>
+                <span v-if="indexData != Dataframe?.history.length - 1">⏫</span>
+                </div>
+            </div>
+          <div
+            class="frame-item"
+            
+            style="margin: 10px 50px"
+          >
+            <h3>{{ Dataframe?.title }}</h3>
+            
+            <div class="frame-info">
+              <div class="info-line">
+                <span class="info-title">Quantity:</span> {{ Dataframe?.quantity }}
+                <span class="info-title">Warehouse ID:</span> {{ Dataframe?.supplier }}
+              </div>
+              <!-- <button @click="closeFrame" v-if="item.id_plan == 0" class="close-btn">Swap</button> -->
+            </div>
+
+            <table class="table">
+        <thead>
+          <tr>
+            <th class="title">status</th>
+            <th class="title">location</th>
+            <th class="title">updateat</th>
+            <th class="title">quantity</th>
+            <th class="title" v-if="Dataframe?.history?.length > 0">History</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(itemProduct, indexProduct) in Dataframe.inOutByProducts" :key="indexProduct">
+            <td>{{ itemProduct.status == 0 ? "Deliverynote" : "Import" }}</td>
+            <td>{{ itemProduct.location }}</td>
+            <td>{{ itemProduct.updateat }}</td>
+            <td>{{ itemProduct.quantity }}</td>
+            
+          </tr>
+        </tbody>
+      </table>
+
+      
+          </div>
+        </div>
+      </div>
 </template>
 
 <script setup>
 import axios from 'axios';
-import {ref, getCurrentInstance, watch} from 'vue';
+import {ref, getCurrentInstance, watch, onMounted} from 'vue';
   import {useToast} from 'vue-toastification'
   import PagesTotal from './PageList/PagesTotal.vue'
 
@@ -68,6 +151,70 @@ import {ref, getCurrentInstance, watch} from 'vue';
   const pageSize = ref(20)
   const valueE = ref('')
 
+  const currentArea = ref(null)
+  const currentLine = ref(null)
+  const currentShelf = ref(null)
+  const currentLocation = ref(null)
+
+  const DataArea = ref([])
+  const DataLine = ref([])
+  const DataShelf = ref([])
+  const DataLocation = ref([])
+  const dataProduct = ref([])
+  const dataUpdateLocation = ref([])
+  const frameVisibleNew = ref(false)
+  const Dataframe = ref({})
+
+  onMounted(() => {
+    dataArea()
+  })
+
+  const closeFaram = () => {
+    frameVisibleNew.value = !frameVisibleNew.value
+  }
+
+  const dowloadExcelOneData = async (title) => {
+    isLoading.value = true;
+    document.body.classList.add("loading"); // Add Lớp "loading"
+    document.body.style.overflow = "hidden";
+    const res = await axios.post(hostname + `/api/Product/FindAllDownLoadExcelByCodeProduct?code=${title}`, {}, {
+      headers: {
+                    'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'Content-Type': 'application/json',
+                },
+                responseType: 'blob' // Cực kỳ quan trọng! Không có sẽ bị lỗi file
+    })
+
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'DataExcel.xlsx'; // Đặt tên file khi tải xuống
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+    isLoading.value = false;
+    document.body.classList.remove("loading");
+    document.body.style.overflow = "auto";
+  }
+  
+  const showData = async (id) => {
+    isLoading.value = true;
+    document.body.classList.add("loading"); // Add Lớp "loading"
+    document.body.style.overflow = "hidden";
+    const res = await axios.get(hostname + `/api/Product/findOneByOutAndIn?id=${id}`)
+
+    if(res.data.success){
+      frameVisibleNew.value = true
+      Dataframe.value = res.data.content
+      console.log(res)
+    }
+
+    isLoading.value = false;
+    document.body.classList.remove("loading");
+    document.body.style.overflow = "auto";
+  }
   const downloadData = async () =>{
     if(!valueE.value.trim()){
         return
@@ -99,6 +246,129 @@ import {ref, getCurrentInstance, watch} from 'vue';
     document.body.classList.remove("loading");
     document.body.style.overflow = "auto";
   }
+
+  const searchLine = () => {
+    valueE.value = ''
+    DataLine.value = []
+    DataShelf.value = []
+    DataLocation.value = []
+    currentLine.value = null
+    currentLocation.value = null
+    currentShelf.value = null
+    dataLine()
+
+    valueE.value = currentArea.value
+    console.log(valueE.value)
+
+  }
+  
+  const searchShelf = () => {
+    valueE.value = ''
+    DataShelf.value = []
+    DataLocation.value = []
+    currentLocation.value = null
+    currentShelf.value = null
+    dataShelf()
+    const chuyendoi = parseInt(currentLine.value)
+    if(chuyendoi <= 9)
+      valueE.value = currentArea.value + '0' + currentLine.value
+    else 
+      valueE.value = currentArea.value +  '' + currentLine.value
+    console.log(valueE.value)
+  }
+
+  const searchLocation = () => {
+    valueE.value = ''
+    DataLocation.value = []
+    currentLocation.value = null
+    dataLocation()
+
+    const chuyendoi = parseInt(currentLine.value)
+    const chuyendoiShelf = parseInt(currentShelf.value)
+    if(chuyendoi <= 9 && chuyendoiShelf <= 9)
+        valueE.value = currentArea.value + '0' + currentLine.value + '0' + currentShelf.value
+    
+    else if(chuyendoi <= 9 && chuyendoiShelf > 9)
+        valueE.value = currentArea.value + '0' + currentLine.value + '' + currentShelf.value
+    else if(chuyendoi > 9 && chuyendoiShelf <= 9)
+        valueE.value = currentArea.value + '' + currentLine.value + '0' + currentShelf.value
+    else valueE.value = currentArea.value + '' + currentLine.value + '' + currentShelf.value
+  }
+
+  const ClickData = () => {
+    valueE.value = ''
+    dataLine()
+    const chuyendoi = parseInt(currentLine.value)
+    const chuyendoiShelf = parseInt(currentShelf.value)
+    if(chuyendoi <= 9 && chuyendoiShelf <= 9)
+        valueE.value = currentArea.value + '0' + currentLine.value + '0' + currentShelf.value + '' + currentLocation.value
+    
+    else if(chuyendoi <= 9 && chuyendoiShelf > 9)
+        valueE.value = currentArea.value + '0' + currentLine.value + '' + currentShelf.value + '' + currentLocation.value
+    else if(chuyendoi > 9 && chuyendoiShelf <= 9)
+        valueE.value = currentArea.value + '' + currentLine.value + '0' + currentShelf.value + '' + currentLocation.value
+    else valueE.value = currentArea.value + '' + currentLine.value + '' + currentShelf.value + '' + currentLocation.value
+  }
+  const dataArea = async () => {
+    isLoading.value = true;
+    document.body.classList.add("loading"); // Add Lớp "loading"
+    document.body.style.overflow = "hidden";
+    const res = await axios.get(hostname + `/api/location_addr/FindAllData`)
+    if(res.data.success){
+      DataArea.value = res.data.content
+    }
+
+    isLoading.value = false;
+    document.body.classList.remove("loading");
+    document.body.style.overflow = "auto";
+  }
+
+  const dataLine = async () => {
+    isLoading.value = true;
+    document.body.classList.add("loading"); // Add Lớp "loading"
+    document.body.style.overflow = "hidden";
+    const res = await axios.get(hostname + `/api/location_addr/FindAllDataLine?area=${currentArea.value}`)
+    if(res.data.success){
+      DataLine.value = res.data.content
+    }
+
+    isLoading.value = false;
+    document.body.classList.remove("loading");
+    document.body.style.overflow = "auto";
+  }
+
+  const dataShelf = async () => {
+    isLoading.value = true;
+    document.body.classList.add("loading"); // Add Lớp "loading"
+    document.body.style.overflow = "hidden";
+    const res = await axios.get(hostname + `/api/location_addr/FindAllDataShelfOne?line=${currentLine.value}&area=${currentArea.value}`)
+    if(res.data.success){
+      DataShelf.value = res.data.content
+    }
+
+    isLoading.value = false;
+    document.body.classList.remove("loading");
+    document.body.style.overflow = "auto";
+  }
+
+  const dataLocation = async () => {
+    isLoading.value = true;
+    document.body.classList.add("loading"); // Add Lớp "loading"
+    document.body.style.overflow = "hidden";
+    const res = await axios.get(hostname + `/api/location_addr/FindAllDataLocation?line=${currentLine.value}&area=${currentArea.value}&shelf=${currentShelf.value}`)
+    if(res.data.success){
+      DataLocation.value = res.data.content
+      DataLocation.value.location.map((item) => {
+        dataUpdateLocation.value.push(item.slice(-2)) // Cắt lấy 2 số cuối
+      })
+    }
+
+    console.log(res)
+
+    isLoading.value = false;
+    document.body.classList.remove("loading");
+    document.body.style.overflow = "auto";
+  }
   const changeReload = (event) => {
     pageSize.value = event
     findOneData(valueE.value, page.value)
@@ -108,7 +378,7 @@ import {ref, getCurrentInstance, watch} from 'vue';
     findOneData(valueE.value, newPage)
   })
 
-  const dataProduct = ref([])
+  
   const findOneData = async(search, pageData) => {
     console.log(search)
     isLoading.value = true;

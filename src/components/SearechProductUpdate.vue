@@ -82,6 +82,20 @@
         <button class="btn" @click="dowloadExcelOneData(Dataframe.title)" style="border: 1px solid greenyellow;">
           DowLoad Excel
         </button>
+
+        <div v-if="Dataframe?.history?.length > 0">
+                <div v-for="(itemData, indexData) in Dataframe?.history" :key="indexData">
+                    <!-- <p > 
+                    {{ item.area }} {{ item.line }} {{ item.shelf }}
+
+                     {{ item.code_location_addr }}
+                </p> -->
+                <p>
+                    {{ itemData.code_location_addr }}
+                </p>
+                <span v-if="indexData != Dataframe?.history.length - 1">⏫</span>
+                </div>
+            </div>
           <div
             class="frame-item"
             
@@ -91,12 +105,12 @@
             
             <div class="frame-info">
               <div class="info-line">
-                <span class="info-title">位置:</span> {{ Dataframe?.quantity }}
-                <span class="info-title">位置:</span> {{ Dataframe?.supplier }}
+                <span class="info-title">Quantity:</span> {{ Dataframe?.quantity }}
+                <span class="info-title">Warehouse ID:</span> {{ Dataframe?.supplier }}
               </div>
               <!-- <button @click="closeFrame" v-if="item.id_plan == 0" class="close-btn">Swap</button> -->
             </div>
-
+            
             <table class="table">
         <thead>
           <tr>
@@ -113,22 +127,12 @@
             <td>{{ itemProduct.location }}</td>
             <td>{{ itemProduct.updateat }}</td>
             <td>{{ itemProduct.quantity }}</td>
-            <td v-if="item?.history?.length > 0">
-                <div v-for="(itemData, indexData) in item?.history" :key="indexData">
-                    <!-- <p > 
-                    {{ item.area }} {{ item.line }} {{ item.shelf }}
-
-                     {{ item.code_location_addr }}
-                </p> -->
-                <p>
-                    {{ itemData.code_location_addr }}
-                </p>
-                <span v-if="indexData != item?.history.length - 1">⏫</span>
-                </div>
-            </td>
+            
           </tr>
         </tbody>
       </table>
+
+      
           </div>
         </div>
       </div>
