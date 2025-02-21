@@ -281,11 +281,13 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
   isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
-    const res = !searchName.value.trim() ? await axios.get(hostname + `/api/Product/findBySuppliers?id=${search}&page=1&pageSize=${pageSize.value}`)
+    const res = !searchName.value.trim() ? await axios.get(hostname + `/api/Product/findBySuppliers?id=${search}&page=${pageData}&pageSize=${pageSize.value}`)
     : await axios.get(hostname + `/api/Product/FindOne?name=${searchName.value}&page=${pageData}&pageSize=${pageSize.value}`)
     if(res.data.success){
       dataProduct.value = []
         dataProduct.value = res.data.content.data
+        page.value = res.data.content.page
+        totalPage.value = res.data.content.totalPages
         Toast.success("Success")
     }else{
         dataProduct.value = []
