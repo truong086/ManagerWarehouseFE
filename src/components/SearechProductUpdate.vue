@@ -1,33 +1,52 @@
 <template>
+    
     <div>
-        <div>
+        <div style="display: flex;">
+          <div>
             <h1>Search Product Code</h1>
+          </div>
+          <input type="text" v-model="searchName" style="padding: 5px 5px; border-radius: 10px;">
+          <button class="btn" style="border: 1px solid greenyellow; margin: 0 10px;" @click="findOneData(currentDataSuppliers, page)">Search</button>
+          <div>
         </div>
-        <input type="text" v-model="searchName" style="padding: 5px 5px; border-radius: 10px;">
-        <button class="btn" style="border: 1px solid greenyellow; margin: 0 10px;" @click="findOneData">Search</button>
-    </div>
 
-    <div v-if="dataProduct.title != undefined" style="width: 100%; margin: 20px 0; cursor: pointer;">
+      <select v-model="currentDataSuppliers" @change="searchDataByProduct">
+        <option v-for="(item, index) in suppliersData" :key="index" :value="item.id">
+          {{ item.title }}
+        </option>
+      </select>
+
+      <button class="btn" style="border: 1px solid greenyellow;" @click="dowloadData">
+        DownLoad Excel
+      </button>
+      </div>
+      </div>
+
+    <div v-if="dataProduct.length > 0" style="width: 100%; margin: 20px 0; cursor: pointer;">
         <table class="table">
         <thead>
           <tr>
             <th class="title">Title</th>
+            <th class="title">Warehouse ID</th>
             <th class="title">Area</th>
             <th class="title">Line</th>
             <th class="title">Shelf</th>
+            <th class="title">Quantity</th>
             <th class="title">Location</th>
             <th class="title" v-if="dataProduct?.history?.length > 0">History</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>{{ dataProduct.title }}</td>
-            <td>{{ dataProduct.dataLocations[0].area }}</td>
-            <td>{{ dataProduct.dataLocations[0].line }}</td>
-            <td>{{ dataProduct.dataLocations[0].shelf }}</td>
-            <td>{{ dataProduct.dataLocations[0].code }}</td>
-            <td v-if="dataProduct?.history?.length > 0">
-                <div v-for="(item, index) in dataProduct?.history" :key="index">
+          <tr v-for="(itemProduct, indexProduct) in dataProduct" :key="indexProduct" @click="showData(itemProduct.id)">
+            <td>{{ itemProduct.title }}</td>
+            <td>{{ itemProduct.nameSupplier }}</td>
+            <td>{{ itemProduct.dataLocations[0].area }}</td>
+            <td>{{ itemProduct.dataLocations[0].line }}</td>
+            <td>{{ itemProduct.dataLocations[0].shelf }}</td>
+            <td>{{ itemProduct.dataLocations[0].quantity }}</td>
+            <td>{{ itemProduct.dataLocations[0].code }}</td>
+            <td v-if="itemProduct?.history?.length > 0">
+                <div v-for="(item, index) in itemProduct?.history" :key="index">
                     <!-- <p > 
                     {{ item.area }} {{ item.line }} {{ item.shelf }}
 
@@ -36,43 +55,236 @@
                 <p>
                     {{ item.code_location_addr }}
                 </p>
-                <!-- <span v-if="index != itemData?.history.length - 1">⏫</span> -->
+                <span v-if="index != itemProduct?.history.length - 1">⏫</span>
                 </div>
             </td>
           </tr>
         </tbody>
       </table>
         
+      <PagesTotal :page="page" :totalPage="totalPage" :valueE="currentDataSuppliers" @pageChange="findOneData" @pageSizeChange="changeReload"></PagesTotal>
     </div>
     
     <div v-if="isLoading" class="loading-overlay">
       <div class="spinner"></div>
       <p>Đang tải...</p>
     </div>
+
+    <div v-if="frameVisibleNew" class="frame-popup">
+        <div
+          class="frame-content"
+          :style="{ maxWidth: '800' + 'px', justifyContent: 'flex-start' }"
+        >
+        <button class="btn" style="border: 1px solid black;" @click="closeFaram">
+          close
+        </button>
+
+        <button class="btn" @click="dowloadExcelOneData(Dataframe.title)" style="border: 1px solid greenyellow;">
+          DowLoad Excel
+        </button>
+          <div
+            class="frame-item"
+            
+            style="margin: 10px 50px"
+          >
+            <h3>{{ Dataframe?.title }}</h3>
+            
+            <div class="frame-info">
+              <div class="info-line">
+                <span class="info-title">位置:</span> {{ Dataframe?.quantity }}
+                <span class="info-title">位置:</span> {{ Dataframe?.supplier }}
+              </div>
+              <!-- <button @click="closeFrame" v-if="item.id_plan == 0" class="close-btn">Swap</button> -->
+            </div>
+
+            <table class="table">
+        <thead>
+          <tr>
+            <th class="title">status</th>
+            <th class="title">location</th>
+            <th class="title">updateat</th>
+            <th class="title">quantity</th>
+            <th class="title" v-if="Dataframe?.history?.length > 0">History</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(itemProduct, indexProduct) in Dataframe.inOutByProducts" :key="indexProduct">
+            <td>{{ itemProduct.status == 0 ? "Deliverynote" : "Import" }}</td>
+            <td>{{ itemProduct.location }}</td>
+            <td>{{ itemProduct.updateat }}</td>
+            <td>{{ itemProduct.quantity }}</td>
+            <td v-if="item?.history?.length > 0">
+                <div v-for="(itemData, indexData) in item?.history" :key="indexData">
+                    <!-- <p > 
+                    {{ item.area }} {{ item.line }} {{ item.shelf }}
+
+                     {{ item.code_location_addr }}
+                </p> -->
+                <p>
+                    {{ itemData.code_location_addr }}
+                </p>
+                <span v-if="indexData != item?.history.length - 1">⏫</span>
+                </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+          </div>
+        </div>
+      </div>
 </template>
 
 <script setup>
 import axios from 'axios';
-import {ref, getCurrentInstance} from 'vue';
+import {ref, getCurrentInstance, watch, onMounted} from 'vue';
   import {useToast} from 'vue-toastification'
+  import PagesTotal from './PageList/PagesTotal.vue'
 
   const {proxy} = getCurrentInstance()
   const hostname = proxy?.hostname
   const Toast = useToast()
   const isLoading = ref(false)
   const searchName = ref('')
+  const suppliersData = ref([])
+  const page = ref(1)
+  const totalPage = ref(0)
+  const pageSize = ref(20)
 
+  const frameVisibleNew = ref(false)
+  const Dataframe = ref([])
   const dataProduct = ref({})
-  const findOneData = async() => {
+  const currentDataSuppliers = ref(null)
+  onMounted(() => {
+    findAllSupplier()
+  })
+
+  const closeFaram = () => {
+    frameVisibleNew.value = !frameVisibleNew.value
+  }
+  
+  watch(page.value, (newPage) => {
+    findOneData(currentDataSuppliers.value, newPage)
+  })
+  const changeReload = (event) => {
+    pageSize.value = event
+    findOneData(currentDataSuppliers.value, page.value)
+  }
+
+  const dowloadExcelOneData = async (title) => {
     isLoading.value = true;
+    document.body.classList.add("loading"); // Add Lớp "loading"
+    document.body.style.overflow = "hidden";
+    const res = await axios.post(hostname + `/api/Product/FindAllDownLoadExcelByCodeProduct?code=${title}`, {}, {
+      headers: {
+                    'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'Content-Type': 'application/json',
+                },
+                responseType: 'blob' // Cực kỳ quan trọng! Không có sẽ bị lỗi file
+    })
+
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'DataExcel.xlsx'; // Đặt tên file khi tải xuống
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+    isLoading.value = false;
+    document.body.classList.remove("loading");
+    document.body.style.overflow = "auto";
+  }
+  const showData = async (id) => {
+    isLoading.value = true;
+    document.body.classList.add("loading"); // Add Lớp "loading"
+    document.body.style.overflow = "hidden";
+    const res = await axios.get(hostname + `/api/Product/findOneByOutAndIn?id=${id}`)
+
+    if(res.data.success){
+      frameVisibleNew.value = true
+      Dataframe.value = res.data.content
+      console.log(res)
+    }
+
+    isLoading.value = false;
+    document.body.classList.remove("loading");
+    document.body.style.overflow = "auto";
+  }
+
+  const dowloadData = async () => {
+
+    let data = []
+
+    if(dataProduct.value.length <= 0)
+        return
+
+        isLoading.value = true;
+    document.body.classList.add("loading"); // Add Lớp "loading"
+    document.body.style.overflow = "hidden";
+
+    dataProduct.value.forEach(element => {
+      data.push(element.title)
+    })
+
+    console.log(data)
+    const res = await axios.post(hostname + '/api/Product/FindAllDownLoadExcelByCodeProductList', data, {
+      headers: {
+                    'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'Content-Type': 'application/json',
+                },
+                responseType: 'blob' // Cực kỳ quan trọng! Không có sẽ bị lỗi file
+    })
+
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'DataExcel.xlsx'; // Đặt tên file khi tải xuống
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+    isLoading.value = false;
+    document.body.classList.remove("loading");
+    document.body.style.overflow = "auto";
+  }
+
+  const findAllSupplier = async () => {
+
+    isLoading.value = true;
+    document.body.classList.add("loading"); // Add Lớp "loading"
+    document.body.style.overflow = "hidden";
+    const res = await axios.get(hostname + '/api/Supplier/FindAll')
+
+    if(res.data.success){
+      suppliersData.value = res.data.content
+    }
+
+    isLoading.value = false;
+    document.body.classList.remove("loading");
+    document.body.style.overflow = "auto";
+  }
+  const searchDataByProduct = () => {
+    searchName.value = ''
+    findOneData(currentDataSuppliers.value, page.value)
+  }
+
+  const findOneData = async(search, pageData) => {
+
+    if(!searchName.value.trim() && search == null)
+        return
+  isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
-    const res = await axios.get(hostname + `/api/Product/FindOne?name=${searchName.value}`)
+    const res = !searchName.value.trim() ? await axios.get(hostname + `/api/Product/findBySuppliers?id=${search}&page=1&pageSize=${pageSize.value}`)
+    : await axios.get(hostname + `/api/Product/FindOne?name=${searchName.value}&page=${pageData}&pageSize=${pageSize.value}`)
     if(res.data.success){
-        dataProduct.value = res.data.content
+      dataProduct.value = []
+        dataProduct.value = res.data.content.data
         Toast.success("Success")
     }else{
-        dataProduct.value = {}
+        dataProduct.value = []
     }
     console.log(res)
     

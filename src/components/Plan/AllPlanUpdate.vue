@@ -37,6 +37,13 @@
           >
             提交
           </button>
+
+          <button 
+            @click="submitSearch('search')" style="background-color: black;"
+            class="bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300"
+          >
+            Search Data
+          </button>
         </div>
       </div>
       <div style="height: auto" class="result">
@@ -60,6 +67,10 @@
                 狀態：
                 <a style="font-weight: bold; color: red">已收到</a>
               </h5>
+
+              <h5>
+                <a style="font-weight: bold; color: red">{{ formatDateTime(item.updateat) }}</a>
+              </h5>
             </div>
           </div>
   
@@ -82,6 +93,10 @@
                 狀態：
                 <a style="font-weight: bold; color: red">完成的</a>
               </h5>
+
+              <h5>
+                <a style="font-weight: bold; color: red">{{ formatDateTime(item.updateat) }}</a>
+              </h5>
             </div>
           </div>
   
@@ -103,6 +118,10 @@
               <h5>
                 狀態：
                 <a style="font-weight: bold; color: red">等待確認</a>
+              </h5>
+
+              <h5>
+                <a style="font-weight: bold; color: red">{{ formatDateTime(item.updateat) }}</a>
               </h5>
             </div>
 
@@ -165,6 +184,13 @@
   const datetimePlan = ref({
     datefrom: "",
     dateto: ""
+  })
+const typeData = ref(null)
+  const datetimePlanDate = ref({
+    datefrom: "",
+    dateto: "",
+    page: 1,
+    pageSize: 20
   })
   const NextMap = (id) => {
   router.push({ path: "PlanUpdatePage", query: { id: id, name: "Update Plan" } });
@@ -242,7 +268,36 @@ const deleteData = async(id) => {
     isLoading.value = true;
     document.body.classList.add("loading"); // Add Lớp "loading"
     document.body.style.overflow = "hidden";
-    if (typePlan.value === "all") {
+    if(typeData.value === 'search'){
+      if (!datetimePlan.value.datefrom) {
+      alert("Vui lòng chọn ngày!");
+      return;
+    }
+  
+    if (!datetimePlan.value.dateto) {
+      alert("Vui lòng chọn ngày!");
+      return;
+    }
+
+      datetimePlanDate.value.page = pageData
+    datetimePlanDate.value.pageSize = pageSize.value
+    datetimePlanDate.value.datefrom = datetimePlan.value.datefrom
+    datetimePlanDate.value.dateto = datetimePlan.value.dateto
+      const res = await axios.post(hostName + `/api/Plan/FindAllDataByDone`, datetimePlanDate.value)
+
+    console.log(res)
+    if (res.data.success) {
+        page.value = res.data.content.page;
+        totalPage.value = res.data.content.totalPages;
+        currentPlanData.value = res.data.content.data;
+      }else{
+        page.value = 1
+        totalPage.value = 0
+        currentPlanData.value = []
+      }
+    }
+    else{
+      if (typePlan.value === "all") {
       const res =
         search === ""
           ? await axios.get(
@@ -314,17 +369,36 @@ const deleteData = async(id) => {
         currentPlanData.value = []
       }
     }
+    }
+    
     Toast.success("Success");
     isLoading.value = false;
     document.body.classList.remove("loading");
     document.body.style.overflow = "auto";
   };
   
+  const submitSearch = async (search) => {
+    typeData.value = search
+    findAllData(valueE.value, page.value)
+
+  }
   const changeReload = (event) => {
     pageSize.value = event;
     findAllData(valueE.value, page.value);
   };
   
+  const formatDateTime = (dateTimeString) => {
+  const date = new Date(dateTimeString);
+
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Tháng bắt đầu từ 0
+  const year = date.getFullYear();
+
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+
+  return `${day}/${month}/${year} ${hours}:${minutes}`;
+};
   const showData = (data, type) => {
     if (isButton.value != "") {
       document.querySelector("." + isButton.value).style.backgroundColor =
