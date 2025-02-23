@@ -208,12 +208,12 @@ const deleteData = async(id) => {
 }
   const submitDate = async () => {
     if (!datetimePlan.value.datefrom) {
-      alert("Vui lòng chọn ngày!");
+      alert("請選擇日期!");
       return;
     }
   
     if (!datetimePlan.value.dateto) {
-      alert("Vui lòng chọn ngày!");
+      alert("請選擇日期!");
       return;
     }
   
@@ -271,12 +271,12 @@ const deleteData = async(id) => {
     document.body.style.overflow = "hidden";
     if(typeData.value === 'search'){
       if (!datetimePlan.value.datefrom) {
-      alert("Vui lòng chọn ngày!");
+      alert("請選擇日期!");
       return;
     }
   
     if (!datetimePlan.value.dateto) {
-      alert("Vui lòng chọn ngày!");
+      alert("請選擇日期!");
       return;
     }
 

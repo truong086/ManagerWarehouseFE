@@ -69,7 +69,13 @@
       </table>
         
       <PagesTotal :page="page" :totalPage="totalPage" :valueE="currentDataSuppliers" @pageChange="findOneData" @pageSizeChange="changeReload"></PagesTotal>
+      
     </div>
+
+    <div>
+        <h1>{{ dataNull }}</h1>
+      </div>
+    
     
     <div v-if="isLoading" class="loading-overlay">
       <div class="spinner"></div>
@@ -164,6 +170,8 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
   const Dataframe = ref([])
   const dataProduct = ref({})
   const currentDataSuppliers = ref(null)
+
+  const dataNull = ref("")
   onMounted(() => {
     findAllSupplier()
   })
@@ -195,7 +203,7 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     const url = window.URL.createObjectURL(new Blob([res.data]));
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'DataLocationCode' + + new Date().toLocaleTimeString() + '.xlsx'; // Đặt tên file khi tải xuống
+        a.download = getCurrentTimestamp(); // Đặt tên file khi tải xuống
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -249,7 +257,7 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     const url = window.URL.createObjectURL(new Blob([res.data]));
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'Product' + new Date().toLocaleTimeString() + '.xlsx'; // Đặt tên file khi tải xuống
+        a.download = getCurrentTimestamp(); // Đặt tên file khi tải xuống
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -259,6 +267,18 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     document.body.classList.remove("loading");
     document.body.style.overflow = "auto";
   }
+
+  const getCurrentTimestamp = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+
+    return `ProductCode_${year}${month}${day}_${hours}${minutes}${seconds}.xlsx`;
+};
 
   const findAllSupplier = async () => {
 
@@ -282,21 +302,31 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
 
   const findOneData = async(search, pageData) => {
 
-    if(!searchName.value.trim() && search == null)
-        return
+    if(!searchName.value.trim() && search == null){
+      dataNull.value = "No Data"
+      return
+    }
+        
   isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
     const res = !searchName.value.trim() ? await axios.get(hostname + `/api/Product/findBySuppliers?id=${search}&page=${pageData}&pageSize=${pageSize.value}`)
     : await axios.get(hostname + `/api/Product/FindOne?name=${searchName.value}&page=${pageData}&pageSize=${pageSize.value}`)
     if(res.data.success){
-      dataProduct.value = []
+      if(res.data.content.data.length > 0){
+        dataProduct.value = []
         dataProduct.value = res.data.content.data
         page.value = res.data.content.page
         totalPage.value = res.data.content.totalPages
+        dataNull.value = ""
         Toast.success("Success")
+      }else{
+        dataNull.value = "No Data"
+      }
+      
     }else{
         dataProduct.value = []
+        dataNull.value = "No Data"
     }
     console.log(res)
     

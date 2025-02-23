@@ -78,6 +78,10 @@
         
     </div>
 
+    <div>
+      <h1>{{ dataNull }}</h1>
+    </div>
+
     <PagesTotal :page="page" :totalPage="totalPage" :valueE="valueE" @pageChange="findOneData" @pageSizeChange="changeReload"></PagesTotal>
     
     <div v-if="isLoading" class="loading-overlay">
@@ -183,6 +187,8 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
   const frameVisibleNew = ref(false)
   const Dataframe = ref({})
 
+  const dataNull = ref('')
+
   onMounted(() => {
     dataArea()
   })
@@ -206,7 +212,7 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     const url = window.URL.createObjectURL(new Blob([res.data]));
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'LocationCode' + new Date().toLocaleTimeString() + '.xlsx'; // Đặt tên file khi tải xuống
+        a.download = getCurrentTimestamp(); // Đặt tên file khi tải xuống
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -217,6 +223,17 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     document.body.style.overflow = "auto";
   }
   
+  const getCurrentTimestamp = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+
+    return `ProductCode_${year}${month}${day}_${hours}${minutes}${seconds}.xlsx`;
+};
   const showData = async (id) => {
     isLoading.value = true;
     document.body.classList.add("loading"); // Add Lớp "loading"
@@ -254,7 +271,7 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     const url = window.URL.createObjectURL(new Blob([res.data]));
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'LocationCode' + new Date().toLocaleTimeString() + '.xlsx'; // Đặt tên file khi tải xuống
+        a.download = getCurrentTimestamp(); // Đặt tên file khi tải xuống
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -355,6 +372,9 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
   }
 
   const dataLine = async () => {
+
+    const fullRange = Array.from({ length: 10 }, (_, i) => (i + 1).toString().padStart(2, "0"));
+    isLoading.value = true;
     isLoading.value = true;
     document.body.classList.add("loading"); // Add Lớp "loading"
     document.body.style.overflow = "hidden";
@@ -362,6 +382,11 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     if(res.data.success){
       DataLine.value = res.data.content
       DataLine.value = [...DataLine.value].sort((a, b) => parseInt(a) - parseInt(b))
+
+      // Tìm các số bị thiếu
+      const missingNumbers = fullRange.filter(num => !DataLine.value.includes(num));
+
+      DataLine.value = [...DataLine.value, ...missingNumbers].sort((a, b) => a - b);
     }
 
     isLoading.value = false;
@@ -370,6 +395,8 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
   }
 
   const dataShelf = async () => {
+    const fullRange = Array.from({ length: 20 }, (_, i) => (i + 1).toString().padStart(2, "0"));
+    isLoading.value = true;
     isLoading.value = true;
     document.body.classList.add("loading"); // Add Lớp "loading"
     document.body.style.overflow = "hidden";
@@ -377,6 +404,17 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     if(res.data.success){
       DataShelf.value = res.data.content
       DataShelf.value = [...DataShelf.value].sort((a, b) => parseInt(a.shelf) - parseInt(b.shelf))
+
+      // 2️⃣ Lấy danh sách số đã có trong content
+      const existingShelves = DataShelf.value.map(item => item.shelf);
+
+      // 3️⃣ Tìm các số bị thiếu
+      const missingNumbers = fullRange.filter(num => !existingShelves.includes(num));
+
+      // 4️⃣ Tạo danh sách các số bị thiếu dưới dạng { shelf: "xx" }
+      const missingItems = missingNumbers.map(num => ({ shelf: num }));
+
+      DataShelf.value = [...DataShelf.value, ...missingItems].sort((a, b) => a.shelf - b.shelf);
     }
 
     isLoading.value = false;
@@ -391,15 +429,24 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     const res = await axios.get(hostname + `/api/location_addr/FindAllDataLocation?line=${currentLine.value}&area=${currentArea.value}&shelf=${currentShelf.value}`)
     if(res.data.success){
       DataLocation.value = res.data.content
-      DataLocation.value.location = [...DataLocation.value.location].sort((a, b) => {
-        const numA = parseInt(a.slice(-2))
-        const numB = parseInt(b.slice(-2))
+      // DataLocation.value.location = [...DataLocation.value.location].sort((a, b) => {
+      //   const numA = parseInt(a.slice(-2))
+      //   const numB = parseInt(b.slice(-2))
 
-        return numA - numB
-      }) 
-      DataLocation.value.location.map((item) => {
-        dataUpdateLocation.value.push(item.slice(-2)) // Cắt lấy 2 số cuối
-      })
+      //   return numA - numB
+      // }) 
+      // DataLocation.value.location.map((item) => {
+      //   dataUpdateLocation.value.push(item.slice(-2)) // Cắt lấy 2 số cuối
+      // })
+
+      DataLocation.value.location = []
+
+      for(let i = 1; i <= 5; i++){
+        for(let y = i; y <= 6; y++){
+          console.log(i + '' + y)
+          dataUpdateLocation.value.push(i + '' + y)
+        }
+      }
     }
 
     console.log(res)
@@ -420,17 +467,29 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
   
   const findOneData = async(search, pageData) => {
     console.log(search)
+    if(!search.trim()){
+      dataNull.value = "No Data"
+
+      return
+    }
     isLoading.value = true;
     document.body.classList.add("loading"); // Add Lớp "loading"
     document.body.style.overflow = "hidden";
     const res = await axios.get(hostname + `/api/location_addr/SearchData?name=${search}&page=${pageData}&pageSize=${pageSize.value}`)
     if(res.data.success){
+      if(res.data.content.data.length > 0){
         dataProduct.value = res.data.content.data
         page.value = res.data.content.page
         totalPage.value = res.data.content.totalPages
+        dataNull.value = ""
         Toast.success("Success")
+      }else{
+        dataNull.value = "No Data"
+      }
+        
     }else{
         dataProduct.value = []
+        dataNull.value = "No Data"
     }
     
     console.log(res)
