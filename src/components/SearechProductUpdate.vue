@@ -1,24 +1,30 @@
 <template>
     
     <div>
-        <div style="display: flex;">
-          <div>
-            <h1>Search Product Code</h1>
+        <div>
+          <div style="margin-bottom: 20px;">
+            <h1 style="font-weight: bold;">Search Product Code</h1>
           </div>
-          <input type="text" v-model="searchName" style="padding: 5px 5px; border-radius: 10px;">
-          <button class="btn" style="border: 1px solid greenyellow; margin: 0 10px;" @click="findOneData(currentDataSuppliers, page)">Search</button>
+          <div>
+            <input type="text" v-model="searchName" style="padding: 5px 5px; border-radius: 10px; border: 1px dashed greenyellow;">
+            <button class="btn" style="border: 1px solid greenyellow; margin: 0 10px;" @click="findOneData(currentDataSuppliers, page)">Search</button>
+            <button class="btn" style="border: 1px solid greenyellow;" @click="dowloadData">
+              DownLoad Excel
+            </button>
+          </div>
           <div>
         </div>
 
-      <select v-model="currentDataSuppliers" @change="searchDataByProduct">
+      <div style="margin: 30px 0; display: flex; width: 100%; justify-content: center;">
+        <h3 style="margin: 0 20px;">Supplier: </h3>
+        <select v-model="currentDataSuppliers" @change="searchDataByProduct">
         <option v-for="(item, index) in suppliersData" :key="index" :value="item.id">
           {{ item.title }}
         </option>
       </select>
+      </div>
 
-      <button class="btn" style="border: 1px solid greenyellow;" @click="dowloadData">
-        DownLoad Excel
-      </button>
+      
       </div>
       </div>
 

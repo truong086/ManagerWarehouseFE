@@ -33,9 +33,10 @@
           
           <button 
             @click="submitDate"
-            class="bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300"
+            style="color: black;"
+            class="bg-blue-600 text-red font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300"
           >
-            提交
+            Dowload Excel
           </button>
 
           <button 
@@ -397,7 +398,8 @@ const deleteData = async(id) => {
   const hours = date.getHours().toString().padStart(2, "0");
   const minutes = date.getMinutes().toString().padStart(2, "0");
 
-  return `${day}/${month}/${year} ${hours}:${minutes}`;
+  // return `${day}/${month}/${year} ${hours}:${minutes}`;
+  return `${year}/${month}/${day}/ ${hours}:${minutes}`;
 };
   const showData = (data, type) => {
     if (isButton.value != "") {

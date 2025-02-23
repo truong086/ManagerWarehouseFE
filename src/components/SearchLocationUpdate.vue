@@ -2,27 +2,41 @@
     
     <div>
         <div>
-        <h1>Search Location Code</h1>
+        <h1 style="font-weight: bold; margin-bottom: 20px">Search Location Code</h1>
     </div>
-        <input type="text" v-model="valueE" style="padding: 5px 5px; border-radius: 10px;">
+        <input type="text" v-model="valueE" style="padding: 5px 5px; border-radius: 10px; border: 1px dashed greenyellow;">
         <button class="btn" style="border: 1px solid greenyellow; margin: 0 10px;" @click="findOneData(valueE, page)">Search</button>
         <button @click="downloadData" class="btn" style="border: 1px solid greenyellow; margin: 0 10px;">Download Excel</button>
         
-        <select style="margin: 0 10px;" v-model="currentArea" @change="searchLine">
+        <div style="margin: 30px 0; display: flex; width: 100%; justify-content: center;">
+          <div style="display: flex;">
+            <h3 style="margin: 0 10px;">Area: </h3>
+          <select style="margin: 0 10px; width: 80px;" v-model="currentArea" @change="searchLine">
           <option v-for="(item, index) in DataArea" :key="index" :value="item">{{ item }}</option>
         </select>
+          </div>
 
-        <select v-model="currentLine" @change="searchShelf">
+        <div style="display: flex; margin: 0 10px;">
+          <h3 style="margin: 0 10px;">Line: </h3>
+          <select v-model="currentLine" @change="searchShelf" style="width: 80px;">
           <option v-for="(item, index) in DataLine" :key="index" :value="item">{{ item }}</option>
         </select>
+        </div>
 
-        <select style="margin: 0 10px;" v-model="currentShelf" @change="searchLocation">
+        <div style="display: flex;">
+          <h3 style="margin: 0 10px;">Shelf: </h3>
+          <select style="width: 80px;" v-model="currentShelf" @change="searchLocation">
           <option v-for="(item, index) in DataShelf" :key="index" :value="item.shelf">{{ item.shelf }}</option>
         </select>
+        </div>
 
-        <select v-model="currentLocation" @change="ClickData">
+        <div style="display: flex; margin: 0 10px; width: 80px;">
+          <h3 style="margin: 0 10px;">Location: </h3>
+          <select v-model="currentLocation" @change="ClickData">
           <option v-for="(item, index) in dataUpdateLocation" :key="index" :value="item">{{ item }}</option>
         </select>
+        </div>
+        </div>
     </div>
 
     <div v-if="dataProduct.length > 0" style="margin: 20px 0;">
@@ -30,9 +44,11 @@
         <thead>
           <tr>
             <th class="title">Title</th>
+            <th class="title">Warehouse ID</th>
             <th class="title">Area</th>
             <th class="title">Line</th>
             <th class="title">Shelf</th>
+            <th class="title">Quantity</th>
             <th class="title">Location</th>
             <!-- <th class="title">History</th> -->
           </tr>
@@ -40,9 +56,11 @@
         <tbody>
           <tr v-for="(itemData, indexData) in dataProduct" :key="indexData"  @click="showData(itemData.id)">
             <td>{{ itemData.title }}</td>
+            <td>{{ itemData.supplier }}</td>
             <td>{{ itemData.area }}</td>
             <td>{{ itemData.line }}</td>
             <td>{{ itemData.shelf }}</td>
+            <td>{{ itemData.quantity }}</td>
             <td>{{ itemData.code }}</td>
             <!-- <td v-if="itemData?.history?.length > 0">
                 <div v-for="(item, index) in itemData?.history" :key="index">
@@ -270,7 +288,7 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     currentShelf.value = null
     dataShelf()
     const chuyendoi = parseInt(currentLine.value)
-    if(chuyendoi <= 9)
+    if(chuyendoi <= 9 && !/^0\d+/.test(currentLine.value) && !/^0\d+/.test(currentShelf.value))
       valueE.value = currentArea.value + '0' + currentLine.value
     else 
       valueE.value = currentArea.value +  '' + currentLine.value
@@ -285,12 +303,12 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
 
     const chuyendoi = parseInt(currentLine.value)
     const chuyendoiShelf = parseInt(currentShelf.value)
-    if(chuyendoi <= 9 && chuyendoiShelf <= 9)
+    if(chuyendoi <= 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLine.value) && !/^0\d+/.test(currentShelf.value))
         valueE.value = currentArea.value + '0' + currentLine.value + '0' + currentShelf.value
     
-    else if(chuyendoi <= 9 && chuyendoiShelf > 9)
+    else if(chuyendoi <= 9 && chuyendoiShelf > 9 && !/^0\d+/.test(currentLine.value) && !/^0\d+/.test(currentShelf.value))
         valueE.value = currentArea.value + '0' + currentLine.value + '' + currentShelf.value
-    else if(chuyendoi > 9 && chuyendoiShelf <= 9)
+    else if(chuyendoi > 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLine.value) && !/^0\d+/.test(currentShelf.value))
         valueE.value = currentArea.value + '' + currentLine.value + '0' + currentShelf.value
     else valueE.value = currentArea.value + '' + currentLine.value + '' + currentShelf.value
   }
@@ -300,12 +318,12 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     dataLine()
     const chuyendoi = parseInt(currentLine.value)
     const chuyendoiShelf = parseInt(currentShelf.value)
-    if(chuyendoi <= 9 && chuyendoiShelf <= 9)
+    if(chuyendoi <= 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLine.value) && !/^0\d+/.test(currentShelf.value))
         valueE.value = currentArea.value + '0' + currentLine.value + '0' + currentShelf.value + '' + currentLocation.value
     
-    else if(chuyendoi <= 9 && chuyendoiShelf > 9)
+    else if(chuyendoi <= 9 && chuyendoiShelf > 9 && !/^0\d+/.test(currentLine.value) && !/^0\d+/.test(currentShelf.value))
         valueE.value = currentArea.value + '0' + currentLine.value + '' + currentShelf.value + '' + currentLocation.value
-    else if(chuyendoi > 9 && chuyendoiShelf <= 9)
+    else if(chuyendoi > 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLine.value) && !/^0\d+/.test(currentShelf.value))
         valueE.value = currentArea.value + '' + currentLine.value + '0' + currentShelf.value + '' + currentLocation.value
     else valueE.value = currentArea.value + '' + currentLine.value + '' + currentShelf.value + '' + currentLocation.value
   }
@@ -315,7 +333,20 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     document.body.style.overflow = "hidden";
     const res = await axios.get(hostname + `/api/location_addr/FindAllData`)
     if(res.data.success){
-      DataArea.value = res.data.content
+      DataArea.value = res.data.content.sort((a, b) => {
+        const letterA = a.charAt(0) // Lấy ký tự đầu tiên
+        const letterb = b.charAt(0) // Lấy ký tự đầu tiên
+        
+        const numA = parseInt(a.slice(1))
+        const numB = parseInt(b.slice(1))
+
+        // Sắp xếp theo chữ cái đầu tiên, nếu giống thì sắp xếp theo số
+        if(letterA == letterb){
+          return numA - numB
+        }
+
+        return letterA.localeCompare(letterb)
+      })
     }
 
     isLoading.value = false;
@@ -330,6 +361,7 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     const res = await axios.get(hostname + `/api/location_addr/FindAllDataLine?area=${currentArea.value}`)
     if(res.data.success){
       DataLine.value = res.data.content
+      DataLine.value = [...DataLine.value].sort((a, b) => parseInt(a) - parseInt(b))
     }
 
     isLoading.value = false;
@@ -344,6 +376,7 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     const res = await axios.get(hostname + `/api/location_addr/FindAllDataShelfOne?line=${currentLine.value}&area=${currentArea.value}`)
     if(res.data.success){
       DataShelf.value = res.data.content
+      DataShelf.value = [...DataShelf.value].sort((a, b) => parseInt(a.shelf) - parseInt(b.shelf))
     }
 
     isLoading.value = false;
@@ -358,6 +391,12 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     const res = await axios.get(hostname + `/api/location_addr/FindAllDataLocation?line=${currentLine.value}&area=${currentArea.value}&shelf=${currentShelf.value}`)
     if(res.data.success){
       DataLocation.value = res.data.content
+      DataLocation.value.location = [...DataLocation.value.location].sort((a, b) => {
+        const numA = parseInt(a.slice(-2))
+        const numB = parseInt(b.slice(-2))
+
+        return numA - numB
+      }) 
       DataLocation.value.location.map((item) => {
         dataUpdateLocation.value.push(item.slice(-2)) // Cắt lấy 2 số cuối
       })

@@ -1,5 +1,6 @@
 <template>
     <div>
+      <h1 style="font-weight: bold; margin: 15px 0;">Create Plan</h1>
         <!-- <input type="text" style="padding: 5px 10px; border-radius: 10px;" placeholder="Location Old" v-model="dataPlan.location_old">
         <input type="text" style="padding: 5px 10px; border-radius: 10px; margin: 0 10px;" placeholder="Location New" v-model="dataPlan.location_new">
         <button v-if="!route.query.id" class="btn" style="border: 1px solid greenyellow;" @click="addplan">
@@ -37,21 +38,30 @@
             <h2 class="title">Location Old</h2>
             <div style="display: flex; flex-wrap: wrap;">
               <div v-for="(item, index) in dataLocationOld.location" :key="index" >
-                <button
+                <div v-if="dataLocationOld.findAllPlanDatas.some(x => x.locationOld == item || x.locationNew == item)">
+                  <p style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">plan : {{ findOnePlan(dataLocationOld.findAllPlanDatas, item).id }}, type: {{ findOnePlan(dataLocationOld.findAllPlanDatas, item).locationOld == item ? "Old" : "New" }}</p>
+                  <button
                 @click="OpenFrame(dataLocationOld.productbyShelf, item)"
-                v-if="dataLocationOld.productbyShelf.some(x => x.location == item)"
-                 :class="'form-select ' + 'bg_old' + item" style="width: 120px; background-color: violet;">{{ item }}</button>
+                
+                 :class="'form-select ' + 'bg_old' + item" style="width: 100px; background-color: violet;">{{ lastData(item) }}</button>
+                </div>
 
-                 <button
+                 <div v-else>
+                  <button
                 @click="OpenFrame(dataLocationOld.productbyShelf, item)"
-                v-else
-                 class="form-select" style="width: 120px;">{{ item }}</button>
+                
+                :class="'form-select ' + 'bg_old' + item" style="width: 100px;">{{ lastData(item) }}</button>
+                 </div>
               </div>
             </div>
           </div>
           </div>
 
-          <div style="margin-top: 100px;">
+          <div style="text-align: left;">
+            <button @click="showPlanNewData" class="btn" style="font-weight: bold; background-color: aqua; padding: 10px 30px; margin: 15px 0;">Swap Location New <i class="fa fa-sign-language" aria-hidden="true"></i></button>
+          </div>
+
+          <div style="margin-top: 100px;" v-if="showPlanNew">
             <div>
             <h2 class="title">Area New</h2>
             <select class="form-select" v-model="currentWarehouseNew" @change="selectLineNew">
@@ -75,18 +85,26 @@
 
           <div>
             <h2 class="title">Location New</h2>
-            <div style="display: flex; flex-wrap: wrap;">
+            <div style="display: flex;  flex-wrap: wrap;">
               <div v-for="(item, index) in dataLocationNew.location" :key="index" >
-                <button
-                @click="OpenFrameNew(dataLocationNew.productbyShelf, item)"
-                v-if="dataLocationNew.productbyShelf.some(x => x.location == item)"
-                 :class="'form-select ' + 'bg_new' + item" style="width: 120px; background-color: violet;">{{ item }}</button>
+                <div v-if="dataLocationNew.findAllPlanDatas.some(x => x.locationOld == item || x.locationNew == item)">
+                  <p style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">plan : {{ findOnePlan(dataLocationNew.findAllPlanDatas, item).id }}, type: {{ findOnePlan(dataLocationNew.findAllPlanDatas, item).locationOld == item ? "Old" : "New" }}</p>
+                  <button
+                    @click="OpenFrameNew(dataLocationNew.productbyShelf, item)"
+                    
+                    :class="'form-select ' + 'bg_new' + item" style="width: 100px; background-color: violet;">{{ lastData(item) }}</button>
+                </div>
+                <div v-else>
+                  <button
+                  @click="OpenFrameNew(dataLocationNew.productbyShelf, item)"
+                  
+                  :class="'form-select ' + 'bg_new' + item" style="width: 100px;">{{ lastData(item) }}</button>
+                </div>
+                
 
-                 <button
-                @click="OpenFrameNew(dataLocationNew.productbyShelf, item)"
-                v-else
-                :class="'form-select ' + 'bg_new' + item" style="width: 120px;">{{ item }}</button>
+                 
               </div>
+              
             </div>
           </div>
           </div>
@@ -96,14 +114,14 @@
         <div>
           
         </div>
+        <button v-if="!route.query.id" class="btn" style="border: 1px solid greenyellow; margin: 20px 0;" @click="addplan">
+                  Add Plan
+              </button>
 
-        <button v-if="!route.query.id" class="btn" style="border: 1px solid greenyellow;" @click="addplan">
-            Add Plan
-        </button>
-
-        <button v-else class="btn" style="border: 1px solid greenyellow;" @click="updatePlan">
-            Update Plan
-        </button>
+              <button v-else class="btn" style="border: 1px solid greenyellow; margin: 20px 0;" @click="updatePlan">
+                  Update Plan
+              </button>
+        
     </div>
 
     <!-- Frame hiển thị thông tin -->
@@ -168,7 +186,7 @@
 
 <script setup>
 import axios from 'axios';
-import {ref, getCurrentInstance, onMounted} from 'vue';
+import {ref, getCurrentInstance, onMounted, onUpdated} from 'vue';
 import {useRouter, useRoute} from 'vue-router'
   import {useToast} from 'vue-toastification'
   import Swal from "sweetalert2";
@@ -192,7 +210,7 @@ import {useRouter, useRoute} from 'vue-router'
   const dataLineOld = ref([])
   const dataShelfOld = ref([])
   const dataLocationOld = ref([])
-
+  const showPlanNew = ref(false)
   const frameData = ref([])
   const frameDataNew = ref([])
   // const currentLocationOld = ref(null)
@@ -224,15 +242,30 @@ import {useRouter, useRoute} from 'vue-router'
     findAllAreaNew()
   })
 
+  onUpdated(() => { // Kiểm tra khi giao diện đã load hết dữ liệu lên
+    // loadDataLast()
+    console.log("Hello World")
+  })
+  const showPlanNewData = () => {
+    showPlanNew.value = !showPlanNew.value
+  }
+  const findOnePlan = (item, location) => {
+    return item.find(x => x.locationNew == location || x.locationOld == location)
+  }
+
+  const lastData = (item) => {
+    return item.slice(-2)
+  }
   const closeFrameNew = () => {
     frameVisibleNew.value = !frameVisibleNew.value
   }
   const ClickDataOld = (location) => {
     dataPlan.value.location_old = location
-    if(BgOld.value != null)
-        document.querySelector('.' + BgOld.value).style.backgroundColor = 'violet'
+    console.log("Data " + location)
+    if(BgOld.value !== null)
+        document.querySelector('.' + BgOld.value).style.backgroundColor = 'white'
     
-    document.querySelector('.bg_old' + location).style.backgroundColor = 'red'
+    document.querySelector('.bg_old' + location).style.backgroundColor = 'yellow'
 
     BgOld.value = 'bg_old' + location
 
@@ -244,9 +277,9 @@ import {useRouter, useRoute} from 'vue-router'
   const ClickDataNew = (location) => {
     dataPlan.value.location_new = location
     if(BgNew.value != null)
-        document.querySelector('.' + BgNew.value).style.backgroundColor = 'violet'
+        document.querySelector('.' + BgNew.value).style.backgroundColor = 'white'
     
-    document.querySelector('.bg_new' + location).style.backgroundColor = 'red'
+    document.querySelector('.bg_new' + location).style.backgroundColor = 'yellow'
 
     BgNew.value = 'bg_new' + location
 
@@ -298,6 +331,9 @@ import {useRouter, useRoute} from 'vue-router'
     dataShelfOld.value = []
     dataLineOld.value = []
     dataLocationOld.value = []
+
+    currentLineOld.value = null
+    currentShelfOld.value = null
     findAllLineOld()
   }
 
@@ -305,6 +341,8 @@ import {useRouter, useRoute} from 'vue-router'
     BgOld.value = null
     dataShelfOld.value = []
     dataLocationOld.value = []
+    
+    currentShelfOld.value = null
 
     findAllShelfOld()
   }
@@ -323,7 +361,20 @@ import {useRouter, useRoute} from 'vue-router'
     const res = await axios.get(hostname + '/api/location_addr/FindAllData')
     if(res.data.success){
       Swal.fire("Success")
-      dataAreaOld.value = res.data.content
+      dataAreaOld.value = res.data.content.sort((a, b) => {
+        const letterA = a.charAt(0) // Lấy ký tự đầu tiên
+        const letterb = b.charAt(0) // Lấy ký tự đầu tiên
+        
+        const numA = parseInt(a.slice(1))
+        const numB = parseInt(b.slice(1))
+
+        // Sắp xếp theo chữ cái đầu tiên, nếu giống thì sắp xếp theo số
+        if(letterA == letterb){
+          return numA - numB
+        }
+
+        return letterA.localeCompare(letterb)
+      })
     }
 
     isLoading.value = false;
@@ -340,6 +391,8 @@ import {useRouter, useRoute} from 'vue-router'
     if(res.data.success){
       Swal.fire("Success")
       dataLineOld.value = res.data.content
+
+      dataLineOld.value = [...dataLineOld.value].sort((a, b) => parseInt(a) - parseInt(b))
     }
 
     isLoading.value = false;
@@ -355,6 +408,8 @@ import {useRouter, useRoute} from 'vue-router'
     if(res.data.success){
       Swal.fire("Success")
       dataShelfOld.value = res.data.content
+
+      dataShelfOld.value = [...dataShelfOld.value].sort((a, b) => parseInt(a.shelf) - parseInt(b.shelf))
     }
 
     isLoading.value = false;
@@ -370,8 +425,17 @@ import {useRouter, useRoute} from 'vue-router'
     if(res.data.success){
       Swal.fire("Success")
       dataLocationOld.value = res.data.content
+
+      dataLocationOld.value.location = [...dataLocationOld.value.location].sort((a, b) => {
+        const numA = parseInt(a.slice(-2))
+        const numB = parseInt(b.slice(-2))
+
+        return numA - numB
+      }) 
+
     }
 
+    console.log(res)
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
@@ -383,6 +447,10 @@ import {useRouter, useRoute} from 'vue-router'
     dataShelfNew.value = []
     dataLineNew.value = []
     dataLocationNew.value = []
+
+    currentLineNew.value = null
+    currentShelfNew.value = null
+
     findAllLineNew()
   }
 
@@ -391,6 +459,7 @@ import {useRouter, useRoute} from 'vue-router'
     dataShelfNew.value = []
     dataLocationNew.value = []
 
+    currentShelfNew.value = null
     findAllShelfNew()
   }
 
@@ -408,7 +477,20 @@ import {useRouter, useRoute} from 'vue-router'
     const res = await axios.get(hostname + '/api/location_addr/FindAllData')
     if(res.data.success){
       Swal.fire("Success")
-      dataAreaNew.value = res.data.content
+      dataAreaNew.value = res.data.content.sort((a, b) => {
+        const letterA = a.charAt(0) // Lấy ký tự đầu tiên
+        const letterb = b.charAt(0) // Lấy ký tự đầu tiên
+        
+        const numA = parseInt(a.slice(1))
+        const numB = parseInt(b.slice(1))
+
+        // Sắp xếp theo chữ cái đầu tiên, nếu giống thì sắp xếp theo số
+        if(letterA == letterb){
+          return numA - numB
+        }
+
+        return letterA.localeCompare(letterb)
+      })
     }
 
     isLoading.value = false;
@@ -425,6 +507,7 @@ import {useRouter, useRoute} from 'vue-router'
     if(res.data.success){
       Swal.fire("Success")
       dataLineNew.value = res.data.content
+      dataLineNew.value = [...dataLineNew.value].sort((a, b) => parseInt(a) - parseInt(b))
     }
 
     isLoading.value = false;
@@ -440,8 +523,20 @@ import {useRouter, useRoute} from 'vue-router'
     if(res.data.success){
       Swal.fire("Success")
       dataShelfNew.value = res.data.content
+      dataShelfNew.value = [...dataShelfNew.value].sort((a, b) => parseInt(a.shelf) - parseInt(b.shelf))
     }
 
+    isLoading.value = false;
+  document.body.classList.remove("loading");
+  document.body.style.overflow = "auto";
+  }
+
+  // const loadDataFirst = () => {
+  //   isLoading.value = true;
+  // document.body.classList.add("loading"); // Add Lớp "loading"
+  // document.body.style.overflow = "hidden";
+  // }
+  const loadDataLast = () =>{
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
@@ -455,6 +550,13 @@ import {useRouter, useRoute} from 'vue-router'
     if(res.data.success){
       Swal.fire("Success")
       dataLocationNew.value = res.data.content
+
+      dataLocationNew.value.location = [...dataLocationNew.value.location].sort((a, b) => {
+        const numA = parseInt(a.slice(-2))
+        const numB = parseInt(b.slice(-2))
+
+        return numA - numB
+      }) 
     }
 
     isLoading.value = false;
@@ -514,12 +616,11 @@ import {useRouter, useRoute} from 'vue-router'
       findAllShelfNew()
       findAllLocationNew()
       
+      loadDataLast()
       
       // document.querySelector('.' + BgNew.value).style.backgroundColor = 'violet'
     
-      console.log(BgOld.value)
-      console.log(BgNew.value)
-      console.log(res)
+      showPlanNew.value = !showPlanNew.value
     }
 
     isLoading.value = false;
@@ -528,8 +629,11 @@ import {useRouter, useRoute} from 'vue-router'
   }
 
   const addplan = async() => { 
-    if(dataPlan.value.location_new === "" || dataPlan.value.location_old === "")
-        return
+    if(dataPlan.value.location_new === "" || dataPlan.value.location_old === ""){
+      alert("No Location !!!")
+      return
+    }
+        
     isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
@@ -550,6 +654,16 @@ import {useRouter, useRoute} from 'vue-router'
   }
 </script>
 
+<style>
+@keyframes index1 {
+  0% {
+    color: red;
+  }
+  100% {
+    color: yellow;
+  }
+}
+</style>
 <style scope>
 
 .form-select,
