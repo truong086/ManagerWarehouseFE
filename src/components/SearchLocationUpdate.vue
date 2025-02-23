@@ -402,19 +402,26 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     document.body.style.overflow = "hidden";
     const res = await axios.get(hostname + `/api/location_addr/FindAllDataShelfOne?line=${currentLine.value}&area=${currentArea.value}`)
     if(res.data.success){
-      DataShelf.value = res.data.content
-      DataShelf.value = [...DataShelf.value].sort((a, b) => parseInt(a.shelf) - parseInt(b.shelf))
+      if(res.data.content.length > 0){
+        DataShelf.value = res.data.content
+        DataShelf.value = [...DataShelf.value].sort((a, b) => parseInt(a.shelf) - parseInt(b.shelf))
 
-      // 2️⃣ Lấy danh sách số đã có trong content
-      const existingShelves = DataShelf.value.map(item => item.shelf);
+        // 2️⃣ Lấy danh sách số đã có trong content
+        const existingShelves = DataShelf.value.map(item => item.shelf);
 
-      // 3️⃣ Tìm các số bị thiếu
-      const missingNumbers = fullRange.filter(num => !existingShelves.includes(num));
+        // 3️⃣ Tìm các số bị thiếu
+        const missingNumbers = fullRange.filter(num => !existingShelves.includes(num));
 
-      // 4️⃣ Tạo danh sách các số bị thiếu dưới dạng { shelf: "xx" }
-      const missingItems = missingNumbers.map(num => ({ shelf: num }));
+        // 4️⃣ Tạo danh sách các số bị thiếu dưới dạng { shelf: "xx" }
+        const missingItems = missingNumbers.map(num => ({ shelf: num }));
 
-      DataShelf.value = [...DataShelf.value, ...missingItems].sort((a, b) => a.shelf - b.shelf);
+        DataShelf.value = [...DataShelf.value, ...missingItems].sort((a, b) => a.shelf - b.shelf);
+      }else{
+        for(let i = 1; i <= 20; i++){
+          DataShelf.value.push({shelf: '' + i})
+        }
+      }
+      
     }
 
     isLoading.value = false;
@@ -428,25 +435,35 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     document.body.style.overflow = "hidden";
     const res = await axios.get(hostname + `/api/location_addr/FindAllDataLocation?line=${currentLine.value}&area=${currentArea.value}&shelf=${currentShelf.value}`)
     if(res.data.success){
-      DataLocation.value = res.data.content
-      // DataLocation.value.location = [...DataLocation.value.location].sort((a, b) => {
-      //   const numA = parseInt(a.slice(-2))
-      //   const numB = parseInt(b.slice(-2))
+      if(res.data.content.location.length > 0){
+        DataLocation.value = res.data.content
+        // DataLocation.value.location = [...DataLocation.value.location].sort((a, b) => {
+        //   const numA = parseInt(a.slice(-2))
+        //   const numB = parseInt(b.slice(-2))
 
-      //   return numA - numB
-      // }) 
-      // DataLocation.value.location.map((item) => {
-      //   dataUpdateLocation.value.push(item.slice(-2)) // Cắt lấy 2 số cuối
-      // })
+        //   return numA - numB
+        // }) 
+        // DataLocation.value.location.map((item) => {
+        //   dataUpdateLocation.value.push(item.slice(-2)) // Cắt lấy 2 số cuối
+        // })
 
-      DataLocation.value.location = []
+        DataLocation.value.location = []
 
-      for(let i = 1; i <= 5; i++){
-        for(let y = i; y <= 6; y++){
-          console.log(i + '' + y)
-          dataUpdateLocation.value.push(i + '' + y)
+        for(let i = 1; i <= 5; i++){
+          for(let y = 1; y <= 6; y++){
+            console.log(i + '' + y)
+            dataUpdateLocation.value.push(i + '' + y)
+          }
+        }
+      }else{
+        for(let i = 1; i <= 5; i++){
+          for(let y = 1; y <= 6; y++){
+            console.log(i + '' + y)
+            dataUpdateLocation.value.push(i + '' + y)
+          }
         }
       }
+      
     }
 
     console.log(res)

@@ -500,7 +500,10 @@ import {useRouter, useRoute} from 'vue-router'
 
       dataShelfOld.value = [...dataShelfOld.value, ...missingItems].sort((a, b) => a.shelf - b.shelf);
       }else{
-        dataShelfOld.value = []
+        for(let i = 1; i <= 20; i++){
+          dataShelfOld.value.push({shelf: '' + i})
+        }
+        
       }
       
     }else{
@@ -655,7 +658,9 @@ import {useRouter, useRoute} from 'vue-router'
 
       dataShelfNew.value = [...dataShelfNew.value, ...missingItems].sort((a, b) => a.shelf - b.shelf);
       }else{
-        dataShelfNew.value = []
+        for(let i = 1; i <= 20; i++){
+          dataShelfNew.value.push({shelf: '' + i})
+        }
       }
       
     }else{
