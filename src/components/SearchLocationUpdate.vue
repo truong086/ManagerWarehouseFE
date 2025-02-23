@@ -206,7 +206,7 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     const url = window.URL.createObjectURL(new Blob([res.data]));
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'DataExcel.xlsx'; // Đặt tên file khi tải xuống
+        a.download = 'LocationCode' + new Date().toLocaleTimeString() + '.xlsx'; // Đặt tên file khi tải xuống
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -254,7 +254,7 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
     const url = window.URL.createObjectURL(new Blob([res.data]));
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'DataExcel.xlsx'; // Đặt tên file khi tải xuống
+        a.download = 'LocationCode' + new Date().toLocaleTimeString() + '.xlsx'; // Đặt tên file khi tải xuống
         document.body.appendChild(a);
         a.click();
         a.remove();
