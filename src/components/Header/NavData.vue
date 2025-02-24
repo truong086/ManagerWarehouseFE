@@ -12,28 +12,28 @@
                         <li class="b1" v-on:click="SwapBackGroupColor('b1')">
                           <router-link to="/PlanUpdatePage" class="waves-effect waves-dark" aria-expanded="false">
                             <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                            <span class="hide-menu">{{ t('Plan') }}</span>
+                            <span class="hide-menu">Plan</span>
                         </router-link>
                         </li>
 
                         <li class="b2" v-on:click="SwapBackGroupColor('b2')">
                           <router-link to="/SearechProductUpdatePage" class="waves-effect waves-dark" aria-expanded="false">
                             <i class="fa fa-search" aria-hidden="true"></i>
-                            <span class="hide-menu">{{ t('Search Product By Code') }}</span>
+                            <span class="hide-menu">Search Product By Code</span>
                         </router-link>
                         </li>
 
                         <li class="b3" v-on:click="SwapBackGroupColor('b3')">
                           <router-link to="/SearchLocationUpdatePage" class="waves-effect waves-dark" aria-expanded="false">
                             <i class="fa fa-search" aria-hidden="true"></i>
-                            <span class="hide-menu">{{ t('Search Location By Code') }}</span>
+                            <span class="hide-menu">Search Location By Code</span>
                         </router-link>
                         </li>
 
                         <li class="b4" v-on:click="SwapBackGroupColor('b4')">
                           <router-link to="/AllPlanUpdatePage" class="waves-effect waves-dark" aria-expanded="false">
                             <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                            <span class="hide-menu">{{ t('Find All Plan') }}</span>
+                            <span class="hide-menu">Find All Plan</span>
                         </router-link>
                         </li>
                         <!----<li> <a class="waves-effect waves-dark" href="pages-error-404.html" aria-expanded="false"><i
@@ -154,11 +154,11 @@
 
 <script setup>
   import { ref } from 'vue'
-  import { useI18n } from 'vue-i18n' // Import vue-i18n
+  // import { useI18n } from 'vue-i18n' // Import vue-i18n
 
   const isBackGroup = ref(null)
 
-  const { t, locale } = useI18n()  // Sử dụng i18n để thay đổi ngôn ngữ
+  // const { t, locale } = useI18n()  // Sử dụng i18n để thay đổi ngôn ngữ
 
 
   const SwapBackGroupColor = (data) => {
@@ -172,7 +172,7 @@
 
 
   // Lưu trữ ngôn ngữ đã chọn
-  const selectedLanguage = ref('zh')
+  // const selectedLanguage = ref('zh')
 
   // Hàm thay đổi ngôn ngữ
   // const changeLanguage = () => {
