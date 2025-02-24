@@ -175,7 +175,7 @@
   const selectedLanguage = ref('zh')
 
   // Hàm thay đổi ngôn ngữ
-  const changeLanguage = () => {
-    locale.value = selectedLanguage.value // Cập nhật ngôn ngữ bằng vue-i18n
-  }
+  // const changeLanguage = () => {
+  //   locale.value = selectedLanguage.value // Cập nhật ngôn ngữ bằng vue-i18n
+  // }
 </script>
