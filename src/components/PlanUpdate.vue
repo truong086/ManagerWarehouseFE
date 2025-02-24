@@ -106,6 +106,13 @@
               
             </div>
           </div>
+          <button v-if="!route.query.id" class="btn" style="border: 1px solid greenyellow; margin: 20px 0;" @click="addplan">
+                  Add Plan
+              </button>
+
+              <button v-else class="btn" style="border: 1px solid greenyellow; margin: 20px 0;" @click="updatePlan">
+                  Update Plan
+              </button>
           </div>
         </div>
         </div>
@@ -113,13 +120,7 @@
         <div>
           
         </div>
-        <button v-if="!route.query.id" class="btn" style="border: 1px solid greenyellow; margin: 20px 0;" @click="addplan">
-                  Add Plan
-              </button>
-
-              <button v-else class="btn" style="border: 1px solid greenyellow; margin: 20px 0;" @click="updatePlan">
-                  Update Plan
-              </button>
+        
         
     </div>
 
