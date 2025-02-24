@@ -321,6 +321,7 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
         dataNull.value = ""
         Toast.success("Success")
       }else{
+        dataProduct.value = []
         dataNull.value = "No Data"
       }
       

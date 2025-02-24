@@ -238,7 +238,7 @@ const deleteData = async(id) => {
        const url = window.URL.createObjectURL(new Blob([response.data]));
           const a = document.createElement('a');
           a.href = url;
-          a.download = 'DataExcel.xlsx'; // Đặt tên file khi tải xuống
+          a.download = getCurrentTimestamp(); // Đặt tên file khi tải xuống
           document.body.appendChild(a);
           a.click();
           a.remove();
@@ -254,6 +254,18 @@ const deleteData = async(id) => {
     document.body.classList.remove("loading");
     document.body.style.overflow = "auto";
   };
+
+  const getCurrentTimestamp = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+
+    return `ProductCode_${year}${month}${day}_${hours}${minutes}${seconds}.xlsx`;
+};
   watch(page.value, (newPage) => {
     findAllData(valueE.value, newPage);
   });
@@ -266,9 +278,7 @@ const deleteData = async(id) => {
   };
   const findAllData = async (search, pageData) => {
     currentPlanData.value = []
-    isLoading.value = true;
-    document.body.classList.add("loading"); // Add Lớp "loading"
-    document.body.style.overflow = "hidden";
+ 
     if(typeData.value === 'search'){
       if (!datetimePlan.value.datefrom) {
       alert("請選擇日期!");
@@ -279,6 +289,10 @@ const deleteData = async(id) => {
       alert("請選擇日期!");
       return;
     }
+
+    isLoading.value = true;
+    document.body.classList.add("loading"); // Add Lớp "loading"
+    document.body.style.overflow = "hidden";
 
       datetimePlanDate.value.page = pageData
     datetimePlanDate.value.pageSize = pageSize.value
@@ -296,8 +310,15 @@ const deleteData = async(id) => {
         totalPage.value = 0
         currentPlanData.value = []
       }
+
+      isLoading.value = false;
+    document.body.classList.remove("loading");
+    document.body.style.overflow = "auto";
     }
     else{
+      isLoading.value = true;
+    document.body.classList.add("loading"); // Add Lớp "loading"
+    document.body.style.overflow = "hidden";
       if (typePlan.value === "all") {
       const res =
         search === ""

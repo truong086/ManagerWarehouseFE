@@ -1,15 +1,6 @@
 <template>
     <div>
       <h1 style="font-weight: bold; margin: 15px 0;">Create Plan</h1>
-        <!-- <input type="text" style="padding: 5px 10px; border-radius: 10px;" placeholder="Location Old" v-model="dataPlan.location_old">
-        <input type="text" style="padding: 5px 10px; border-radius: 10px; margin: 0 10px;" placeholder="Location New" v-model="dataPlan.location_new">
-        <button v-if="!route.query.id" class="btn" style="border: 1px solid greenyellow;" @click="addplan">
-            Add Plan
-        </button>
-
-        <button v-else class="btn" style="border: 1px solid greenyellow;" @click="updatePlan">
-            Update Plan
-        </button> -->
         <div>
           <div style="width: 800px; margin: 0 auto;">
           <div>
@@ -58,22 +49,6 @@
                  </div>
                 </div>
               </div>
-              <!-- <div v-for="(item, index) in dataLocationOld.location" :key="index" >
-                <div v-if="dataLocationOld.findAllPlanDatas.some(x => x.locationOld == item || x.locationNew == item)">
-                  <p style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">plan : {{ findOnePlan(dataLocationOld.findAllPlanDatas, item).id }}, type: {{ findOnePlan(dataLocationOld.findAllPlanDatas, item).locationOld == item ? "Old" : "New" }}</p>
-                  <button
-                @click="OpenFrame(dataLocationOld.productbyShelf, item)"
-                
-                 :class="'form-select ' + 'bg_old' + item" style="width: 100px; background-color: violet;">{{ lastData(item) }}</button>
-                </div>
-
-                 <div v-else>
-                  <button
-                @click="OpenFrame(dataLocationOld.productbyShelf, item)"
-                
-                :class="'form-select ' + 'bg_old' + item" style="width: 100px;">{{ lastData(item) }}</button>
-                 </div>
-              </div> -->
             </div>
           </div>
           </div>
@@ -128,21 +103,6 @@
                  </div>
                 </div>
               </div>
-              <!-- <div v-for="(item, index) in dataLocationNew.location" :key="index" >
-                <div v-if="dataLocationNew.findAllPlanDatas.some(x => x.locationOld == item || x.locationNew == item)">
-                  <p style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">plan : {{ findOnePlan(dataLocationNew.findAllPlanDatas, item).id }}, type: {{ findOnePlan(dataLocationNew.findAllPlanDatas, item).locationOld == item ? "Old" : "New" }}</p>
-                  <button
-                    @click="OpenFrameNew(dataLocationNew.productbyShelf, item)"
-                    
-                    :class="'form-select ' + 'bg_new' + item" style="width: 100px; background-color: violet;">{{ lastData(item) }}</button>
-                </div>
-                <div v-else>
-                  <button
-                  @click="OpenFrameNew(dataLocationNew.productbyShelf, item)"
-                  
-                  :class="'form-select ' + 'bg_new' + item" style="width: 100px;">{{ lastData(item) }}</button>
-                </div>
-              </div> -->
               
             </div>
           </div>
@@ -182,7 +142,7 @@
             <div class="frame-info">
               <div class="info-line">
                 <span class="info-title">位置:</span> {{ item?.location }}
-                <span class="info-title">位置:</span> {{ item?.quantity }}
+                <span class="info-title">數量:</span> {{ item?.quantity }}
               </div>
               <!-- <button @click="closeFrame" v-if="item.id_plan == 0" class="close-btn">Swap</button> -->
             </div>
@@ -211,7 +171,7 @@
             <div class="frame-info">
               <div class="info-line">
                 <span class="info-title">位置:</span> {{ item?.location }}
-                <span class="info-title">位置:</span> {{ item?.quantity }}
+                <span class="info-title">數量:</span> {{ item?.quantity }}
               </div>
               <!-- <button @click="closeFrame" v-if="item.id_plan == 0" class="close-btn">Swap</button> -->
             </div>
@@ -269,6 +229,7 @@ import {useRouter, useRoute} from 'vue-router'
   const dataLocationNew = ref([])
   const BgNew = ref(null)
   const showDataLocationNew = ref(false)
+  const checkDataLocation = ref("")
   // const currentLocationNew = ref(null)
   
   const dataPlan = ref({
@@ -308,11 +269,20 @@ import {useRouter, useRoute} from 'vue-router'
   const closeFrameNew = () => {
     frameVisibleNew.value = !frameVisibleNew.value
   }
-  const ClickDataOld = (location) => {
+  const ClickDataOld = async (location) => {
     dataPlan.value.location_old = location
     console.log("Data " + location)
+
+    const res = !route.query.id ? await axios.get(hostname + `/api/Plan/checkPlanLocationAdd?code=${dataPlan.value.location_old}`)
+                                : await axios.get(hostname + `/api/Plan/checkPlanLocationUpdate?id=${route.query.id}&code=${dataPlan.value.location_old}`)
+                    
+    if(!res.data.success){
+      dataPlan.value.location_old = ""
+      alert("The location is selected by another plan !")
+      return
+    }
     if(BgOld.value !== null)
-        document.querySelector('.' + BgOld.value).style.backgroundColor = 'white'
+        document.querySelector('.' + BgOld.value).style.backgroundColor = 'violet'
     
     document.querySelector('.bg_old' + location.slice(-2)).style.backgroundColor = 'yellow'
 
@@ -323,25 +293,51 @@ import {useRouter, useRoute} from 'vue-router'
     Swal.fire("Success")
   }
 
-  const ClickDataNew = (location) => {
+  const countCharactersWithoutSpaces = (str) => str.replace(/\s/g, "").length
+  const ClickDataNew = async (location) => {
+      
     console.log(location)
-    const chuyendoi = parseInt(currentLineNew.value)
-    const chuyendoiShelf = parseInt(currentShelfNew.value)
-    if(chuyendoi <= 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLineNew.value) && !/^0\d+/.test(currentShelfNew.value))
-        dataPlan.value.location_new = currentWarehouseNew.value + '0' + currentLineNew.value + '0' + currentShelfNew.value + '' + location
     
-    else if(chuyendoi <= 9 && chuyendoiShelf > 9 && !/^0\d+/.test(currentLineNew.value) && !/^0\d+/.test(currentShelfNew.value))
-        dataPlan.value.location_new = currentWarehouseNew.value + '0' + currentLineNew.value + '' + currentShelfNew.value + '' + location
-    else if(chuyendoi > 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLineNew.value) && !/^0\d+/.test(currentShelfNew.value))
-        dataPlan.value.location_new = currentWarehouseNew.value + '' + currentLineNew.value + '0' + currentShelfNew.value + '' + location
-    else dataPlan.value.location_new = currentWarehouseNew.value + '' + currentLineNew.value + '' + currentShelfNew.value + '' + location
+      if(countCharactersWithoutSpaces(location) == 2){
+        const chuyendoi = parseInt(currentLineNew.value)
+      const chuyendoiShelf = parseInt(currentShelfNew.value)
+      if(chuyendoi <= 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLineNew.value) && !/^0\d+/.test(currentShelfNew.value))
+          dataPlan.value.location_new = currentWarehouseNew.value + '0' + currentLineNew.value + '0' + currentShelfNew.value + '' + location
+      
+      else if(chuyendoi <= 9 && chuyendoiShelf > 9 && !/^0\d+/.test(currentLineNew.value) && !/^0\d+/.test(currentShelfNew.value))
+          dataPlan.value.location_new = currentWarehouseNew.value + '0' + currentLineNew.value + '' + currentShelfNew.value + '' + location
+      else if(chuyendoi > 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLineNew.value) && !/^0\d+/.test(currentShelfNew.value))
+          dataPlan.value.location_new = currentWarehouseNew.value + '' + currentLineNew.value + '0' + currentShelfNew.value + '' + location
+      else dataPlan.value.location_new = currentWarehouseNew.value + '' + currentLineNew.value + '' + currentShelfNew.value + '' + location
 
-    if(BgNew.value != null)
+    }else if(countCharactersWithoutSpaces(location) == 8){
+      dataPlan.value.location_new = location
+    }
+    
+    const res = !route.query.id ? await axios.get(hostname + `/api/Plan/checkPlanLocationAdd?code=${dataPlan.value.location_new}`)
+                                : await axios.get(hostname + `/api/Plan/checkPlanLocationUpdate?id=${route.query.id}&code=${dataPlan.value.location_new}`)
+                    
+    if(!res.data.success){
+      dataPlan.value.location_new = ""
+      alert("The location is selected by another plan !")
+      return
+    }
+    
+    if(dataLocationNew?.value.productbyShelf.some(x => x.location == checkDataLocation.value)){
+      if(BgNew.value != null)
+        document.querySelector('.' + BgNew.value).style.backgroundColor = 'violet'
+    }else{
+      if(BgNew.value != null)
         document.querySelector('.' + BgNew.value).style.backgroundColor = 'white'
-    
-    document.querySelector('.bg_new' + location.slice(-2)).style.backgroundColor = 'yellow'
+    }
+      document.querySelector('.bg_new' + location.slice(-2)).style.backgroundColor = 'yellow'
 
-    BgNew.value = 'bg_new' + location.slice(-2)
+      if(countCharactersWithoutSpaces(location) == 2){
+        checkDataLocation.value = currentWarehouseNew.value + '' + currentLineNew.value + '' + currentShelfNew.value + '' + location
+      }else if(countCharactersWithoutSpaces(location) == 8){
+        checkDataLocation.value = location
+      }
+      BgNew.value = 'bg_new' + location.slice(-2)
 
     frameVisibleNew.value = !frameVisibleNew.value
 
@@ -370,7 +366,8 @@ import {useRouter, useRoute} from 'vue-router'
     if(list?.length >= 0 && list !== null && list !== undefined){
       const checkList = list.filter((l) => l.location.slice(-2) == location)
       if(checkList.length <= 0){
-        frameDataNew.value.push({location: location})
+        
+        frameDataNew.value.push({location: currentWarehouseNew.value + '' + currentLineNew.value + '' + currentShelfNew.value + '' + location})
         return
       }
         
@@ -379,7 +376,7 @@ import {useRouter, useRoute} from 'vue-router'
         frameDataNew.value.push(element)
       });
     } else{
-      frameDataNew.value.push({location: location})
+      frameDataNew.value.push({location: currentWarehouseNew.value + '' + currentLineNew.value + '' + currentShelfNew.value + '' + location})
     }
 
     console.log(frameDataNew.value)
@@ -793,16 +790,18 @@ import {useRouter, useRoute} from 'vue-router'
   dataPlan.value.areaOld = currentWarehouseOld.value
   dataPlan.value.lineOld = currentLineOld.value
   dataPlan.value.shelfOld = currentShelfOld.value
-    const res = await axios.post(hostname + '/api/Plan/Add', dataPlan.value)
-    if(res.data.success){
-        console.log(res)
-        Toast.success("Success")
-        alert("Successs")
-        router.push("/SearechProductUpdatePage")
-    }else{
-        Toast.error(res.data.error)
-        alert(res.data.error)
-    }
+
+  console.log(dataPlan.value)
+    // const res = await axios.post(hostname + '/api/Plan/Add', dataPlan.value)
+    // if(res.data.success){
+    //     console.log(res)
+    //     Toast.success("Success")
+    //     alert("Successs")
+    //     router.push("/SearechProductUpdatePage")
+    // }else{
+    //     Toast.error(res.data.error)
+    //     alert(res.data.error)
+    // }
 
     isLoading.value = false;
   document.body.classList.remove("loading");
