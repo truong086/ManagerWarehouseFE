@@ -245,8 +245,8 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
       data.push(element.title)
     })
 
-    console.log(data)
-    const res = await axios.post(hostname + '/api/Product/FindAllDownLoadExcelByCodeProductList', data, {
+    if(currentDataSuppliers.value != null){
+      const res = await axios.post(hostname + `/api/Product/FindAllDownLoadExcelBySupplier?supplier=${currentDataSuppliers.value}`, {}, {
       headers: {
                     'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                     'Content-Type': 'application/json',
@@ -262,6 +262,25 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
         a.click();
         a.remove();
         window.URL.revokeObjectURL(url);
+    }else{
+      const res = await axios.post(hostname + '/api/Product/FindAllDownLoadExcelByCodeProductList', data, {
+      headers: {
+                    'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'Content-Type': 'application/json',
+                },
+                responseType: 'blob' // Cực kỳ quan trọng! Không có sẽ bị lỗi file
+    })
+
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = getCurrentTimestamp(); // Đặt tên file khi tải xuống
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+    }
+    
 
     isLoading.value = false;
     document.body.classList.remove("loading");
@@ -310,8 +329,29 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
   isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
-    const res = !searchName.value.trim() ? await axios.get(hostname + `/api/Product/findBySuppliers?id=${search}&page=${pageData}&pageSize=${pageSize.value}`)
-    : await axios.get(hostname + `/api/Product/FindOne?name=${searchName.value}&page=${pageData}&pageSize=${pageSize.value}`)
+  if(!searchName.value.trim()){
+    const res = await axios.get(hostname + `/api/Product/findBySuppliers?id=${search}&page=${pageData}&pageSize=${pageSize.value}`)
+    searchName.value = ''
+    if(res.data.success){
+      if(res.data.content.data.length > 0){
+        dataProduct.value = []
+        dataProduct.value = res.data.content.data
+        page.value = res.data.content.page
+        totalPage.value = res.data.content.totalPages
+        dataNull.value = ""
+        Toast.success("Success")
+      }else{
+        dataProduct.value = []
+        dataNull.value = "No Data"
+      }
+      
+    }else{
+        dataProduct.value = []
+        dataNull.value = "No Data"
+    }
+  }else{
+    const res = await axios.get(hostname + `/api/Product/FindOne?name=${searchName.value}&page=${pageData}&pageSize=${pageSize.value}`)
+    currentDataSuppliers.value = null
     if(res.data.success){
       if(res.data.content.data.length > 0){
         dataProduct.value = []
@@ -330,6 +370,8 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
         dataNull.value = "No Data"
     }
     console.log(res)
+  }
+    
     
     isLoading.value = false;
   document.body.classList.remove("loading");
