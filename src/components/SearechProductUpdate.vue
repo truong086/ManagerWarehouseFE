@@ -168,7 +168,7 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
 
   const frameVisibleNew = ref(false)
   const Dataframe = ref([])
-  const dataProduct = ref({})
+  const dataProduct = ref([])
   const currentDataSuppliers = ref(null)
 
   const dataNull = ref("")
@@ -233,7 +233,7 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
   const dowloadData = async () => {
 
     let data = []
-
+    console.log(dataProduct.value)
     if(dataProduct.value.length <= 0)
         return
 
