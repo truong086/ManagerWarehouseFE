@@ -35,7 +35,7 @@
             @click="submitSearch('search')" style="background-color: black;"
             class="bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300"
           >
-            Search Data
+          搜尋數據
           </button>
 
           <button 
@@ -43,7 +43,7 @@
             style="color: black;"
             class="bg-blue-600 text-red font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300"
           >
-            Dowload Excel
+          下載Excel
           </button>
 
           
@@ -143,7 +143,7 @@
               style="margin-left: 50px; background-color: rgba(11, 176, 217, 0.8)"
               @click="NextMap(item.id)"
             >
-              Update
+            更新
             </button>
 
             <button
@@ -151,7 +151,7 @@
               style="margin-left: 50px; background-color: rgba(11, 176, 217, 0.8)"
               @click="deleteData(item.id)"
             >
-              Delete
+            刪除
             </button>
             </div>
           </div>
@@ -168,7 +168,7 @@
   
     <div v-if="isLoading" class="loading-overlay">
       <div class="spinner"></div>
-      <p>加載中...</p>
+      <p>載入中...</p>
     </div>
   </template>
   
