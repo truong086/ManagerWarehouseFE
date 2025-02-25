@@ -14,6 +14,7 @@ export const useCounterStore = defineStore('counter', {
     id_account: 0,
     account_name: '',
     account_image: '',
+    typeData: '',
     checkStatictisData: [],
     checkStatictisAccount: [],
     dataAccountByProduct: [],
@@ -57,13 +58,17 @@ export const useCounterStore = defineStore('counter', {
     getdataTotalProductDelivenote: (state) => state.dataTotalProductDelivenote,
 
     getcheckStatictisTotalProductSupplier: (state) => state.checkStatictisTotalProductSupplier,
-    getdataTotalProductSupplier: (state) => state.dataTotalProductSupplier
+    getdataTotalProductSupplier: (state) => state.dataTotalProductSupplier,
+    getTypeData: (state) => state.typeData,
   },
 
   // Actions (giống methods)
   actions: {
     setDataAccountByProduct(item){
       this.dataAccountByProduct.push(item)
+    },
+    setTypeDatas(item){
+      this.typeData = item
     },
     setCheckStatictisAccount(item){
       this.checkStatictisAccount.push(item)
@@ -174,6 +179,7 @@ export const useCounterStore = defineStore('counter', {
     },
     clearStore(){
       this.role = []
+      this.typeData = ""
       this.$reset
       localStorage.clear()
     }

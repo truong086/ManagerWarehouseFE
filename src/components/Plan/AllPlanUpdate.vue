@@ -3,7 +3,7 @@
       <div class="button-group">
         <button class="all" @click="showData('all', 'all')">所有計劃</button>
         <button class="lichsu" @click="showData('lichsu', 'lichsu')">
-          歷史
+          完成
         </button>
         <button class="NoReceiver" @click="showData('NoReceiver', 'NoReceiver')">
             尚未指定接收者的計劃
@@ -57,6 +57,9 @@
             style="background-color: rgba(11, 176, 217, 0.2); text-align: center; "
           >
             <div class="warehouse-info" style="z-index: 1000; text-align: center; width: 500px; margin: 0 auto;">
+              <p style="font-weight: bold; font-size: 15px;">
+              {{ item.id }}
+            </p>
               <p>
                 舊位置：{{ item.areaOld }} => {{ item.lineOld }} =>
                 {{ item.shelfOld }} => {{ item.locationOld }} 
@@ -83,6 +86,9 @@
             style="background: rgba(52, 199, 62, 0.2); text-align: center;"
           >
           <div class="warehouse-info" style="z-index: 1000; text-align: center; width: 500px; margin: 0 auto;" >
+            <p style="font-weight: bold; font-size: 15px;">
+              {{ item.id }}
+            </p>
               <p>
                 舊位置：{{ item.areaOld }} => {{ item.lineOld }} =>
                 {{ item.shelfOld }} => {{ item.locationOld }} 
@@ -94,7 +100,7 @@
               </p>
               <h5>
                 狀態：
-                <a style="font-weight: bold; color: red">完成的</a>
+                <a style="font-weight: bold; color: red">已完成</a>
               </h5>
 
               <h5>
@@ -109,6 +115,9 @@
             style="background-color: rgba(247, 231, 5, 0.2); text-align: center;"
           >
           <div class="warehouse-info" style="z-index: 1000; text-align: center; width: 500px; margin: 0 auto;">
+            <p style="font-weight: bold; font-size: 15px;">
+              {{ item.id }}
+            </p>
               <p>
                 舊位置：{{ item.areaOld }} => {{ item.lineOld }} =>
                 {{ item.shelfOld }} => {{ item.locationOld }} 
@@ -285,28 +294,32 @@ const deleteData = async(id) => {
   const findAllData = async (search, pageData) => {
     currentPlanData.value = []
  
-    if(typeData.value === 'search' && search === "all"){
+    console.log(search)
+    console.log(store.getTypeData)
+    if(search === "search" && store.getTypeData === "all"){
       if (!datetimePlan.value.datefrom) {
-      alert("請選擇日期!");
-      return;
-    }
+        alert("請選擇日期!");
+        return;
+      }
   
-    if (!datetimePlan.value.dateto) {
-      alert("請選擇日期!");
-      return;
-    }
+      if (!datetimePlan.value.dateto) {
+        alert("請選擇日期!");
+        return;
+      }
 
-    isLoading.value = true;
-    document.body.classList.add("loading"); // Add Lớp "loading"
-    document.body.style.overflow = "hidden";
+      console.log("Đã vào")
 
-      datetimePlanDate.value.page = pageData
-    datetimePlanDate.value.pageSize = pageSize.value
-    datetimePlanDate.value.datefrom = datetimePlan.value.datefrom
-    datetimePlanDate.value.dateto = datetimePlan.value.dateto
+      isLoading.value = true;
+      document.body.classList.add("loading"); // Add Lớp "loading"
+      document.body.style.overflow = "hidden";
+
+        datetimePlanDate.value.page = pageData
+      datetimePlanDate.value.pageSize = pageSize.value
+      datetimePlanDate.value.datefrom = datetimePlan.value.datefrom
+      datetimePlanDate.value.dateto = datetimePlan.value.dateto
       const res = await axios.post(hostName + `/api/Plan/FindAllDataByNoDone`, datetimePlanDate.value)
 
-    console.log(res)
+      console.log(res)
     if (res.data.success) {
         page.value = res.data.content.page;
         totalPage.value = res.data.content.totalPages;
@@ -321,11 +334,11 @@ const deleteData = async(id) => {
     document.body.classList.remove("loading");
     document.body.style.overflow = "auto";
     }
-    else if(typeData.value === 'search' && search === "lichsu"){
+    else if(search === 'search' && store.getTypeData === "lichsu"){
       if (!datetimePlan.value.datefrom) {
-      alert("請選擇日期!");
-      return;
-    }
+        alert("請選擇日期!");
+        return;
+      }
   
     if (!datetimePlan.value.dateto) {
       alert("請選擇日期!");
@@ -359,13 +372,52 @@ const deleteData = async(id) => {
     document.body.classList.remove("loading");
     document.body.style.overflow = "auto";
     }
+
+    else if(search === 'search' && store.getTypeData === "NoReceiver"){
+      if (!datetimePlan.value.datefrom) {
+        alert("請選擇日期!");
+        return;
+      }
+  
+    if (!datetimePlan.value.dateto) {
+      alert("請選擇日期!");
+      return;
+    }
+
+    isLoading.value = true;
+    document.body.classList.add("loading"); // Add Lớp "loading"
+    document.body.style.overflow = "hidden";
+
+      datetimePlanDate.value.page = pageData
+    datetimePlanDate.value.pageSize = pageSize.value
+    datetimePlanDate.value.datefrom = datetimePlan.value.datefrom
+    datetimePlanDate.value.dateto = datetimePlan.value.dateto
+      const res = await axios.post(hostName + `/api/Plan/FindAllDataByNoDone`, datetimePlanDate.value)
+
+    console.log(res)
+    if (res.data.success) {
+        page.value = res.data.content.page;
+        totalPage.value = res.data.content.totalPages;
+        if(page.value > totalPage.value)
+            page.value = 1
+        currentPlanData.value = res.data.content.data;
+      }else{
+        page.value = 1
+        totalPage.value = 0
+        currentPlanData.value = []
+      }
+
+      isLoading.value = false;
+    document.body.classList.remove("loading");
+    document.body.style.overflow = "auto";
+    }
     else{
       
       isLoading.value = true;
     document.body.classList.add("loading"); // Add Lớp "loading"
     document.body.style.overflow = "hidden";
     
-      if (typePlan.value === "all") {
+      if (store.getTypeData === "all") {
         
       const res =
         search === ""
@@ -393,7 +445,7 @@ const deleteData = async(id) => {
       }
   
       console.log(res)
-    } else if (typePlan.value === "lichsu") {
+    } else if (store.getTypeData === "lichsu") {
       const res =
         search === ""
           ? await axios.get(
@@ -418,7 +470,7 @@ const deleteData = async(id) => {
         totalPage.value = 0
         currentPlanData.value = []
       }
-    } else if (typePlan.value === "NoReceiver") {
+    } else if (store.getTypeData === "NoReceiver") {
       const res =
         search === ""
           ? await axios.get(
@@ -453,7 +505,7 @@ const deleteData = async(id) => {
   };
   
   const submitSearch = async (search) => {
-    typeData.value = search
+    valueE.value = search
     findAllData(valueE.value, page.value)
 
   }
@@ -489,6 +541,8 @@ const deleteData = async(id) => {
     document.querySelector("." + data).style.color = "white";
     isButton.value = data;
     typePlan.value = type;
+    valueE.value = ""
+    store.setTypeDatas(type)
   
     datetimePlan.value.datefrom = ""
     datetimePlan.value.dateto = ""

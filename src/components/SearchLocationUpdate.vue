@@ -99,22 +99,8 @@
         </button>
 
         <button class="btn" @click="dowloadExcelOneData(Dataframe.title)" style="border: 1px solid greenyellow;">
-          DowLoad Excel
+          Download Excel
         </button>
-
-        <div v-if="Dataframe?.history?.length > 0">
-                <div v-for="(itemData, indexData) in Dataframe?.history" :key="indexData">
-                    <!-- <p > 
-                    {{ item.area }} {{ item.line }} {{ item.shelf }}
-
-                     {{ item.code_location_addr }}
-                </p> -->
-                <p>
-                    {{ itemData.code_location_addr }}
-                </p>
-                <span v-if="indexData != Dataframe?.history.length - 1">⏫</span>
-                </div>
-            </div>
           <div
             class="frame-item"
             
@@ -130,7 +116,31 @@
               <!-- <button @click="closeFrame" v-if="item.id_plan == 0" class="close-btn">Swap</button> -->
             </div>
 
-            <table class="table">
+            <div v-if="Dataframe?.history?.length > 0">
+              <h2>History Product</h2>
+              <table class="table">
+        <thead>
+          <tr>
+            <th class="title">Area</th>
+            <th class="title">Line</th>
+            <th class="title">Shelf</th>
+            <th class="title">Code</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(itemProduct, indexProduct) in Dataframe?.history" :key="indexProduct">
+            <td>{{ itemProduct.area}}</td>
+            <td>{{ itemProduct.line }}</td>
+            <td>{{ itemProduct.shelf }}</td>
+            <td>{{ itemProduct.code_location_addr }}</td>
+            
+          </tr>
+        </tbody>
+      </table>
+            </div>
+
+            <div v-if="Dataframe.inOutByProducts.length > 0">
+              <table class="table">
         <thead>
           <tr>
             <th class="title">status</th>
@@ -150,6 +160,9 @@
           </tr>
         </tbody>
       </table>
+            </div>
+            
+            
 
       
           </div>

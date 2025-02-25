@@ -36,7 +36,7 @@
                   <button
                 @click="OpenFrame(dataLocationOld.productbyShelf, item + '' + itemY, 'bg_old' + item + '' + itemY)"
                 
-                 :class="'form-select ' + 'bg_old' + item + '' + itemY" style="width: 130px; background-color: violet;">{{ item }} - {{ itemY }}</button>
+                 :class="['form-select', 'bg_old' + item + '' + itemY, {active: 'bg_old' + item + '' + itemY === BgOld}]" style="width: 130px; background-color: violet;">{{ item }} - {{ itemY }}</button>
                 </div>
 
                 <div v-else>
@@ -45,7 +45,7 @@
                   <button
                 @click="OpenFrame(dataLocationOld?.productbyShelf, item + '' + itemY, 'bg_old' + item + '' + itemY)"
                 
-                :class="'form-select ' + 'bg_old' + item + '' + itemY" style="width: 130px;">{{ item }} - {{ itemY }}</button>
+                :class="['form-select', 'bg_old' + item + '' + itemY, {active: 'bg_old' + item + '' + itemY === BgOld}]" style="width: 130px;">{{ item }} - {{ itemY }}</button>
                  </div>
                 </div>
               </div>
@@ -90,16 +90,16 @@
                   <button
                 @click="OpenFrameNew(dataLocationNew.productbyShelf, item + '' + itemY)"
                 
-                 :class="'form-select ' + 'bg_new' + item + '' + itemY" style="width: 130px; background-color: violet;">{{ item }} - {{ itemY }}</button>
+                :class="['form-select', 'bg_new' + item + '' + itemY, { active: 'bg_new' + item + '' + itemY === BgNew }]" style="width: 130px; background-color: violet;">{{ item }} - {{ itemY }}</button>
                 </div>
-
+                
                 <div v-else>
                   <p v-if="dataLocationNew?.findAllPlanDatas?.some(x => (x.locationOld.slice(-2) == item + '' + itemY && x.areaOld == currentWarehouseNew && x.lineOld == currentLineNew && x.shelfOld == currentShelfNew) 
                   || (x.locationNew.slice(-2) == item + '' + itemY && x.areaNew == currentWarehouseNew && x.lineNew == currentLineNew && x.shelfNew == currentShelfNew))" style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">plan : {{ findOnePlan(dataLocationNew.findAllPlanDatas, item + '' + itemY).id }}, type: {{ findOnePlan(dataLocationNew?.findAllPlanDatas, item + '' + itemY).locationOld == currentWarehouseNew + currentLineNew + currentShelfNew + item + '' + itemY ? "Old" : "New" }}</p>
                   <button
                 @click="OpenFrameNew(dataLocationNew?.productbyShelf, item + '' + itemY)"
                 
-                :class="'form-select ' + 'bg_new' + item + '' + itemY" style="width: 130px;">{{ item }} - {{ itemY }}</button>
+                :class="['form-select', 'bg_new' + item + '' + itemY, { active: 'bg_new' + item + '' + itemY === BgNew }]" style="width: 130px;">{{ item }} - {{ itemY }}</button>
                  </div>
                 </div>
               </div>
@@ -197,13 +197,14 @@ import {ref, getCurrentInstance, onMounted, onUpdated} from 'vue';
 import {useRoute, useRouter} from 'vue-router'
   import {useToast} from 'vue-toastification'
   import Swal from "sweetalert2";
-
+ 
   const router = useRouter()
   const {proxy} = getCurrentInstance()
   const hostname = proxy?.hostname
   const Toast = useToast()
   const isLoading = ref(false)
   const route = useRoute()
+
 
   const widthDom = ref(1500);
 
@@ -814,6 +815,14 @@ import {useRoute, useRouter} from 'vue-router'
       showPlanNew.value = !showPlanNew.value
     }
 
+    BgNew.value = 'bg_new' + dataPlan.value.location_new.slice(-2)
+    BgOld.value = 'bg_old' + dataPlan.value.location_old.slice(-2)
+
+    console.log(dataPlan.value)
+    console.log(BgNew.value)
+    console.log(BgOld.value)
+
+
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
@@ -883,5 +892,14 @@ import {useRoute, useRouter} from 'vue-router'
 
 .form-select {
   cursor: pointer;
+}
+
+</style>
+
+<style>
+
+.active {
+  border: 3px solid red; /* Hoặc bất kỳ màu nào bạn muốn */
+  background-color: yellow !important; /* Hoặc màu nền theo yêu cầu */
 }
 </style>
