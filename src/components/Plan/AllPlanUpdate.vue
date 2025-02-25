@@ -32,6 +32,13 @@
           </div>
           
           <button 
+            @click="submitSearch('search')" style="background-color: black;"
+            class="bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300"
+          >
+            Search Data
+          </button>
+
+          <button 
             @click="submitDate"
             style="color: black;"
             class="bg-blue-600 text-red font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300"
@@ -39,12 +46,7 @@
             Dowload Excel
           </button>
 
-          <button 
-            @click="submitSearch('search')" style="background-color: black;"
-            class="bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300"
-          >
-            Search Data
-          </button>
+          
         </div>
       </div>
       <div style="height: auto" class="result">
@@ -217,6 +219,10 @@ const deleteData = async(id) => {
       return;
     }
   
+    if(typeData.value == null){
+      alert("No Data")
+      return
+    }
     // Chuyển đổi thành ISO 8601 (UTC)
     datetimePlan.value.datefrom = new Date(datetimePlan.value.datefrom).toISOString();
     datetimePlan.value.dateto = new Date(datetimePlan.value.dateto).toISOString();
@@ -279,7 +285,43 @@ const deleteData = async(id) => {
   const findAllData = async (search, pageData) => {
     currentPlanData.value = []
  
-    if(typeData.value === 'search'){
+    if(typeData.value === 'search' && search === "all"){
+      if (!datetimePlan.value.datefrom) {
+      alert("請選擇日期!");
+      return;
+    }
+  
+    if (!datetimePlan.value.dateto) {
+      alert("請選擇日期!");
+      return;
+    }
+
+    isLoading.value = true;
+    document.body.classList.add("loading"); // Add Lớp "loading"
+    document.body.style.overflow = "hidden";
+
+      datetimePlanDate.value.page = pageData
+    datetimePlanDate.value.pageSize = pageSize.value
+    datetimePlanDate.value.datefrom = datetimePlan.value.datefrom
+    datetimePlanDate.value.dateto = datetimePlan.value.dateto
+      const res = await axios.post(hostName + `/api/Plan/FindAllDataByNoDone`, datetimePlanDate.value)
+
+    console.log(res)
+    if (res.data.success) {
+        page.value = res.data.content.page;
+        totalPage.value = res.data.content.totalPages;
+        currentPlanData.value = res.data.content.data;
+      }else{
+        page.value = 1
+        totalPage.value = 0
+        currentPlanData.value = []
+      }
+
+      isLoading.value = false;
+    document.body.classList.remove("loading");
+    document.body.style.overflow = "auto";
+    }
+    else if(typeData.value === 'search' && search === "lichsu"){
       if (!datetimePlan.value.datefrom) {
       alert("請選擇日期!");
       return;
@@ -304,6 +346,8 @@ const deleteData = async(id) => {
     if (res.data.success) {
         page.value = res.data.content.page;
         totalPage.value = res.data.content.totalPages;
+        if(page.value > totalPage.value)
+            page.value = 1
         currentPlanData.value = res.data.content.data;
       }else{
         page.value = 1
@@ -316,10 +360,13 @@ const deleteData = async(id) => {
     document.body.style.overflow = "auto";
     }
     else{
+      
       isLoading.value = true;
     document.body.classList.add("loading"); // Add Lớp "loading"
     document.body.style.overflow = "hidden";
+    
       if (typePlan.value === "all") {
+        
       const res =
         search === ""
           ? await axios.get(
@@ -336,6 +383,8 @@ const deleteData = async(id) => {
       if (res.data.success) {
         page.value = res.data.content.page;
         totalPage.value = res.data.content.totalPages;
+        if(page.value > totalPage.value)
+            page.value = 1
         currentPlanData.value = res.data.content.data;
       }else{
         page.value = 1
@@ -361,6 +410,8 @@ const deleteData = async(id) => {
       if (res.data.success) {
         page.value = res.data.content.page;
         totalPage.value = res.data.content.totalPages;
+        if(page.value > totalPage.value)
+            page.value = 1
         currentPlanData.value = res.data.content.data;
       }else{
         page.value = 1
@@ -384,6 +435,8 @@ const deleteData = async(id) => {
       if (res.data.success) {
         page.value = res.data.content.page;
         totalPage.value = res.data.content.totalPages;
+        if(page.value > totalPage.value)
+            page.value = 1
         currentPlanData.value = res.data.content.data;
       }else{
         page.value = 1
@@ -406,6 +459,7 @@ const deleteData = async(id) => {
   }
   const changeReload = (event) => {
     pageSize.value = event;
+    page.value = 1
     findAllData(valueE.value, page.value);
   };
   
@@ -428,14 +482,16 @@ const deleteData = async(id) => {
         "white";
       document.querySelector("." + isButton.value).style.color = "black";
     }
+
+    currentPlanData.value = []
   
     document.querySelector("." + data).style.backgroundColor = "#45a049";
     document.querySelector("." + data).style.color = "white";
     isButton.value = data;
     typePlan.value = type;
   
-    console.log(typePlan.value)
-  
+    datetimePlan.value.datefrom = ""
+    datetimePlan.value.dateto = ""
     findAllData(valueE.value, page.value);
   };
   

@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h1 style="font-weight: bold; margin: 15px 0;">Create Plan</h1>
+      <h1 style="font-weight: bold; margin: 15px 0;">{{ route.query.id ? "Update Plan ( " + route.query.id + " )" : "Create Plan" }}</h1>
         <div>
           <div style="width: 800px; margin: 0 auto;">
           <div>
@@ -128,10 +128,10 @@
     <div v-if="frameVisible" class="frame-popup">
         <div
           class="frame-content"
-          :style="{ maxWidth: widthDom + 'px', justifyContent: 'flex-start' }"
+          :style="{ maxWidth: widthDom + 'px', justifyContent: 'flex-start', border: '1px solid black' }"
         >
-          <button @click="closeFrame" class="close-btn">關閉按鈕</button>
-          <button @click="ClickDataOld(frameData[0].location)" class="close-btn">選擇</button>
+          <button @click="closeFrame" class="close-btn" style="background-color: red;">關閉按鈕</button>
+          <button @click="ClickDataOld(frameData[0].location)" class="close-btn" style="background-color: blueviolet;">選擇</button>
           <div
             class="frame-item"
             v-for="(item, index) in frameData"
@@ -156,10 +156,10 @@
     <div v-if="frameVisibleNew" class="frame-popup">
         <div
           class="frame-content"
-          :style="{ maxWidth: widthDom + 'px', justifyContent: 'flex-start' }"
+          :style="{ maxWidth: widthDom + 'px', justifyContent: 'flex-start', border: '1px solid black' }"
         >
-          <button @click="closeFrameNew" class="close-btn">關閉按鈕</button>
-          <button @click="ClickDataNew(frameDataNew[0].location)" class="close-btn">選擇</button>
+          <button @click="closeFrameNew" class="close-btn" style="background-color: red;">關閉按鈕</button>
+          <button @click="ClickDataNew(frameDataNew[0].location)" class="close-btn" style="background-color: blueviolet;">選擇</button>
           <div v-if="frameDataNew?.length > 0">
             <div
             class="frame-item"
@@ -190,11 +190,11 @@
 <script setup>
 import axios from 'axios';
 import {ref, getCurrentInstance, onMounted, onUpdated} from 'vue';
-import {useRouter, useRoute} from 'vue-router'
+import {useRoute} from 'vue-router'
   import {useToast} from 'vue-toastification'
   import Swal from "sweetalert2";
 
-  const router = useRouter()
+  // const router = useRouter()
   const {proxy} = getCurrentInstance()
   const hostname = proxy?.hostname
   const Toast = useToast()
@@ -245,6 +245,8 @@ import {useRouter, useRoute} from 'vue-router'
   })
 
   onMounted(() => {
+    dataPlan.value.location_new = ""
+    dataPlan.value.location_old = ""
     if(route.query.id){
       findOneData(route.query.id)
     }
@@ -274,6 +276,10 @@ import {useRouter, useRoute} from 'vue-router'
     
     console.log("Data " + location)
 
+    if(checkLocationExsis(location) == dataPlan.value.location_new){
+      alert("Data Exsis")
+      return
+    }
     const res = !route.query.id ? await axios.get(hostname + `/api/Plan/checkPlanLocationAdd?code=${checkLocationExsis(location)}`)
                                 : await axios.get(hostname + `/api/Plan/checkPlanLocationUpdate?id=${route.query.id}&code=${checkLocationExsis(location)}`)
                     
@@ -318,6 +324,11 @@ import {useRouter, useRoute} from 'vue-router'
       
     console.log(location)
     
+    if(checkLocationExsis(location) == dataPlan.value.location_old){
+      alert("Data Exsis")
+      return
+    }
+
     const res = !route.query.id ? await axios.get(hostname + `/api/Plan/checkPlanLocationAdd?code=${checkLocationExsis(location)}`)
                                 : await axios.get(hostname + `/api/Plan/checkPlanLocationUpdate?id=${route.query.id}&code=${checkLocationExsis(location)}`)
                     
@@ -728,6 +739,11 @@ import {useRouter, useRoute} from 'vue-router'
     isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
+
+  if(dataPlan.value.location_new === dataPlan.value.location_old){
+      alert("Data Exsis")
+      return
+    }
   dataPlan.value.areaNew = currentWarehouseNew.value
   dataPlan.value.lineNew = currentLineNew.value
   dataPlan.value.shelfNew = currentShelfNew.value
@@ -737,7 +753,7 @@ import {useRouter, useRoute} from 'vue-router'
     const res = await axios.put(hostname + `/api/Plan/UpdateData?id=${route.query.id}`, dataPlan.value)
     if(res.data.success){
       Toast.success("Success")
-      router.push("/SearechProductUpdatePage")
+      // router.push("/SearechProductUpdatePage")
       alert("Successs")
     }else{
       alert("error")
@@ -800,6 +816,11 @@ import {useRouter, useRoute} from 'vue-router'
       alert("No Location !!!")
       return
     }
+
+    if(dataPlan.value.location_new === dataPlan.value.location_old){
+      alert("Data Exsis")
+      return
+    }
         
     isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
@@ -818,7 +839,7 @@ import {useRouter, useRoute} from 'vue-router'
         console.log(res)
         Toast.success("Success")
         alert("Successs")
-        router.push("/SearechProductUpdatePage")
+        // router.push("/SearechProductUpdatePage")
     }else{
         Toast.error(res.data.error)
         alert(res.data.error)

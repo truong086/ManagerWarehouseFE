@@ -338,6 +338,8 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
         dataProduct.value = res.data.content.data
         page.value = res.data.content.page
         totalPage.value = res.data.content.totalPages
+        if(page.value > totalPage.value)
+          page.value = 1
         dataNull.value = ""
         Toast.success("Success")
       }else{

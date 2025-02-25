@@ -1196,6 +1196,10 @@ const updatePlan = async () => {
   isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
+  if(planNew.value.localtionNew === planNew.value.locationOld){
+    alert("Data Exsis")
+    return
+  }
   const res = await axios.put(
     hostName + `/api/Plan/Update?id=${route.query.id}`,
     planNew.value,
@@ -1242,6 +1246,12 @@ const addPlan = async () => {
   isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
+
+  if(planNew.value.localtionNew === planNew.value.locationOld){
+    alert("Data Exsis")
+    return
+  }
+      
   planNew.value.shelfOld = locationCheck.value.id_Shelf;
   planNew.value.shelf = locationNewDataDemo.value.shelf;
   console.log(planNew.value);
