@@ -113,6 +113,10 @@
               <button v-else class="btn" style="border: 1px solid greenyellow; margin: 20px 0;" @click="updatePlan">
                   Update Plan
               </button>
+
+              <button class="btn" style="border: 1px solid black; margin: 20px 0;" @click="backData">
+                  Back
+              </button>
           </div>
         </div>
         </div>
@@ -190,11 +194,11 @@
 <script setup>
 import axios from 'axios';
 import {ref, getCurrentInstance, onMounted, onUpdated} from 'vue';
-import {useRoute} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
   import {useToast} from 'vue-toastification'
   import Swal from "sweetalert2";
 
-  // const router = useRouter()
+  const router = useRouter()
   const {proxy} = getCurrentInstance()
   const hostname = proxy?.hostname
   const Toast = useToast()
@@ -271,6 +275,10 @@ import {useRoute} from 'vue-router'
   // }
   const closeFrameNew = () => {
     frameVisibleNew.value = !frameVisibleNew.value
+  }
+
+  const backData = () => {
+    router.push("/AllPlanUpdatePage")
   }
   const ClickDataOld = async (location) => {
     
@@ -753,7 +761,7 @@ import {useRoute} from 'vue-router'
     const res = await axios.put(hostname + `/api/Plan/UpdateData?id=${route.query.id}`, dataPlan.value)
     if(res.data.success){
       Toast.success("Success")
-      // router.push("/SearechProductUpdatePage")
+      router.push("/AllPlanUpdatePage")
       alert("Successs")
     }else{
       alert("error")
@@ -839,7 +847,7 @@ import {useRoute} from 'vue-router'
         console.log(res)
         Toast.success("Success")
         alert("Successs")
-        // router.push("/SearechProductUpdatePage")
+        router.push("/AllPlanUpdatePage")
     }else{
         Toast.error(res.data.error)
         alert(res.data.error)
