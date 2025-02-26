@@ -35,7 +35,7 @@
             @click="submitSearch('search')" style="background-color: black;"
             class="bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300"
           >
-          搜尋數據
+          搜尋資料
           </button>
 
           <button 
@@ -143,7 +143,7 @@
               style="margin-left: 50px; background-color: rgba(11, 176, 217, 0.8)"
               @click="NextMap(item.id)"
             >
-            更新
+            修改計劃
             </button>
 
             <button
@@ -151,7 +151,7 @@
               style="margin-left: 50px; background-color: rgba(11, 176, 217, 0.8)"
               @click="deleteData(item.id)"
             >
-            刪除
+            刪除計劃
             </button>
             </div>
           </div>
