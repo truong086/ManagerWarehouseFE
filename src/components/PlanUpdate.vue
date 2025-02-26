@@ -1,32 +1,32 @@
 <template>
     <div>
-      <h1 style="font-weight: bold; margin: 15px 0;">{{ route.query.id ? "Update Plan ( " + route.query.id + " )" : "Create Plan" }}</h1>
+      <h1 style="font-weight: bold; margin: 15px 0;">新增計劃</h1>
         <div>
           <div style="width: 800px; margin: 0 auto;">
           <div>
             <div>
-            <h2 class="title">Area Old</h2>
+            <h2 class="title">舊區域</h2>
             <select class="form-select" v-model="currentWarehouseOld" @change="selectLine">
               <option v-for="(item, index) in dataAreaOld" :key="index" :value="item">{{ item }}</option>
             </select>
           </div>
 
           <div>
-            <h2 class="title">Line Old</h2>
+            <h2 class="title">舊排</h2>
             <select class="form-select" v-model="currentLineOld" @change="selectShelf">
               <option v-for="(item, index) in dataLineOld" :key="index" :value="item">{{ item }}</option>
             </select>
           </div>
 
           <div>
-            <h2 class="title">Shelf Old</h2>
+            <h2 class="title">架</h2>
             <select class="form-select" v-model="currentShelfOld" @change="selectLocation">
               <option v-for="(item, index) in dataShelfOld" :key="index" :value="item.shelf">{{ item.shelf }}</option>
             </select>
           </div>
 
           <div>
-            <h2 class="title">Location Old</h2>
+            <h2 class="title">舊位置</h2>
             <div style="display: flex; flex-wrap: wrap;" v-if="showlocationold">
               <div v-for="item in 5" :key="item" style="display: flex;">
                 <div v-for="itemY in 6" :key="itemY" >
@@ -36,7 +36,7 @@
                   <button
                 @click="OpenFrame(dataLocationOld.productbyShelf, item + '' + itemY, 'bg_old' + item + '' + itemY)"
                 
-                 :class="['form-select', 'bg_old' + item + '' + itemY, {active: 'bg_old' + item + '' + itemY === BgOld}]" style="width: 130px; background-color: violet;">{{ item }} - {{ itemY }}</button>
+                 :class="'form-select ' + 'bg_old' + item + '' + itemY" style="width: 130px; background-color: violet;">{{ item }} - {{ itemY }}</button>
                 </div>
 
                 <div v-else>
@@ -45,7 +45,7 @@
                   <button
                 @click="OpenFrame(dataLocationOld?.productbyShelf, item + '' + itemY, 'bg_old' + item + '' + itemY)"
                 
-                :class="['form-select', 'bg_old' + item + '' + itemY, {active: 'bg_old' + item + '' + itemY === BgOld}]" style="width: 130px;">{{ item }} - {{ itemY }}</button>
+                :class="'form-select ' + 'bg_old' + item + '' + itemY" style="width: 130px;">{{ item }} - {{ itemY }}</button>
                  </div>
                 </div>
               </div>
@@ -54,33 +54,33 @@
           </div>
 
           <div style="text-align: left;">
-            <button @click="showPlanNewData" class="btn" style="font-weight: bold; background-color: aqua; padding: 10px 30px; margin: 15px 0;">Swap Location New <i class="fa fa-sign-language" aria-hidden="true"></i></button>
+            <button @click="showPlanNewData" class="btn" style="font-weight: bold; background-color: aqua; padding: 10px 30px; margin: 15px 0;">交換至新儲位 <i class="fa fa-sign-language" aria-hidden="true"></i></button>
           </div>
 
           <div style="margin-top: 100px;" v-if="showPlanNew">
             <div>
-            <h2 class="title">Area New</h2>
+            <h2 class="title">新區域</h2>
             <select class="form-select" v-model="currentWarehouseNew" @change="selectLineNew">
               <option v-for="(item, index) in dataAreaNew" :key="index" :value="item">{{ item }}</option>
             </select>
           </div>
 
           <div>
-            <h2 class="title">Line New</h2>
+            <h2 class="title">新排</h2>
             <select class="form-select" v-model="currentLineNew" @change="selectShelfNew">
               <option v-for="(item, index) in dataLineNew" :key="index" :value="item">{{ item }}</option>
             </select>
           </div>
 
           <div>
-            <h2 class="title">Shelf New</h2>
+            <h2 class="title">新架</h2>
             <select class="form-select" v-model="currentShelfNew" @change="selectLocationNew">
               <option v-for="(item, index) in dataShelfNew" :key="index" :value="item.shelf">{{ item.shelf }}</option>
             </select>
           </div>
 
           <div>
-            <h2 class="title">Location New</h2>
+            <h2 class="title">新位置</h2>
             <div style="display: flex;  flex-wrap: wrap;" v-if="showDataLocationNew">
               <div v-for="item in 5" :key="item" style="display: flex;">
                 <div v-for="itemY in 6" :key="itemY" >
@@ -90,16 +90,16 @@
                   <button
                 @click="OpenFrameNew(dataLocationNew.productbyShelf, item + '' + itemY)"
                 
-                :class="['form-select', 'bg_new' + item + '' + itemY, { active: 'bg_new' + item + '' + itemY === BgNew }]" style="width: 130px; background-color: violet;">{{ item }} - {{ itemY }}</button>
+                 :class="'form-select ' + 'bg_new' + item + '' + itemY" style="width: 130px; background-color: violet;">{{ item }} - {{ itemY }}</button>
                 </div>
-                
+
                 <div v-else>
                   <p v-if="dataLocationNew?.findAllPlanDatas?.some(x => (x.locationOld.slice(-2) == item + '' + itemY && x.areaOld == currentWarehouseNew && x.lineOld == currentLineNew && x.shelfOld == currentShelfNew) 
                   || (x.locationNew.slice(-2) == item + '' + itemY && x.areaNew == currentWarehouseNew && x.lineNew == currentLineNew && x.shelfNew == currentShelfNew))" style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">plan : {{ findOnePlan(dataLocationNew.findAllPlanDatas, item + '' + itemY).id }}, type: {{ findOnePlan(dataLocationNew?.findAllPlanDatas, item + '' + itemY).locationOld == currentWarehouseNew + currentLineNew + currentShelfNew + item + '' + itemY ? "Old" : "New" }}</p>
                   <button
                 @click="OpenFrameNew(dataLocationNew?.productbyShelf, item + '' + itemY)"
                 
-                :class="['form-select', 'bg_new' + item + '' + itemY, { active: 'bg_new' + item + '' + itemY === BgNew }]" style="width: 130px;">{{ item }} - {{ itemY }}</button>
+                :class="'form-select ' + 'bg_new' + item + '' + itemY" style="width: 130px;">{{ item }} - {{ itemY }}</button>
                  </div>
                 </div>
               </div>
@@ -107,15 +107,11 @@
             </div>
           </div>
           <button v-if="!route.query.id" class="btn" style="border: 1px solid greenyellow; margin: 20px 0;" @click="addplan">
-                  Add Plan
+            新增計劃
               </button>
 
               <button v-else class="btn" style="border: 1px solid greenyellow; margin: 20px 0;" @click="updatePlan">
-                  Update Plan
-              </button>
-
-              <button class="btn" style="border: 1px solid black; margin: 20px 0;" @click="backData">
-                  Back
+                更新計劃
               </button>
           </div>
         </div>
@@ -132,10 +128,10 @@
     <div v-if="frameVisible" class="frame-popup">
         <div
           class="frame-content"
-          :style="{ maxWidth: widthDom + 'px', justifyContent: 'flex-start', border: '1px solid black' }"
+          :style="{ maxWidth: widthDom + 'px', justifyContent: 'flex-start' }"
         >
-          <button @click="closeFrame" class="close-btn" style="background-color: red;">關閉按鈕</button>
-          <button @click="ClickDataOld(frameData[0].location)" class="close-btn" style="background-color: blueviolet;">選擇</button>
+          <button @click="closeFrame" class="close-btn">關閉按鈕</button>
+          <button @click="ClickDataOld(frameData[0].location)" class="close-btn">選擇</button>
           <div
             class="frame-item"
             v-for="(item, index) in frameData"
@@ -160,10 +156,10 @@
     <div v-if="frameVisibleNew" class="frame-popup">
         <div
           class="frame-content"
-          :style="{ maxWidth: widthDom + 'px', justifyContent: 'flex-start', border: '1px solid black' }"
+          :style="{ maxWidth: widthDom + 'px', justifyContent: 'flex-start',border: '1px solid black }"
         >
-          <button @click="closeFrameNew" class="close-btn" style="background-color: red;">關閉按鈕</button>
-          <button @click="ClickDataNew(frameDataNew[0].location)" class="close-btn" style="background-color: blueviolet;">選擇</button>
+          <button @click="closeFrameNew" class="close-btn">關閉按鈕</button>
+          <button @click="ClickDataNew(frameDataNew[0].location)" class="close-btn">選擇</button>
           <div v-if="frameDataNew?.length > 0">
             <div
             class="frame-item"
@@ -187,24 +183,23 @@
       </div>
     <div v-if="isLoading" class="loading-overlay">
       <div class="spinner"></div>
-      <p>Đang tải...</p>
+      <p>載入中......</p>
     </div>
 </template>
 
 <script setup>
 import axios from 'axios';
 import {ref, getCurrentInstance, onMounted, onUpdated} from 'vue';
-import {useRoute, useRouter} from 'vue-router'
+import {useRouter, useRoute} from 'vue-router'
   import {useToast} from 'vue-toastification'
   import Swal from "sweetalert2";
- 
+
   const router = useRouter()
   const {proxy} = getCurrentInstance()
   const hostname = proxy?.hostname
   const Toast = useToast()
   const isLoading = ref(false)
   const route = useRoute()
-
 
   const widthDom = ref(1500);
 
@@ -250,8 +245,6 @@ import {useRoute, useRouter} from 'vue-router'
   })
 
   onMounted(() => {
-    dataPlan.value.location_new = ""
-    dataPlan.value.location_old = ""
     if(route.query.id){
       findOneData(route.query.id)
     }
@@ -277,18 +270,10 @@ import {useRoute, useRouter} from 'vue-router'
   const closeFrameNew = () => {
     frameVisibleNew.value = !frameVisibleNew.value
   }
-
-  const backData = () => {
-    router.push("/AllPlanUpdatePage")
-  }
   const ClickDataOld = async (location) => {
     
     console.log("Data " + location)
 
-    if(checkLocationExsis(location) == dataPlan.value.location_new){
-      alert("Data Exsis")
-      return
-    }
     const res = !route.query.id ? await axios.get(hostname + `/api/Plan/checkPlanLocationAdd?code=${checkLocationExsis(location)}`)
                                 : await axios.get(hostname + `/api/Plan/checkPlanLocationUpdate?id=${route.query.id}&code=${checkLocationExsis(location)}`)
                     
@@ -333,11 +318,6 @@ import {useRoute, useRouter} from 'vue-router'
       
     console.log(location)
     
-    if(checkLocationExsis(location) == dataPlan.value.location_old){
-      alert("Data Exsis")
-      return
-    }
-
     const res = !route.query.id ? await axios.get(hostname + `/api/Plan/checkPlanLocationAdd?code=${checkLocationExsis(location)}`)
                                 : await axios.get(hostname + `/api/Plan/checkPlanLocationUpdate?id=${route.query.id}&code=${checkLocationExsis(location)}`)
                     
@@ -748,11 +728,6 @@ import {useRoute, useRouter} from 'vue-router'
     isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
-
-  if(dataPlan.value.location_new === dataPlan.value.location_old){
-      alert("Data Exsis")
-      return
-    }
   dataPlan.value.areaNew = currentWarehouseNew.value
   dataPlan.value.lineNew = currentLineNew.value
   dataPlan.value.shelfNew = currentShelfNew.value
@@ -762,7 +737,7 @@ import {useRoute, useRouter} from 'vue-router'
     const res = await axios.put(hostname + `/api/Plan/UpdateData?id=${route.query.id}`, dataPlan.value)
     if(res.data.success){
       Toast.success("Success")
-      router.push("/AllPlanUpdatePage")
+      router.push("/SearechProductUpdatePage")
       alert("Successs")
     }else{
       alert("error")
@@ -815,14 +790,6 @@ import {useRoute, useRouter} from 'vue-router'
       showPlanNew.value = !showPlanNew.value
     }
 
-    BgNew.value = 'bg_new' + dataPlan.value.location_new.slice(-2)
-    BgOld.value = 'bg_old' + dataPlan.value.location_old.slice(-2)
-
-    console.log(dataPlan.value)
-    console.log(BgNew.value)
-    console.log(BgOld.value)
-
-
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
@@ -831,11 +798,6 @@ import {useRoute, useRouter} from 'vue-router'
   const addplan = async() => { 
     if(dataPlan.value.location_new === "" || dataPlan.value.location_old === ""){
       alert("No Location !!!")
-      return
-    }
-
-    if(dataPlan.value.location_new === dataPlan.value.location_old){
-      alert("Data Exsis")
       return
     }
         
@@ -856,7 +818,7 @@ import {useRoute, useRouter} from 'vue-router'
         console.log(res)
         Toast.success("Success")
         alert("Successs")
-        router.push("/AllPlanUpdatePage")
+        router.push("/SearechProductUpdatePage")
     }else{
         Toast.error(res.data.error)
         alert(res.data.error)
@@ -892,14 +854,5 @@ import {useRoute, useRouter} from 'vue-router'
 
 .form-select {
   cursor: pointer;
-}
-
-</style>
-
-<style>
-
-.active {
-  border: 3px solid red; /* Hoặc bất kỳ màu nào bạn muốn */
-  background-color: yellow !important; /* Hoặc màu nền theo yêu cầu */
 }
 </style>
