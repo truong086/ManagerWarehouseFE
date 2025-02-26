@@ -433,11 +433,20 @@ const deleteData = async(id) => {
             );
   
       if (res.data.success) {
-        page.value = res.data.content.page;
-        totalPage.value = res.data.content.totalPages;
-        if(page.value > totalPage.value)
-            page.value = 1
-        currentPlanData.value = res.data.content.data;
+        if(res.data.content.data.length > 0){
+          page.value = res.data.content.page;
+          totalPage.value = res.data.content.totalPages;
+          if(page.value > totalPage.value)
+              page.value = 1
+          currentPlanData.value = res.data.content.data;
+        }else{
+          store.setTypeDatas(store.getTypeData)
+          findAllData("h", 1)
+
+          isLoading.value = true;
+          document.body.classList.add("loading"); // Add Lớp "loading"
+          document.body.style.overflow = "hidden";
+        }
       }else{
         page.value = 1
         totalPage.value = 0
@@ -460,11 +469,21 @@ const deleteData = async(id) => {
             );
         console.log(res)
       if (res.data.success) {
-        page.value = res.data.content.page;
-        totalPage.value = res.data.content.totalPages;
-        if(page.value > totalPage.value)
-            page.value = 1
-        currentPlanData.value = res.data.content.data;
+        if(res.data.content.data.length > 0){
+          page.value = res.data.content.page;
+          totalPage.value = res.data.content.totalPages;
+          if(page.value > totalPage.value)
+              page.value = 1
+          currentPlanData.value = res.data.content.data;
+        }else{
+          store.setTypeDatas(store.getTypeData)
+          findAllData("h", 1)
+
+          isLoading.value = true;
+          document.body.classList.add("loading"); // Add Lớp "loading"
+          document.body.style.overflow = "hidden";
+        }
+        
       }else{
         page.value = 1
         totalPage.value = 0
@@ -485,11 +504,20 @@ const deleteData = async(id) => {
             );
   
       if (res.data.success) {
-        page.value = res.data.content.page;
-        totalPage.value = res.data.content.totalPages;
-        if(page.value > totalPage.value)
-            page.value = 1
-        currentPlanData.value = res.data.content.data;
+        if(res.data.content.data.length > 0){
+          page.value = res.data.content.page;
+          totalPage.value = res.data.content.totalPages;
+          if(page.value > totalPage.value)
+              page.value = 1
+          currentPlanData.value = res.data.content.data;
+        }else{
+          store.setTypeDatas(store.getTypeData)
+          findAllData("h", 1)
+
+          isLoading.value = true;
+          document.body.classList.add("loading"); // Add Lớp "loading"
+          document.body.style.overflow = "hidden";
+        }
       }else{
         page.value = 1
         totalPage.value = 0

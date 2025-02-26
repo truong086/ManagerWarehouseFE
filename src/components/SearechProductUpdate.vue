@@ -19,7 +19,7 @@
         <h3 style="margin: 0 20px;">Supplier: </h3>
         <select v-model="currentDataSuppliers" @change="searchDataByProduct">
         <option v-for="(item, index) in suppliersData" :key="index" :value="item.id">
-          {{ item.title }}
+          {{ item.name }}
         </option>
       </select>
       </div>
