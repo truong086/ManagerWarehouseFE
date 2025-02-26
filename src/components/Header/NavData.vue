@@ -12,28 +12,28 @@
                         <li class="b1" v-on:click="SwapBackGroupColor('b1')">
                           <router-link to="/PlanUpdatePage" class="waves-effect waves-dark" aria-expanded="false">
                             <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                            <span class="hide-menu">Plan</span>
+                            <span class="hide-menu">新增計劃</span>
                         </router-link>
                         </li>
 
                         <li class="b2" v-on:click="SwapBackGroupColor('b2')">
                           <router-link to="/SearechProductUpdatePage" class="waves-effect waves-dark" aria-expanded="false">
                             <i class="fa fa-search" aria-hidden="true"></i>
-                            <span class="hide-menu">Search Product By Code</span>
+                            <span class="hide-menu">搜尋產品</span>
                         </router-link>
                         </li>
 
                         <li class="b3" v-on:click="SwapBackGroupColor('b3')">
                           <router-link to="/SearchLocationUpdatePage" class="waves-effect waves-dark" aria-expanded="false">
                             <i class="fa fa-search" aria-hidden="true"></i>
-                            <span class="hide-menu">Search Location By Code</span>
+                            <span class="hide-menu">搜尋儲位</span>
                         </router-link>
                         </li>
 
                         <li class="b4" v-on:click="SwapBackGroupColor('b4')">
                           <router-link to="/AllPlanUpdatePage" class="waves-effect waves-dark" aria-expanded="false">
                             <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                            <span class="hide-menu">Find All Plan</span>
+                            <span class="hide-menu">搜尋計劃</span>
                         </router-link>
                         </li>
                         <!----<li> <a class="waves-effect waves-dark" href="pages-error-404.html" aria-expanded="false"><i
