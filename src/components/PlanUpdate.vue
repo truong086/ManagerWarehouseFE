@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h1 style="font-weight: bold; margin: 15px 0;">新增計劃</h1>
+      <h1 style="font-weight: bold; margin: 15px 0;">{{ route.query.id ? "Update Plan ( " + route.query.id + " )" : "Create Plan" }}</h1>
         <div>
           <div style="width: 800px; margin: 0 auto;">
           <div>
@@ -26,26 +26,40 @@
           </div>
 
           <div>
-            <h2 class="title">舊位置</h2>
+            <h2 class="title">舊位置</h2>x
             <div style="display: flex; flex-wrap: wrap;" v-if="showlocationold">
               <div v-for="item in 5" :key="item" style="display: flex;">
                 <div v-for="itemY in 6" :key="itemY" >
                   <div v-if="dataLocationOld?.productbyShelf?.some(x => x.location.slice(-2) == item + '' + itemY)">
+                  <!-- <p v-if="dataLocationOld?.findAllPlanDatas?.some(x => (x.locationOld.slice(-2) == item + '' + itemY && x.areaOld == currentWarehouseOld && x.lineOld == currentLineOld && x.shelfOld == currentShelfOld) 
+                  || (x.locationNew.slice(-2) == item + '' + itemY && x.areaNew == currentWarehouseOld && x.lineNew == currentLineOld && x.shelfNew == currentShelfOld))" style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">plan : {{ findOnePlan(dataLocationOld.findAllPlanDatas, item + '' + itemY).id }}, type: {{ findOnePlan(dataLocationOld.findAllPlanDatas, item + '' + itemY).locationOld == currentWarehouseOld + currentLineOld + currentShelfOld + item + '' + itemY ? "Old" : "New" }}</p> -->
+                  
                   <p v-if="dataLocationOld?.findAllPlanDatas?.some(x => (x.locationOld.slice(-2) == item + '' + itemY && x.areaOld == currentWarehouseOld && x.lineOld == currentLineOld && x.shelfOld == currentShelfOld) 
-                  || (x.locationNew.slice(-2) == item + '' + itemY && x.areaNew == currentWarehouseOld && x.lineNew == currentLineOld && x.shelfNew == currentShelfOld))" style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">plan : {{ findOnePlan(dataLocationOld.findAllPlanDatas, item + '' + itemY).id }}, type: {{ findOnePlan(dataLocationOld.findAllPlanDatas, item + '' + itemY).locationOld == currentWarehouseOld + currentLineOld + currentShelfOld + item + '' + itemY ? "Old" : "New" }}</p>
+                  || (x.locationNew.slice(-2) == item + '' + itemY && x.areaNew == currentWarehouseOld && x.lineNew == currentLineOld && x.shelfNew == currentShelfOld)) 
+                  && findOnePlan(dataLocationOld?.findAllPlanDatas, item + '' + itemY) != null" 
+                  style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">
+                  {{ 'plan : ' + findOnePlan(dataLocationOld?.findAllPlanDatas, item + '' + itemY).id}}, type: {{ findOnePlan(dataLocationOld?.findAllPlanDatas, item + '' + itemY).locationOld == currentWarehouseOld + currentLineOld + currentShelfOld + item + '' + itemY ? "Old" : "New" }}
+                </p>
                   <button
                 @click="OpenFrame(dataLocationOld.productbyShelf, item + '' + itemY, 'bg_old' + item + '' + itemY)"
                 
-                 :class="'form-select ' + 'bg_old' + item + '' + itemY" style="width: 130px; background-color: violet;">{{ item }} - {{ itemY }}</button>
+                :class="['form-select', 'bg_old' + item + '' + itemY, {active: 'bg_old' + item + '' + itemY === BgOld}]" style="width: 130px; background-color: violet;">{{ item }} - {{ itemY }}</button>
                 </div>
 
                 <div v-else>
+                  <!-- <p v-if="dataLocationOld?.findAllPlanDatas?.some(x => (x.locationOld.slice(-2) == item + '' + itemY && x.areaOld == currentWarehouseOld && x.lineOld == currentLineOld && x.shelfOld == currentShelfOld) 
+                  || (x.locationNew.slice(-2) == item + '' + itemY && x.areaNew == currentWarehouseOld && x.lineNew == currentLineOld && x.shelfNew == currentShelfOld))" style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">plan : {{ findOnePlan(dataLocationOld.findAllPlanDatas, item + '' + itemY).id }}, type: {{ findOnePlan(dataLocationOld?.findAllPlanDatas, item + '' + itemY).locationOld == currentWarehouseOld + currentLineOld + currentShelfOld + item + '' + itemY ? "Old" : "New" }}</p> -->
+                  
                   <p v-if="dataLocationOld?.findAllPlanDatas?.some(x => (x.locationOld.slice(-2) == item + '' + itemY && x.areaOld == currentWarehouseOld && x.lineOld == currentLineOld && x.shelfOld == currentShelfOld) 
-                  || (x.locationNew.slice(-2) == item + '' + itemY && x.areaNew == currentWarehouseOld && x.lineNew == currentLineOld && x.shelfNew == currentShelfOld))" style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">plan : {{ findOnePlan(dataLocationOld.findAllPlanDatas, item + '' + itemY).id }}, type: {{ findOnePlan(dataLocationOld?.findAllPlanDatas, item + '' + itemY).locationOld == currentWarehouseOld + currentLineOld + currentShelfOld + item + '' + itemY ? "Old" : "New" }}</p>
+                  || (x.locationNew.slice(-2) == item + '' + itemY && x.areaNew == currentWarehouseOld && x.lineNew == currentLineOld && x.shelfNew == currentShelfOld)) 
+                  && findOnePlan(dataLocationOld?.findAllPlanDatas, item + '' + itemY) != null" 
+                  style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">
+                  {{ 'plan : ' + findOnePlan(dataLocationOld?.findAllPlanDatas, item + '' + itemY).id}}, type: {{ findOnePlan(dataLocationOld?.findAllPlanDatas, item + '' + itemY).locationOld == currentWarehouseOld + currentLineOld + currentShelfOld + item + '' + itemY ? "Old" : "New" }}
+                </p>
                   <button
                 @click="OpenFrame(dataLocationOld?.productbyShelf, item + '' + itemY, 'bg_old' + item + '' + itemY)"
                 
-                :class="'form-select ' + 'bg_old' + item + '' + itemY" style="width: 130px;">{{ item }} - {{ itemY }}</button>
+                :class="['form-select', 'bg_old' + item + '' + itemY, {active: 'bg_old' + item + '' + itemY === BgOld}]" style="width: 130px;">{{ item }} - {{ itemY }}</button>
                  </div>
                 </div>
               </div>
@@ -85,21 +99,35 @@
               <div v-for="item in 5" :key="item" style="display: flex;">
                 <div v-for="itemY in 6" :key="itemY" >
                   <div v-if="dataLocationNew?.productbyShelf?.some(x => x.location.slice(-2) == item + '' + itemY)">
+                  <!-- <p v-if="dataLocationNew?.findAllPlanDatas?.some(x => (x.locationOld.slice(-2) == item + '' + itemY && x.areaOld == currentWarehouseNew && x.lineOld == currentLineNew && x.shelfOld == currentShelfNew) 
+                  || (x.locationNew.slice(-2) == item + '' + itemY && x.areaNew == currentWarehouseNew && x.lineNew == currentLineNew && x.shelfNew == currentShelfNew))" style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">plan : {{ findOnePlan(dataLocationNew.findAllPlanDatas, item + '' + itemY).id }}, type: {{ findOnePlan(dataLocationNew.findAllPlanDatas, item + '' + itemY).locationOld == currentWarehouseNew + currentLineNew + currentShelfNew + item + '' + itemY ? "Old" : "New" }}</p> -->
+                  
                   <p v-if="dataLocationNew?.findAllPlanDatas?.some(x => (x.locationOld.slice(-2) == item + '' + itemY && x.areaOld == currentWarehouseNew && x.lineOld == currentLineNew && x.shelfOld == currentShelfNew) 
-                  || (x.locationNew.slice(-2) == item + '' + itemY && x.areaNew == currentWarehouseNew && x.lineNew == currentLineNew && x.shelfNew == currentShelfNew))" style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">plan : {{ findOnePlan(dataLocationNew.findAllPlanDatas, item + '' + itemY).id }}, type: {{ findOnePlan(dataLocationNew.findAllPlanDatas, item + '' + itemY).locationOld == currentWarehouseNew + currentLineNew + currentShelfNew + item + '' + itemY ? "Old" : "New" }}</p>
+                  || (x.locationNew.slice(-2) == item + '' + itemY && x.areaNew == currentWarehouseNew && x.lineNew == currentLineNew && x.shelfNew == currentShelfNew)) 
+                  && findOnePlan(dataLocationNew.findAllPlanDatas, item + '' + itemY) != null" 
+                  style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">
+                  {{ "plan :" +  findOnePlan(dataLocationNew.findAllPlanDatas, item + '' + itemY).id }}, type: {{ findOnePlan(dataLocationNew?.findAllPlanDatas, item + '' + itemY).locationOld == currentWarehouseNew + currentLineNew + currentShelfNew + item + '' + itemY ? "Old" : "New" }}
+                </p>
+
                   <button
                 @click="OpenFrameNew(dataLocationNew.productbyShelf, item + '' + itemY)"
                 
-                 :class="'form-select ' + 'bg_new' + item + '' + itemY" style="width: 130px; background-color: violet;">{{ item }} - {{ itemY }}</button>
+                :class="['form-select', 'bg_new' + item + '' + itemY, { active: 'bg_new' + item + '' + itemY === BgNew }]" style="width: 130px; background-color: violet;">{{ item }} - {{ itemY }}</button>
                 </div>
 
                 <div v-else>
+                  <!-- <p v-if="dataLocationNew?.findAllPlanDatas?.some(x => (x.locationOld.slice(-2) == item + '' + itemY && x.areaOld == currentWarehouseNew && x.lineOld == currentLineNew && x.shelfOld == currentShelfNew) 
+                  || (x.locationNew.slice(-2) == item + '' + itemY && x.areaNew == currentWarehouseNew && x.lineNew == currentLineNew && x.shelfNew == currentShelfNew))" style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">plan : {{ findOnePlan(dataLocationNew.findAllPlanDatas, item + '' + itemY).id }}, type: {{ findOnePlan(dataLocationNew?.findAllPlanDatas, item + '' + itemY).locationOld == currentWarehouseNew + currentLineNew + currentShelfNew + item + '' + itemY ? "Old" : "New" }}</p> -->
                   <p v-if="dataLocationNew?.findAllPlanDatas?.some(x => (x.locationOld.slice(-2) == item + '' + itemY && x.areaOld == currentWarehouseNew && x.lineOld == currentLineNew && x.shelfOld == currentShelfNew) 
-                  || (x.locationNew.slice(-2) == item + '' + itemY && x.areaNew == currentWarehouseNew && x.lineNew == currentLineNew && x.shelfNew == currentShelfNew))" style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">plan : {{ findOnePlan(dataLocationNew.findAllPlanDatas, item + '' + itemY).id }}, type: {{ findOnePlan(dataLocationNew?.findAllPlanDatas, item + '' + itemY).locationOld == currentWarehouseNew + currentLineNew + currentShelfNew + item + '' + itemY ? "Old" : "New" }}</p>
+                  || (x.locationNew.slice(-2) == item + '' + itemY && x.areaNew == currentWarehouseNew && x.lineNew == currentLineNew && x.shelfNew == currentShelfNew)) 
+                  && findOnePlan(dataLocationNew.findAllPlanDatas, item + '' + itemY) != null" 
+                  style="position: absolute; font-weight: bold; font-size: 10px; animation: index1 0.5s ease-in-out infinite;">
+                  {{ "plan :" +  findOnePlan(dataLocationNew.findAllPlanDatas, item + '' + itemY).id }}, type: {{ findOnePlan(dataLocationNew?.findAllPlanDatas, item + '' + itemY).locationOld == currentWarehouseNew + currentLineNew + currentShelfNew + item + '' + itemY ? "Old" : "New" }}
+                </p>
                   <button
                 @click="OpenFrameNew(dataLocationNew?.productbyShelf, item + '' + itemY)"
                 
-                :class="'form-select ' + 'bg_new' + item + '' + itemY" style="width: 130px;">{{ item }} - {{ itemY }}</button>
+                :class="['form-select', 'bg_new' + item + '' + itemY, { active: 'bg_new' + item + '' + itemY === BgNew }]" style="width: 130px;">{{ item }} - {{ itemY }}</button>
                  </div>
                 </div>
               </div>
@@ -113,6 +141,9 @@
               <button v-else class="btn" style="border: 1px solid greenyellow; margin: 20px 0;" @click="updatePlan">
                 更新計劃
               </button>
+              <button class="btn" style="border: 1px solid black; margin: 20px 0;" @click="backData">
+                  Back
+                </button>
           </div>
         </div>
         </div>
@@ -128,10 +159,11 @@
     <div v-if="frameVisible" class="frame-popup">
         <div
           class="frame-content"
-          :style="{ maxWidth: widthDom + 'px', justifyContent: 'flex-start' }"
+          :style="{ maxWidth: widthDom + 'px', justifyContent: 'flex-start', border: '1px solid black' }"
         >
-          <button @click="closeFrame" class="close-btn">關閉按鈕</button>
-          <button @click="ClickDataOld(frameData[0].location)" class="close-btn">選擇</button>
+        <button @click="closeFrame" class="close-btn" style="background-color: red;">關閉按鈕</button>
+          <button @click="ClickDataOld(frameData[0].location)" class="close-btn" style="background-color: blueviolet;">選擇</button>
+
           <div
             class="frame-item"
             v-for="(item, index) in frameData"
@@ -156,10 +188,10 @@
     <div v-if="frameVisibleNew" class="frame-popup">
         <div
           class="frame-content"
-          :style="{ maxWidth: widthDom + 'px', justifyContent: 'flex-start',border: '1px solid black }"
+          :style="{ maxWidth: widthDom + 'px', justifyContent: 'flex-start', border: '1px solid black' }"
         >
-          <button @click="closeFrameNew" class="close-btn">關閉按鈕</button>
-          <button @click="ClickDataNew(frameDataNew[0].location)" class="close-btn">選擇</button>
+        <button @click="closeFrameNew" class="close-btn" style="background-color: red;">關閉按鈕</button>
+          <button @click="ClickDataNew(frameDataNew[0].location)" class="close-btn" style="background-color: blueviolet;">選擇</button>
           <div v-if="frameDataNew?.length > 0">
             <div
             class="frame-item"
@@ -245,6 +277,9 @@ import {useRouter, useRoute} from 'vue-router'
   })
 
   onMounted(() => {
+    dataPlan.value.location_new = ""
+    dataPlan.value.location_old = ""
+
     if(route.query.id){
       findOneData(route.query.id)
     }
@@ -257,11 +292,22 @@ import {useRouter, useRoute} from 'vue-router'
     // loadDataLast()
     console.log("Hello World")
   })
+
+
+  const backData = () => {
+    router.push("/AllPlanUpdatePage")
+  }
+
   const showPlanNewData = () => {
     showPlanNew.value = !showPlanNew.value
   }
   const findOnePlan = (item, location) => {
-    return item.find(x => x.locationNew.slice(-2) == location || x.locationOld.slice(-2) == location)
+    console.log(item)
+    
+    return item.find(x => (x.locationOld.slice(-2) == location && x.areaOld == currentWarehouseOld.value && x.lineOld == currentLineOld.value && x.shelfOld == currentShelfOld.value)
+               || (x.locationNew.slice(-2) == location && x.areaNew == currentWarehouseNew.value && x.lineNew == currentLineNew.value && x.shelfNew == currentShelfNew.value))
+    
+    // return item.find(x => x.locationOld.slice(-2) == location || x.locationNew.slice(-2) == location)
   }
 
   // const lastData = (item) => {
@@ -274,11 +320,24 @@ import {useRouter, useRoute} from 'vue-router'
     
     console.log("Data " + location)
 
+    if(checkLocationExsis(location) == dataPlan.value.location_new){
+      alert("Data Exsis")
+      return
+    }
+
+    isLoading.value = true;
+  document.body.classList.add("loading"); // Add Lớp "loading"
+  document.body.style.overflow = "hidden";
+
     const res = !route.query.id ? await axios.get(hostname + `/api/Plan/checkPlanLocationAdd?code=${checkLocationExsis(location)}`)
                                 : await axios.get(hostname + `/api/Plan/checkPlanLocationUpdate?id=${route.query.id}&code=${checkLocationExsis(location)}`)
                     
     if(!res.data.success){
       alert("The location is selected by another plan !")
+
+      isLoading.value = false;
+  document.body.classList.remove("loading");
+  document.body.style.overflow = "auto";
       return
     }
 
@@ -292,6 +351,9 @@ import {useRouter, useRoute} from 'vue-router'
 
     frameVisible.value = !frameVisible.value
 
+    isLoading.value = false;
+  document.body.classList.remove("loading");
+  document.body.style.overflow = "auto";
     Swal.fire("Success")
   }
 
@@ -318,11 +380,23 @@ import {useRouter, useRoute} from 'vue-router'
       
     console.log(location)
     
+        
+    if(checkLocationExsis(location) == dataPlan.value.location_old){
+      alert("Data Exsis")
+      return
+    }
+
+    isLoading.value = true;
+  document.body.classList.add("loading"); // Add Lớp "loading"
+  document.body.style.overflow = "hidden";
     const res = !route.query.id ? await axios.get(hostname + `/api/Plan/checkPlanLocationAdd?code=${checkLocationExsis(location)}`)
                                 : await axios.get(hostname + `/api/Plan/checkPlanLocationUpdate?id=${route.query.id}&code=${checkLocationExsis(location)}`)
                     
     if(!res.data.success){
       alert("The location is selected by another plan !")
+      isLoading.value = false;
+  document.body.classList.remove("loading");
+  document.body.style.overflow = "auto";
       return
     }
 
@@ -362,6 +436,9 @@ import {useRouter, useRoute} from 'vue-router'
 
     frameVisibleNew.value = !frameVisibleNew.value
 
+    isLoading.value = false;
+  document.body.classList.remove("loading");
+  document.body.style.overflow = "auto";
     Swal.fire("Success")
   }
   const OpenFrame = (list, location) => {
@@ -705,6 +782,9 @@ import {useRouter, useRoute} from 'vue-router'
     isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
+
+
+
     const res = await axios.get(hostname + `/api/location_addr/FindAllDataLocation?line=${currentLineNew.value}&area=${currentWarehouseNew.value}&shelf=${currentShelfNew.value}`)
     if(res.data.success){
       Swal.fire("Success")
@@ -723,11 +803,18 @@ import {useRouter, useRoute} from 'vue-router'
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
+
   }
    const updatePlan = async () => {
     isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
+
+  
+  if(dataPlan.value.location_new === dataPlan.value.location_old){
+      alert("Data Exsis")
+      return
+    }
   dataPlan.value.areaNew = currentWarehouseNew.value
   dataPlan.value.lineNew = currentLineNew.value
   dataPlan.value.shelfNew = currentShelfNew.value
@@ -737,7 +824,7 @@ import {useRouter, useRoute} from 'vue-router'
     const res = await axios.put(hostname + `/api/Plan/UpdateData?id=${route.query.id}`, dataPlan.value)
     if(res.data.success){
       Toast.success("Success")
-      router.push("/SearechProductUpdatePage")
+      router.push("/AllPlanUpdatePage")
       alert("Successs")
     }else{
       alert("error")
@@ -773,6 +860,7 @@ import {useRouter, useRoute} from 'vue-router'
       currentLineNew.value = res.data.content.lineNew
       currentShelfNew.value = res.data.content.shelfNew
 
+      checkDataLocation.value = dataPlan.value.location_new
       findAllAreaOld()
       findAllLineOld()
       findAllShelfOld()
@@ -783,12 +871,22 @@ import {useRouter, useRoute} from 'vue-router'
       findAllShelfNew()
       findAllLocationNew()
       
+      console.log(res)
       loadDataLast()
       
       // document.querySelector('.' + BgNew.value).style.backgroundColor = 'violet'
     
       showPlanNew.value = !showPlanNew.value
     }
+
+
+    BgNew.value = 'bg_new' + dataPlan.value.location_new.slice(-2)
+    BgOld.value = 'bg_old' + dataPlan.value.location_old.slice(-2)
+
+    console.log(dataPlan.value)
+    console.log(BgNew.value)
+    console.log(BgOld.value)
+
 
     isLoading.value = false;
   document.body.classList.remove("loading");
@@ -800,6 +898,13 @@ import {useRouter, useRoute} from 'vue-router'
       alert("No Location !!!")
       return
     }
+
+
+    if(dataPlan.value.location_new === dataPlan.value.location_old){
+      alert("Data Exsis")
+      return
+    }
+
         
     isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
@@ -818,7 +923,7 @@ import {useRouter, useRoute} from 'vue-router'
         console.log(res)
         Toast.success("Success")
         alert("Successs")
-        router.push("/SearechProductUpdatePage")
+        router.push("/AllPlanUpdatePage")
     }else{
         Toast.error(res.data.error)
         alert(res.data.error)
@@ -838,6 +943,14 @@ import {useRouter, useRoute} from 'vue-router'
   100% {
     color: yellow;
   }
+}
+</style>
+
+<style>
+
+.active {
+  border: 3px solid red; /* Hoặc bất kỳ màu nào bạn muốn */
+  background-color: yellow !important; /* Hoặc màu nền theo yêu cầu */
 }
 </style>
 <style scope>

@@ -299,11 +299,17 @@ const deleteData = async(id) => {
     if(search === "search" && store.getTypeData === "all"){
       if (!datetimePlan.value.datefrom) {
         alert("請選擇日期!");
+        page.value = 1
+        totalPage.value = 0
+        currentPlanData.value = []
         return;
       }
   
       if (!datetimePlan.value.dateto) {
         alert("請選擇日期!");
+        page.value = 1
+        totalPage.value = 0
+        currentPlanData.value = []
         return;
       }
 
@@ -336,11 +342,17 @@ const deleteData = async(id) => {
     }
     else if(search === 'search' && store.getTypeData === "lichsu"){
       if (!datetimePlan.value.datefrom) {
+        page.value = 1
+        totalPage.value = 0
+        currentPlanData.value = []
         alert("請選擇日期!");
         return;
       }
   
     if (!datetimePlan.value.dateto) {
+      page.value = 1
+        totalPage.value = 0
+        currentPlanData.value = []
       alert("請選擇日期!");
       return;
     }
@@ -375,11 +387,17 @@ const deleteData = async(id) => {
 
     else if(search === 'search' && store.getTypeData === "NoReceiver"){
       if (!datetimePlan.value.datefrom) {
+        page.value = 1
+        totalPage.value = 0
+        currentPlanData.value = []
         alert("請選擇日期!");
         return;
       }
   
     if (!datetimePlan.value.dateto) {
+      page.value = 1
+        totalPage.value = 0
+        currentPlanData.value = []
       alert("請選擇日期!");
       return;
     }

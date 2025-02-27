@@ -522,8 +522,9 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
       }
         
     }else{
-        dataProduct.value = []
-        dataNull.value = "No Data"
+      dataProduct.value = []
+      dataNull.value = "No Data"
+        
     }
     
     console.log(res)
