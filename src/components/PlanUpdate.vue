@@ -142,7 +142,7 @@
                 更新計劃
               </button>
               <button class="btn" style="border: 1px solid black; margin: 20px 0;" @click="backData">
-                  Back
+                返回
                 </button>
           </div>
         </div>

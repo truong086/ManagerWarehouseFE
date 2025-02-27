@@ -3,11 +3,11 @@
     <div>
         <div>
           <div style="margin-bottom: 20px;">
-            <h1 style="font-weight: bold;">根據代碼搜尋產品</h1>
+            <h1 style="font-weight: bold;">搜尋儲位</h1>
           </div>
           <div>
             <input type="text" v-model="searchName" style="padding: 5px 5px; border-radius: 10px; border: 1px dashed greenyellow;">
-            <button class="btn" style="border: 1px solid greenyellow; margin: 0 10px;" @click="findOneData(currentDataSuppliers, page)">Search</button>
+            <button class="btn" style="border: 1px solid greenyellow; margin: 0 10px;" @click="findOneData(currentDataSuppliers, page)">搜尋</button>
             <button class="btn" style="border: 1px solid greenyellow;" @click="dowloadData">
               下載Excel
             </button>
@@ -83,7 +83,7 @@
           :style="{ maxWidth: '800' + 'px', justifyContent: 'flex-start' }"
         >
         <button class="btn" style="border: 1px solid black;" @click="closeFaram">
-          close
+          關閉
         </button>
 
         <button class="btn" @click="dowloadExcelOneData(Dataframe.title)" style="border: 1px solid greenyellow;">
@@ -129,7 +129,7 @@
             
 
             <div v-if="Dataframe.inOutByProducts.length > 0">
-              <h2>送貨單 And  進口</h2>
+              <h2>送貨單 And 進口</h2>
               <table class="table">
         <thead>
           <tr>

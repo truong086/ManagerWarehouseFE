@@ -217,6 +217,13 @@ const deleteData = async(id) => {
         }
     }
 }
+
+// Chuyển đổi thời gian về UTC+8
+const convertToTaiwanTime = (localDateTime) => {
+  const date = new Date(localDateTime);
+  const taiwanTime = new Date(date.getTime() + 8 * 60 * 60 * 1000); // Cộng 8 giờ (UTC+8)
+  return taiwanTime.toISOString(); // Chuyển về ISO format (YYYY-MM-DDTHH:mm:ss.sssZ)
+};
   const submitDate = async () => {
     if (!datetimePlan.value.datefrom) {
       alert("請選擇日期!");
@@ -293,9 +300,7 @@ const deleteData = async(id) => {
   };
   const findAllData = async (search, pageData) => {
     currentPlanData.value = []
- 
-    console.log(search)
-    console.log(store.getTypeData)
+
     if(search === "search" && store.getTypeData === "all"){
       if (!datetimePlan.value.datefrom) {
         alert("請選擇日期!");
@@ -321,8 +326,8 @@ const deleteData = async(id) => {
 
         datetimePlanDate.value.page = pageData
       datetimePlanDate.value.pageSize = pageSize.value
-      datetimePlanDate.value.datefrom = datetimePlan.value.datefrom
-      datetimePlanDate.value.dateto = datetimePlan.value.dateto
+      datetimePlanDate.value.datefrom = convertToTaiwanTime(datetimePlan.value.datefrom)
+      datetimePlanDate.value.dateto = convertToTaiwanTime(datetimePlan.value.dateto)
       const res = await axios.post(hostName + `/api/Plan/FindAllDataByNoDone`, datetimePlanDate.value)
 
       console.log(res)
@@ -363,8 +368,8 @@ const deleteData = async(id) => {
 
       datetimePlanDate.value.page = pageData
     datetimePlanDate.value.pageSize = pageSize.value
-    datetimePlanDate.value.datefrom = datetimePlan.value.datefrom
-    datetimePlanDate.value.dateto = datetimePlan.value.dateto
+    datetimePlanDate.value.datefrom = convertToTaiwanTime(datetimePlan.value.datefrom)
+      datetimePlanDate.value.dateto = convertToTaiwanTime(datetimePlan.value.dateto)
       const res = await axios.post(hostName + `/api/Plan/FindAllDataByDone`, datetimePlanDate.value)
 
     console.log(res)
@@ -408,8 +413,8 @@ const deleteData = async(id) => {
 
       datetimePlanDate.value.page = pageData
     datetimePlanDate.value.pageSize = pageSize.value
-    datetimePlanDate.value.datefrom = datetimePlan.value.datefrom
-    datetimePlanDate.value.dateto = datetimePlan.value.dateto
+    datetimePlanDate.value.datefrom = convertToTaiwanTime(datetimePlan.value.datefrom)
+      datetimePlanDate.value.dateto = convertToTaiwanTime(datetimePlan.value.dateto)
       const res = await axios.post(hostName + `/api/Plan/FindAllDataByNoDone`, datetimePlanDate.value)
 
     console.log(res)

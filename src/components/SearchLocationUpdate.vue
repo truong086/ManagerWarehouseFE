@@ -2,7 +2,7 @@
     
     <div>
         <div>
-        <h1 style="font-weight: bold; margin-bottom: 20px">Search Location Code</h1>
+        <h1 style="font-weight: bold; margin-bottom: 20px">搜尋儲位</h1>
     </div>
         <input type="text" v-model="valueE" style="padding: 5px 5px; border-radius: 10px; border: 1px dashed greenyellow;">
         <button class="btn" style="border: 1px solid greenyellow; margin: 0 10px;" @click="findOneData(valueE, page)">Search</button>
@@ -10,28 +10,28 @@
         
         <div style="margin: 30px 0; display: flex; width: 100%; justify-content: center;">
           <div style="display: flex;">
-            <h3 style="margin: 0 10px;">Area: </h3>
+            <h3 style="margin: 0 10px;">區域: </h3>
           <select style="margin: 0 10px; width: 80px;" v-model="currentArea" @change="searchLine">
           <option v-for="(item, index) in DataArea" :key="index" :value="item">{{ item }}</option>
         </select>
           </div>
 
         <div style="display: flex; margin: 0 10px;">
-          <h3 style="margin: 0 10px;">Line: </h3>
+          <h3 style="margin: 0 10px;">排: </h3>
           <select v-model="currentLine" @change="searchShelf" style="width: 80px;">
           <option v-for="(item, index) in DataLine" :key="index" :value="item">{{ item }}</option>
         </select>
         </div>
 
         <div style="display: flex;">
-          <h3 style="margin: 0 10px;">Shelf: </h3>
+          <h3 style="margin: 0 10px;">架: </h3>
           <select style="width: 80px;" v-model="currentShelf" @change="searchLocation">
           <option v-for="(item, index) in DataShelf" :key="index" :value="item.shelf">{{ item.shelf }}</option>
         </select>
         </div>
 
         <div style="display: flex; margin: 0 10px; width: 80px;">
-          <h3 style="margin: 0 10px;">Location: </h3>
+          <h3 style="margin: 0 10px;">位置: </h3>
           <select v-model="currentLocation" @change="ClickData">
           <option v-for="(item, index) in dataUpdateLocation" :key="index" :value="item">{{ item }}</option>
         </select>
@@ -43,13 +43,13 @@
         <table class="table">
         <thead>
           <tr>
-            <th class="title">Title</th>
-            <th class="title">Warehouse ID</th>
-            <th class="title">Area</th>
-            <th class="title">Line</th>
-            <th class="title">Shelf</th>
-            <th class="title">Quantity</th>
-            <th class="title">Location</th>
+            <th class="title">標題</th>
+            <th class="title">廠商</th>
+            <th class="title">區域</th>
+            <th class="title">排</th>
+            <th class="title">架</th>
+            <th class="title">數量</th>
+            <th class="title">位置</th>
             <!-- <th class="title">History</th> -->
           </tr>
         </thead>
@@ -86,7 +86,7 @@
     
     <div v-if="isLoading" class="loading-overlay">
       <div class="spinner"></div>
-      <p>Đang tải...</p>
+      <p>載入中...</p>
     </div>
 
     <div v-if="frameVisibleNew" class="frame-popup">
@@ -95,11 +95,11 @@
           :style="{ maxWidth: '800' + 'px', justifyContent: 'flex-start' }"
         >
         <button class="btn" style="border: 1px solid black;" @click="closeFaram">
-          close
+          關閉
         </button>
 
         <button class="btn" @click="dowloadExcelOneData(Dataframe.title)" style="border: 1px solid greenyellow;">
-          Download Excel
+          下載Excel
         </button>
           <div
             class="frame-item"
@@ -110,21 +110,21 @@
             
             <div class="frame-info">
               <div class="info-line">
-                <span class="info-title">Quantity:</span> {{ Dataframe?.quantity }}
-                <span class="info-title">Warehouse ID:</span> {{ Dataframe?.supplier }}
+                <span class="info-title">數量:</span> {{ Dataframe?.quantity }}
+                <span class="info-title">廠商:</span> {{ Dataframe?.supplier }}
               </div>
               <!-- <button @click="closeFrame" v-if="item.id_plan == 0" class="close-btn">Swap</button> -->
             </div>
 
             <div v-if="Dataframe?.history?.length > 0">
-              <h2>History Product</h2>
+              <h2>儲位歷史記錄</h2>
               <table class="table">
         <thead>
           <tr>
-            <th class="title">Area</th>
-            <th class="title">Line</th>
-            <th class="title">Shelf</th>
-            <th class="title">Code</th>
+            <th class="title">區域</th>
+            <th class="title">排</th>
+            <th class="title">架</th>
+            <th class="title">儲位代碼</th>
           </tr>
         </thead>
         <tbody>
@@ -143,10 +143,10 @@
               <table class="table">
         <thead>
           <tr>
-            <th class="title">status</th>
-            <th class="title">location</th>
-            <th class="title">updateat</th>
-            <th class="title">quantity</th>
+            <th class="title">狀態</th>
+            <th class="title">位置</th>
+            <th class="title">更新時間</th>
+            <th class="title">數量</th>
             <th class="title" v-if="Dataframe?.history?.length > 0">History</th>
           </tr>
         </thead>
