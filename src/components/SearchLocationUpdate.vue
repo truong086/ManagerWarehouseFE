@@ -129,10 +129,10 @@
         </thead>
         <tbody>
           <tr v-for="(itemProduct, indexProduct) in Dataframe?.history" :key="indexProduct">
-            <td>{{ itemProduct.area}}</td>
-            <td>{{ itemProduct.line }}</td>
-            <td>{{ itemProduct.shelf }}</td>
-            <td>{{ itemProduct.code_location_addr }}</td>
+            <td>{{ itemProduct.location_old.area}}</td>
+            <td>{{ itemProduct.location_old.line }}</td>
+            <td>{{ itemProduct.location_old.shelf }}</td>
+            <td>{{ itemProduct.location_old.code_location_addr }}</td>
             
           </tr>
         </tbody>
@@ -147,7 +147,6 @@
             <th class="title">位置</th>
             <th class="title">更新時間</th>
             <th class="title">數量</th>
-            <th class="title" v-if="Dataframe?.history?.length > 0">History</th>
           </tr>
         </thead>
         <tbody>
