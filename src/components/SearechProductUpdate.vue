@@ -113,6 +113,7 @@
             <th class="title">排</th>
             <th class="title">架</th>
             <th class="title">儲位代碼</th>
+            <th class="title">時間</th>
           </tr>
         </thead>
         <tbody>
@@ -121,7 +122,7 @@
             <td>{{ itemProduct.location_old.line }}</td>
             <td>{{ itemProduct.location_old.shelf }}</td>
             <td>{{ itemProduct.location_old.code_location_addr }}</td>
-            
+            <td>{{ itemProduct.time }}</td>
           </tr>
         </tbody>
       </table>

@@ -11,27 +11,27 @@
         <div style="margin: 30px 0; display: flex; width: 100%; justify-content: center;">
           <div style="display: flex;">
             <h3 style="margin: 0 10px;">區域: </h3>
-          <select style="margin: 0 10px; width: 80px;" v-model="currentArea" @change="searchLine">
+          <select style="margin: 0 10px; width: 100px;" v-model="currentArea" @change="searchLine">
           <option v-for="(item, index) in DataArea" :key="index" :value="item">{{ item }}</option>
         </select>
           </div>
 
         <div style="display: flex; margin: 0 10px;">
           <h3 style="margin: 0 10px;">排: </h3>
-          <select v-model="currentLine" @change="searchShelf" style="width: 80px;">
+          <select v-model="currentLine" @change="searchShelf" style="width: 100px;">
           <option v-for="(item, index) in DataLine" :key="index" :value="item">{{ item }}</option>
         </select>
         </div>
 
         <div style="display: flex;">
           <h3 style="margin: 0 10px;">架: </h3>
-          <select style="width: 80px;" v-model="currentShelf" @change="searchLocation">
+          <select style="width: 100px;" v-model="currentShelf" @change="searchLocation">
           <option v-for="(item, index) in DataShelf" :key="index" :value="item.shelf">{{ item.shelf }}</option>
         </select>
         </div>
 
-        <div style="display: flex; margin: 0 10px; width: 80px;">
-          <h3 style="margin: 0 10px;">位置: </h3>
+        <div style="display: flex; margin: 0 10px; width: 100px;">
+          <h5 style="margin: 0 10px;">位置: </h5>
           <select v-model="currentLocation" @change="ClickData">
           <option v-for="(item, index) in dataUpdateLocation" :key="index" :value="item">{{ item }}</option>
         </select>
@@ -125,6 +125,7 @@
             <th class="title">排</th>
             <th class="title">架</th>
             <th class="title">儲位代碼</th>
+            <th class="title">時間</th>
           </tr>
         </thead>
         <tbody>
@@ -133,7 +134,7 @@
             <td>{{ itemProduct.location_old.line }}</td>
             <td>{{ itemProduct.location_old.shelf }}</td>
             <td>{{ itemProduct.location_old.code_location_addr }}</td>
-            
+            <td>{{ itemProduct.time }}</td>
           </tr>
         </tbody>
       </table>
