@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h1 style="font-weight: bold; margin: 15px 0;">{{ route.query.id ? "Update Plan ( " + route.query.id + " )" : "Create Plan" }}</h1>
+      <h1 style="font-weight: bold; margin: 15px 0;">{{ route.query.id ? "更新計劃 ( " + route.query.id + " )" : "新增計劃" }}</h1>
         <div>
           <div style="width: 800px; margin: 0 auto;">
           <div>

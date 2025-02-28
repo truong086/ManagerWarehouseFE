@@ -328,7 +328,10 @@ const convertToTaiwanTime = (localDateTime) => {
       datetimePlanDate.value.pageSize = pageSize.value
       datetimePlanDate.value.datefrom = convertToTaiwanTime(datetimePlan.value.datefrom)
       datetimePlanDate.value.dateto = convertToTaiwanTime(datetimePlan.value.dateto)
-      const res = await axios.post(hostName + `/api/Plan/FindAllDataByNoDone`, datetimePlanDate.value)
+
+      // datetimePlanDate.value.datefrom = datetimePlan.value.datefrom
+      // datetimePlanDate.value.dateto = datetimePlan.value.dateto
+      const res = await axios.post(hostName + `/api/Plan/FindAllDataByNoDoneAndDone`, datetimePlanDate.value)
 
       console.log(res)
     if (res.data.success) {
@@ -446,12 +449,12 @@ const convertToTaiwanTime = (localDateTime) => {
         search === ""
           ? await axios.get(
               hostName +
-                `/api/Plan/FindAll?page=${pageData}&pageSize=${pageSize.value}`,
+                `/api/Plan/FindAllNoDoneAndDone?page=${pageData}&pageSize=${pageSize.value}`,
               getToken()
             )
           : await axios.get(
               hostName +
-                `/api/Plan/FindAll?name=${search}&page=${pageData}&pageSize=${pageSize.value}`,
+                `/api/Plan/FindAllNoDoneAndDone?name=${search}&page=${pageData}&pageSize=${pageSize.value}`,
               getToken()
             );
   

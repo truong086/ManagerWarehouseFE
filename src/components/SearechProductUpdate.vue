@@ -3,7 +3,7 @@
     <div>
         <div>
           <div style="margin-bottom: 20px;">
-            <h1 style="font-weight: bold;">搜尋儲位</h1>
+            <h1 style="font-weight: bold;">搜尋產品</h1>
           </div>
           <div>
             <input type="text" v-model="searchName" style="padding: 5px 5px; border-radius: 10px; border: 1px dashed greenyellow;">
@@ -32,7 +32,7 @@
         <table class="table">
         <thead>
           <tr>
-            <th class="title">標題</th>
+            <th class="title">產品編號</th>
             <th class="title">廠商</th>
             <th class="title">區域</th>
             <th class="title">排</th>
@@ -122,7 +122,7 @@
             <td>{{ itemProduct.location_old.line }}</td>
             <td>{{ itemProduct.location_old.shelf }}</td>
             <td>{{ itemProduct.location_old.code_location_addr }}</td>
-            <td>{{ itemProduct.time }}</td>
+            <td>{{ formatDateTime(itemProduct.time) }}</td>
           </tr>
         </tbody>
       </table>
@@ -144,7 +144,7 @@
           <tr v-for="(itemProduct, indexProduct) in Dataframe.inOutByProducts" :key="indexProduct">
             <td>{{ itemProduct.status == 0 ? "Deliverynote" : "Import" }}</td>
             <td>{{ itemProduct.location }}</td>
-            <td>{{ itemProduct.updateat }}</td>
+            <td>{{ formatDateTime(itemProduct.updateat) }}</td>
             <td>{{ itemProduct.quantity }}</td>
             
           </tr>
@@ -191,6 +191,21 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
   watch(page.value, (newPage) => {
     findOneData(currentDataSuppliers.value, newPage)
   })
+
+  const formatDateTime = (dateTimeString) => {
+  const date = new Date(dateTimeString);
+
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Tháng bắt đầu từ 0
+  const year = date.getFullYear();
+
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+
+  // return `${day}/${month}/${year} ${hours}:${minutes}`;
+  return `${year}/${month}/${day}/ ${hours}:${minutes}`;
+};
+
   const changeReload = (event) => {
     pageSize.value = event
     findOneData(currentDataSuppliers.value, page.value)
