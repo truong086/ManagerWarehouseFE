@@ -197,7 +197,7 @@
     datefrom: "",
     dateto: ""
   })
-const typeData = ref(null)
+// const typeData = ref(null)
   const datetimePlanDate = ref({
     datefrom: "",
     dateto: "",
@@ -235,13 +235,13 @@ const convertToTaiwanTime = (localDateTime) => {
       return;
     }
   
-    if(typeData.value == null){
+    if(store.getTypeData == null){
       alert("No Data")
       return
     }
     // Chuyển đổi thành ISO 8601 (UTC)
-    datetimePlan.value.datefrom = new Date(datetimePlan.value.datefrom).toISOString();
-    datetimePlan.value.dateto = new Date(datetimePlan.value.dateto).toISOString();
+    datetimePlan.value.datefrom = convertToTaiwanTime(datetimePlan.value.datefrom)
+    datetimePlan.value.dateto = convertToTaiwanTime(datetimePlan.value.dateto)
   
     isLoading.value = true;
     document.body.classList.add("loading"); // Add Lớp "loading"
