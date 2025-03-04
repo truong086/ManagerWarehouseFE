@@ -20,35 +20,6 @@
         </a>
       </div>
       <div class="navbar-collapse">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a
-              class="nav-link nav-toggler hidden-md-up waves-effect waves-dark"
-              href="javascript:void(0)"
-            >
-              <i class="fa fa-bars"></i>
-            </a>
-          </li>
-          <li class="nav-item hidden-xs-down search-box">
-            <a
-              class="nav-link hidden-sm-down waves-effect waves-dark"
-              href="javascript:void(0)"
-            >
-              <i class="fa fa-search"></i>
-            </a>
-            <form class="app-search">
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Search & enter"
-              />
-              <a class="srh-btn">
-                <i class="fa fa-times"></i>
-              </a>
-            </form>
-            <input type="text" class="additional-input" placeholder="Search" />
-          </li>
-        </ul>
         <ul class="navbar-nav my-lg-0">
           <li class="nav-item d-flex align-items-center">
             <div class="profile-container">
@@ -81,28 +52,6 @@
                 </div>
               </div>
             </div>
-          </li>
-          
-          <li class="nav-item dropdown me-3">
-            <a
-              class="nav-link dropdown-toggle waves-effect waves-dark"
-              href="#"
-              id="notificationDropdown"
-              data-bs-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <i class="fa fa-bell"></i>
-              <span class="badge bg-danger">3</span>
-            </a>
-            <ul
-              class="dropdown-menu notification-menu"
-              aria-labelledby="notificationDropdown"
-            >
-              <li><a class="dropdown-item" href="#">Notification 1</a></li>
-              <li><a class="dropdown-item" href="#">Notification 2</a></li>
-              <li><a class="dropdown-item" href="#">Notification 3</a></li>
-            </ul>
           </li>
           <!-- <li class="nav-item dropdown u-pro">
             <a
@@ -469,6 +418,7 @@ const scrollToBottom = () => {
 </script>
 
 <style scoped>
+
 .send-btn {
   margin-top: 10px;
   padding: 10px 20px;

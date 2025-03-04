@@ -19,7 +19,7 @@
           </div>
 
           <div>
-            <h2 class="title">架</h2>
+            <h2 class="title">舊架</h2>
             <select class="form-select" v-model="currentShelfOld" @change="selectLocation">
               <option v-for="(item, index) in dataShelfOld" :key="index" :value="item.shelf">{{ item.shelf }}</option>
             </select>
@@ -161,8 +161,8 @@
           class="frame-content"
           :style="{ maxWidth: widthDom + 'px', justifyContent: 'flex-start', border: '1px solid black' }"
         >
-        <button @click="closeFrame" class="close-btn" style="background-color: red;">關閉按鈕</button>
-          <button @click="ClickDataOld(frameData[0].location)" class="close-btn" style="background-color: blueviolet;">選擇</button>
+        <button @click="closeFrame" class="close-btn" style="background-color: red;">取消選取</button>
+          <button @click="ClickDataOld(frameData[0].location)" class="close-btn" style="background-color: blueviolet;">確認選取</button>
 
           <div
             class="frame-item"
@@ -190,8 +190,8 @@
           class="frame-content"
           :style="{ maxWidth: widthDom + 'px', justifyContent: 'flex-start', border: '1px solid black' }"
         >
-        <button @click="closeFrameNew" class="close-btn" style="background-color: red;">關閉按鈕</button>
-          <button @click="ClickDataNew(frameDataNew[0].location)" class="close-btn" style="background-color: blueviolet;">選擇</button>
+        <button @click="closeFrameNew" class="close-btn" style="background-color: red;">取消選取</button>
+          <button @click="ClickDataNew(frameDataNew[0].location)" class="close-btn" style="background-color: blueviolet;">確認選取</button>
           <div v-if="frameDataNew?.length > 0">
             <div
             class="frame-item"

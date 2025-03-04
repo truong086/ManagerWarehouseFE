@@ -6,9 +6,9 @@
             <h1 style="font-weight: bold;">搜尋產品</h1>
           </div>
           <div>
-            <input type="text" v-model="searchName" style="padding: 5px 5px; border-radius: 10px; border: 1px dashed greenyellow;">
-            <button class="btn" style="border: 1px solid greenyellow; margin: 0 10px;" @click="findOneData(currentDataSuppliers, page)">搜尋</button>
-            <button class="btn" style="border: 1px solid greenyellow;" @click="dowloadData">
+            <input type="text" v-model="searchName" style="padding: 5px 5px; border-radius: 10px; border: 1px solid black;">
+            <button class="btn" style="border: 1px solid black; margin: 0 10px;" @click="findOneData(currentDataSuppliers, page)">搜尋</button>
+            <button class="btn" style="border: 1px solid black;" @click="dowloadData">
               下載Excel
             </button>
           </div>
@@ -77,18 +77,12 @@
       <p>載入中...</p>
     </div>
 
-    <div v-if="frameVisibleNew" class="frame-popup">
+    <div v-if="frameVisibleNew" class="frame-popup" >
         <div
           class="frame-content"
-          :style="{ maxWidth: '800' + 'px', justifyContent: 'flex-start' }"
+          :style="{ maxWidth: '800' + 'px', justifyContent: 'flex-start', border: '1px solid black' }"
         >
-        <button class="btn" style="border: 1px solid black;" @click="closeFaram">
-          關閉
-        </button>
-
-        <button class="btn" @click="dowloadExcelOneData(Dataframe.title)" style="border: 1px solid greenyellow;">
-          下載Excel
-        </button>
+        
           <div
             class="frame-item"
             
@@ -97,15 +91,29 @@
             <h3>{{ Dataframe?.title }}</h3>
             
             <div class="frame-info">
-              <div class="info-line">
-                <span class="info-title">數量:</span> {{ Dataframe?.quantity }}
-                <span class="info-title">廠商:</span> {{ Dataframe?.supplier }}
+              <div class="info-line" style="display: flex; justify-content: center;">
+                <p style="font-weight: bold;">廠商: <span>{{ Dataframe?.supplier }}</span></p> 
+                <p style="font-weight: bold;">數量: <span>{{ Dataframe?.quantity }}</span></p> 
+                
               </div>
               <!-- <button @click="closeFrame" v-if="item.id_plan == 0" class="close-btn">Swap</button> -->
             </div>
+
+            <div style="position: absolute; top: 10px; right: 10px;">
+              <button class="btn" style="border: 1px solid black; background-color: cornflowerblue; color: white;" @click="closeFaram">
+          關閉
+        </button>
+            </div>
             
-            <div v-if="Dataframe?.history?.length > 0">
-              <h2>儲位歷史記錄</h2>
+        <div>
+          <div style="display: flex; width: 100%; justify-content: center; margin: 15px 0;">
+            <h2 style="margin: 0 20px;" v-if="Dataframe?.history?.length > 0 || Dataframe.inOutByProducts.length > 0">儲位歷史記錄</h2>
+            <button class="btn" @click="dowloadExcelOneData(Dataframe.title)" style="border: 1px solid black;">
+          下載Excel
+        </button>
+          </div>
+          <div v-if="Dataframe?.history?.length > 0">
+              
               <table class="table">
         <thead>
           <tr>
@@ -127,10 +135,8 @@
         </tbody>
       </table>
             </div>
-            
 
             <div v-if="Dataframe.inOutByProducts.length > 0">
-              <h2>送貨單 And 進口</h2>
               <table class="table">
         <thead>
           <tr>
@@ -142,7 +148,7 @@
         </thead>
         <tbody>
           <tr v-for="(itemProduct, indexProduct) in Dataframe.inOutByProducts" :key="indexProduct">
-            <td>{{ itemProduct.status == 0 ? "Deliverynote" : "Import" }}</td>
+            <td>{{ itemProduct.status == 0 ? "出庫" : "入庫" }}</td>
             <td>{{ itemProduct.location }}</td>
             <td>{{ formatDateTime(itemProduct.updateat) }}</td>
             <td>{{ itemProduct.quantity }}</td>
@@ -151,8 +157,7 @@
         </tbody>
       </table>
             </div>
-
-      
+        </div>
           </div>
         </div>
       </div>

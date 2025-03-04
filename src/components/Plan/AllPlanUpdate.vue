@@ -3,10 +3,10 @@
       <div class="button-group">
         <button class="all" @click="showData('all', 'all')">所有計劃</button>
         <button class="lichsu" @click="showData('lichsu', 'lichsu')">
-          完成
+          已完成
         </button>
         <button class="NoReceiver" @click="showData('NoReceiver', 'NoReceiver')">
-            尚未指定接收者的計劃
+          尚未完成的計畫
         </button>
       </div>
       <div class="p-4 bg-white shadow-lg rounded-xl w-full max-w-md mx-auto">
@@ -32,7 +32,7 @@
           </div>
           
           <button 
-            @click="submitSearch('search')" style="background-color: black;"
+            @click="submitSearch('search')" style="background-color: black; border-radius: 10px;"
             class="bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300"
           >
           搜尋資料
@@ -40,7 +40,7 @@
 
           <button 
             @click="submitDate"
-            style="color: black;"
+            style="color: black; border-radius: 10px;"
             class="bg-blue-600 text-red font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300"
           >
           下載Excel
@@ -129,7 +129,7 @@
               </p>
               <h5>
                 狀態：
-                <a style="font-weight: bold; color: red">等待確認</a>
+                <a style="font-weight: bold; color: red">尚未完成</a>
               </h5>
 
               <h5>
@@ -235,7 +235,7 @@ const convertToTaiwanTime = (localDateTime) => {
       return;
     }
   
-    if(store.getTypeData == null){
+    if(store.getTypeData == ''){
       alert("No Data")
       return
     }
@@ -318,8 +318,6 @@ const convertToTaiwanTime = (localDateTime) => {
         return;
       }
 
-      console.log("Đã vào")
-
       isLoading.value = true;
       document.body.classList.add("loading"); // Add Lớp "loading"
       document.body.style.overflow = "hidden";
@@ -333,7 +331,6 @@ const convertToTaiwanTime = (localDateTime) => {
       // datetimePlanDate.value.dateto = datetimePlan.value.dateto
       const res = await axios.post(hostName + `/api/Plan/FindAllDataByNoDoneAndDone`, datetimePlanDate.value)
 
-      console.log(res)
     if (res.data.success) {
         page.value = res.data.content.page;
         totalPage.value = res.data.content.totalPages;

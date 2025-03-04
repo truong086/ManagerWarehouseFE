@@ -37,6 +37,7 @@ import excelProductLocationPage from "./components/excelProductLocation.vue";
 import PlanUpdatePage from "./components/PlanUpdate.vue";
 import SearechProductUpdatePage from "./components/SearechProductUpdate.vue";
 import SearchLocationUpdatePage from "./components/SearchLocationUpdate.vue";
+import DashboardPageData from "./components/DashboardPage.vue";
 import AllPlanUpdatePage from "./components/Plan/AllPlanUpdate.vue";
 
 import { useCounterStore } from "./store";
@@ -95,6 +96,11 @@ const routes = [
         path: "/AddDataAreasPage",
         name: "addDataAreasPage",
         component: AddDataAreasPage,
+      },
+      {
+        path: "/DashboardPageData",
+        name: "dashboardPageData",
+        component: DashboardPageData,
       },
       {
         path: "/AllPlanUpdatePage",
