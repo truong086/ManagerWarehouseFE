@@ -1,34 +1,38 @@
 <template>
     <div>
       <h1 style="font-weight: bold; margin: 15px 0;">{{ route.query.id ? "更新計劃 ( " + route.query.id + " )" : "新增計劃" }}</h1>
-        <div>
-          <div style="width: 800px; margin: 0 auto;">
-          <div>
-            <div>
-            <h2 class="title">舊區域</h2>
-            <select class="form-select" v-model="currentWarehouseOld" @change="selectLine">
+        <div style="display: flex;">
+          <div style="display: flex; ">
+          <div :style="{width: dataWidthPlanOld + 'px;'}">
+            <div style="margin-top: 50px;">
+              <input type="text" ref="inputRef" v-model="inputDataOld" @input="loadDataOldSearch" placeholder="Location" style="padding: 10px 5px; border: 1px dashed black; border-radius: 10px;">
+            </div>
+            <div style="display: flex; justify-content: center; margin-top: 30px; margin-bottom: 20px; background-color: rgba(169,169,169, 0.1); border-radius: 20px; height: 80px; padding-top: 30px;">
+              <div style="display: flex;">
+            <h2 style="margin: 0 10px;">舊區域: </h2>
+            <select v-model="currentWarehouseOld" @change="selectLine" style="width: 100px; height: 35px;">
               <option v-for="(item, index) in dataAreaOld" :key="index" :value="item">{{ item }}</option>
             </select>
           </div>
 
-          <div>
-            <h2 class="title">舊排</h2>
-            <select class="form-select" v-model="currentLineOld" @change="selectShelf">
+          <div style="display: flex; margin: 0 20px;">
+            <h2 style="margin: 0 10px;">舊排: </h2>
+            <select v-model="currentLineOld" @change="selectShelf" style="width: 100px; height: 35px;">
               <option v-for="(item, index) in dataLineOld" :key="index" :value="item">{{ item }}</option>
             </select>
           </div>
 
-          <div>
-            <h2 class="title">舊架</h2>
-            <select class="form-select" v-model="currentShelfOld" @change="selectLocation">
+          <div style="display: flex;">
+            <h2 style="margin: 0 10px;">舊架: </h2>
+            <select v-model="currentShelfOld" @change="selectLocation" style="width: 100px; height: 35px;">
               <option v-for="(item, index) in dataShelfOld" :key="index" :value="item.shelf">{{ item.shelf }}</option>
             </select>
           </div>
+            </div>
 
-          <div>
-            <h2 class="title">舊位置</h2>x
-            <div style="display: flex; flex-wrap: wrap;" v-if="showlocationold">
-              <div v-for="item in 5" :key="item" style="display: flex;">
+          <div style="width: 600px; margin: 25px 0;">
+            <div style="display: flex;  flex-wrap: wrap;" v-if="showlocationold">
+              <div v-for="item in 5" :key="item" style="display: flex; width: 600px;">
                 <div v-for="itemY in 6" :key="itemY" >
                   <div v-if="dataLocationOld?.productbyShelf?.some(x => x.location.slice(-2) == item + '' + itemY)">
                   <!-- <p v-if="dataLocationOld?.findAllPlanDatas?.some(x => (x.locationOld.slice(-2) == item + '' + itemY && x.areaOld == currentWarehouseOld && x.lineOld == currentLineOld && x.shelfOld == currentShelfOld) 
@@ -43,7 +47,7 @@
                   <button
                 @click="OpenFrame(dataLocationOld.productbyShelf, item + '' + itemY, 'bg_old' + item + '' + itemY)"
                 
-                :class="['form-select', 'bg_old' + item + '' + itemY, {active: 'bg_old' + item + '' + itemY === BgOld}]" style="width: 130px; background-color: violet;">{{ item }} - {{ itemY }}</button>
+                :class="['form-select', 'bg_old' + item + '' + itemY, {active: 'bg_old' + item + '' + itemY === BgOld}]" style="width: 100px; background-color: violet;">{{ item }} - {{ itemY }}</button>
                 </div>
 
                 <div v-else>
@@ -59,42 +63,52 @@
                   <button
                 @click="OpenFrame(dataLocationOld?.productbyShelf, item + '' + itemY, 'bg_old' + item + '' + itemY)"
                 
-                :class="['form-select', 'bg_old' + item + '' + itemY, {active: 'bg_old' + item + '' + itemY === BgOld}]" style="width: 130px;">{{ item }} - {{ itemY }}</button>
+                :class="['form-select', 'bg_old' + item + '' + itemY, {active: 'bg_old' + item + '' + itemY === BgOld}]" style="width: 100px;">{{ item }} - {{ itemY }}</button>
                  </div>
                 </div>
               </div>
             </div>
           </div>
-          </div>
-
-          <div style="text-align: left;">
+          <div :style="{textAlign: dataAlign}">
             <button @click="showPlanNewData" class="btn" style="font-weight: bold; background-color: aqua; padding: 10px 30px; margin: 15px 0;">交換至新儲位 <i class="fa fa-sign-language" aria-hidden="true"></i></button>
           </div>
+          
+        </div>
+          </div>
 
-          <div style="margin-top: 100px;" v-if="showPlanNew">
-            <div>
-            <h2 class="title">新區域</h2>
-            <select class="form-select" v-model="currentWarehouseNew" @change="selectLineNew">
+          <div style="width: 50px; align-items: center; padding-top: 150px;" v-if="showPlanNew">
+            <!--<p style="font-size: 15px;"> <span>⏪</span> </p>
+            <p style="font-size: 15px;"> <span>⏩</span> </p>-->
+            <img src="../assets/Swap.png" width="20px" alt="">
+          </div>
+          <div style=" width: 600px;" v-if="showPlanNew">
+            <div style="margin-top: 50px;">
+              <input type="text" ref="inputRefNew" v-model="inputDataNew" @input="loadDataOldNew" placeholder="Location" style="padding: 10px 5px; border: 1px dashed black; border-radius: 10px;">
+            </div>
+            <div style="display: flex; justify-content: center; margin-bottom: 20px; background-color: rgba(169,169,169, 0.1); border-radius: 20px; height: 80px; padding-top: 30px; margin-top: 30px;">
+              <div style="display: flex;">
+            <h2 style="margin-right: 10px;">新區域</h2>
+            <select v-model="currentWarehouseNew" @change="selectLineNew" style="width: 100px; height: 35px;">
               <option v-for="(item, index) in dataAreaNew" :key="index" :value="item">{{ item }}</option>
             </select>
           </div>
 
-          <div>
-            <h2 class="title">新排</h2>
-            <select class="form-select" v-model="currentLineNew" @change="selectShelfNew">
+          <div style="display: flex; margin: 0 20px;">
+            <h2 style="margin: 0 10px;">新排</h2>
+            <select v-model="currentLineNew" @change="selectShelfNew" style="width: 100px; height: 35px;">
               <option v-for="(item, index) in dataLineNew" :key="index" :value="item">{{ item }}</option>
             </select>
           </div>
 
-          <div>
-            <h2 class="title">新架</h2>
-            <select class="form-select" v-model="currentShelfNew" @change="selectLocationNew">
+          <div style="display: flex;">
+            <h2 style="margin: 0 10px;">新架</h2>
+            <select v-model="currentShelfNew" @change="selectLocationNew" style="width: 100px; height: 35px;">
               <option v-for="(item, index) in dataShelfNew" :key="index" :value="item.shelf">{{ item.shelf }}</option>
             </select>
           </div>
+            </div>
 
-          <div>
-            <h2 class="title">新位置</h2>
+          <div style="margin: 25px 0;">
             <div style="display: flex;  flex-wrap: wrap;" v-if="showDataLocationNew">
               <div v-for="item in 5" :key="item" style="display: flex;">
                 <div v-for="itemY in 6" :key="itemY" >
@@ -112,7 +126,7 @@
                   <button
                 @click="OpenFrameNew(dataLocationNew.productbyShelf, item + '' + itemY)"
                 
-                :class="['form-select', 'bg_new' + item + '' + itemY, { active: 'bg_new' + item + '' + itemY === BgNew }]" style="width: 130px; background-color: violet;">{{ item }} - {{ itemY }}</button>
+                :class="['form-select', 'bg_new' + item + '' + itemY, { active: 'bg_new' + item + '' + itemY === BgNew }]" style="width: 98px; background-color: violet;">{{ item }} - {{ itemY }}</button>
                 </div>
 
                 <div v-else>
@@ -127,18 +141,18 @@
                   <button
                 @click="OpenFrameNew(dataLocationNew?.productbyShelf, item + '' + itemY)"
                 
-                :class="['form-select', 'bg_new' + item + '' + itemY, { active: 'bg_new' + item + '' + itemY === BgNew }]" style="width: 130px;">{{ item }} - {{ itemY }}</button>
+                :class="['form-select', 'bg_new' + item + '' + itemY, { active: 'bg_new' + item + '' + itemY === BgNew }]" style="width: 98px;">{{ item }} - {{ itemY }}</button>
                  </div>
                 </div>
               </div>
               
             </div>
           </div>
-          <button v-if="!route.query.id" class="btn" style="border: 1px solid greenyellow; margin: 20px 0;" @click="addplan">
+          <button v-if="!route.query.id" class="btn" style="border: 1px solid greenyellow; margin: 20px 10px;" @click="addplan">
             新增計劃
               </button>
 
-              <button v-else class="btn" style="border: 1px solid greenyellow; margin: 20px 0;" @click="updatePlan">
+              <button v-else class="btn" style="border: 1px solid greenyellow; margin: 20px 10px;" @click="updatePlan">
                 更新計劃
               </button>
               <button class="btn" style="border: 1px solid black; margin: 20px 0;" @click="backData">
@@ -146,7 +160,7 @@
                 </button>
           </div>
         </div>
-        </div>
+        
         
         <div>
           
@@ -221,7 +235,7 @@
 
 <script setup>
 import axios from 'axios';
-import {ref, getCurrentInstance, onMounted, onUpdated} from 'vue';
+import {ref, getCurrentInstance, onMounted, onUpdated, watch, nextTick} from 'vue';
 import {useRouter, useRoute} from 'vue-router'
   import {useToast} from 'vue-toastification'
   import Swal from "sweetalert2";
@@ -232,9 +246,10 @@ import {useRouter, useRoute} from 'vue-router'
   const Toast = useToast()
   const isLoading = ref(false)
   const route = useRoute()
+  const dataWidthPlanOld = ref(1200)
 
   const widthDom = ref(1500);
-
+  const dataAlign = ref("center")
   const frameVisible = ref(false)
   const frameVisibleNew = ref(false)
 
@@ -263,6 +278,10 @@ import {useRouter, useRoute} from 'vue-router'
   const BgNew = ref(null)
   const showDataLocationNew = ref(false)
   const checkDataLocation = ref("")
+  const inputDataOld = ref('')
+  const inputDataNew = ref('')
+  const inputRef = ref(null)
+  const inputRefNew = ref(null)
   // const currentLocationNew = ref(null)
   
   const dataPlan = ref({
@@ -276,16 +295,19 @@ import {useRouter, useRoute} from 'vue-router'
     shelfNew: "",
   })
 
-  onMounted(() => {
+  onMounted(async () => {
     dataPlan.value.location_new = ""
     dataPlan.value.location_old = ""
-
+    inputRef.value?.focus()
     if(route.query.id){
       findOneData(route.query.id)
     }
 
     findAllAreaOld()
     findAllAreaNew()
+
+    await nextTick()
+    inputRef.value?.focus()
   })
 
   onUpdated(() => { // Kiểm tra khi giao diện đã load hết dữ liệu lên
@@ -293,13 +315,362 @@ import {useRouter, useRoute} from 'vue-router'
     console.log("Hello World")
   })
 
+  watch(inputDataOld.value, async () => {
+    await nextTick()
+    inputRef.value?.focus()
+  })
 
+  watch(inputDataNew.value, async () => {
+    await nextTick()
+    inputRefNew.value?.focus()
+  })
+
+  const loadDataOldNew = () =>{
+    if(!inputDataNew.value.trim()){
+      currentLineNew.value = ''
+        currentWarehouseNew.value = ''
+        currentShelfNew.value = ''
+        dataLocationNew.value = []
+      dataPlan.value.location_new = ""
+      showDataLocationNew.value = false
+      frameVisibleNew.value = false
+      dataShelfNew.value = []
+      dataLineNew.value = []
+      return
+    }
+
+    if(inputDataNew.value.length == 2){
+      const checkDataAreaLoadNew = dataAreaNew.value.find(x => x == inputDataNew.value)
+      if(checkDataAreaLoadNew != null){
+        currentWarehouseNew.value = inputDataNew.value
+        dataPlan.value.location_new = ""
+        selectLineNew()
+      }else{
+        currentLineNew.value = ''
+        dataLocationNew.value = []
+        frameVisibleNew.value = false
+        showDataLocationNew.value = false
+      }
+      
+    }
+
+    else if(inputDataNew.value.length == 4){
+      if(dataLineNew.value.length <= 0){
+        currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+        findAllLineNew()
+        currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+          currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+          selectShelfNew()
+          dataPlan.value.location_new = ""
+          return
+      }
+      const checkDataAreaLoadNew = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
+        const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2, 4).join(''))
+        if(checkDataLine != null && checkDataAreaLoadNew != null){
+          currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+          currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+          selectShelfNew()
+        }else{
+          currentLineNew.value = ''
+          dataLocationNew.value = []
+          frameVisibleNew.value = false
+          showDataLocationNew.value = false
+          dataLineNew.value = []
+        }
+      dataPlan.value.location_new = ""
+      
+    }
+
+    else if(inputDataNew.value.length == 6){
+
+      if(dataLineNew.value.length <= 0){
+        currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+        findAllLineNew()
+      }
+
+      const checkDataAreaLoadNew = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
+        const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2,4).join(''))
+        const checkDataShelfLoad = dataShelfNew.value.find(x => x.shelf == inputDataNew.value.split('').slice(4,6).join(''))
+        if(checkDataShelfLoad != null && checkDataAreaLoadNew != null && checkDataLine != null){
+          currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+          currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+          currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
+
+          selectLocationNew()
+        }else{
+          currentWarehouseNew.value = ''
+          currentLineNew.value = ''
+          currentShelfNew.value = ''
+          dataLocationNew.value = []
+          frameVisibleNew.value = false
+          showDataLocationNew.value = false
+          dataShelfNew.value = []
+          dataLineNew.value = []
+        }
+
+      dataPlan.value.location_new = ""
+      
+    }
+
+    else if(inputDataNew.value.length == 8){
+
+      if(dataLineNew.value.length <= 0){
+        currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+        findAllLineNew()
+        currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+        findAllShelfNew()
+        currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
+
+        if(dataLocationNew.value.length <= 0){
+          dataPlan.value.location_new = ""
+          BgNew.value = null
+          findAllLocationNew()
+      }
+        // OpenFrameNew(dataLocationNew.value.productbyShelf, inputDataNew.value.split('').slice(6,8).join(''))
+
+        return
+      }
+      // dataLocationOld.value = []
+      currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+        findAllLineNew()
+        currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+        findAllShelfNew()
+        currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
+
+          dataPlan.value.location_new = ""
+          BgNew.value = null
+          findAllLocationNew()
+
+
+      const checkDataAreaLoadOld = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
+        const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2,4).join(''))
+        const checkDataShelfLoad = dataShelfNew.value.find(x => x.shelf == inputDataNew.value.split('').slice(4,6).join(''))
+      if(!checkDatamaTran(inputDataNew.value.split('').slice(6,8).join('')) || checkDataShelfLoad == null || checkDataAreaLoadOld == null || checkDataLine == null){
+        alert("No Location")
+        showDataLocationNew.value = false
+        frameVisibleNew.value = false
+        dataShelfNew.value = []
+        dataLineNew.value = []
+        return
+      }
+
+      if(dataLocationNew.value.length <= 0){
+        currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+          currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+          currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
+
+          dataPlan.value.location_new = ""
+        BgNew.value = null
+        findAllLocationNew()
+      }
+      
+
+
+      // OpenFrameNew(dataLocationNew.value.productbyShelf, inputDataNew.value.split('').slice(6,8).join(''))
+      //if(frameData.value.length > 0)
+          //ClickDataOld(currentWarehouseOld.value + '' + currentLineOld.value + '' + currentShelfOld.value + '' + inputDataOld.value.split('').slice(6,8).join(''))
+
+    }
+
+    else if(inputDataNew.value.length > 8){
+      frameVisibleNew.value = false
+      currentLineNew.value = ''
+        currentWarehouseNew.value = ''
+        currentShelfNew.value = ''
+        dataLocationNew.value = []
+        showDataLocationNew.value = false
+        dataPlan.value.location_new = ""
+        dataShelfNew.value = []
+        dataLineNew.value = []
+    }
+
+    inputRefNew.value?.focus()
+  }
+
+  watch(inputDataOld.value, () => {
+    loadDataOldSearch()
+  })
+  const loadDataOldSearch = () => {
+    if(!inputDataOld.value.trim()){
+      currentLineOld.value = ''
+        currentWarehouseOld.value = ''
+        currentShelfOld.value = ''
+        dataLocationOld.value = []
+      dataPlan.value.location_old = ""
+      showlocationold.value = false
+      frameVisible.value = false
+      dataLineOld.value = []
+          dataShelfOld.value = []
+      return
+    }
+
+    if(inputDataOld.value.length == 2){
+      const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value)
+      if(checkDataAreaLoadOld != null){
+        currentWarehouseOld.value = inputDataOld.value
+        dataPlan.value.location_old = ""
+        selectLine()
+      }else{
+        currentLineOld.value = ''
+        dataLocationOld.value = []
+        showlocationold.value = false
+        frameVisible.value = false
+      }
+      
+    }
+
+    else if(inputDataOld.value.length == 4){
+      if(dataLineOld.value.length <= 0){
+        currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+        findAllLineOld()
+        currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+          currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+          selectShelf()
+          dataPlan.value.location_old = ""
+          return
+      }
+      const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value.split('').slice(0,2).join(''))
+        const checkDataLine = dataLineOld.value.find(x => x == inputDataOld.value.split('').slice(2,4).join(''))
+        if(checkDataLine != null && checkDataAreaLoadOld != null){
+          currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+          currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+          selectShelf()
+        }else{
+          currentLineOld.value = ''
+          dataLocationOld.value = []
+          showlocationold.value = false
+          frameVisible.value = false
+          dataLineOld.value = []
+        }
+      dataPlan.value.location_old = ""
+    }
+
+    else if(inputDataOld.value.length == 6){
+      
+      if(dataLineOld.value.length <= 0){
+        currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+        findAllLineOld()
+      }
+
+      // if(dataShelfOld.value.length <= 0 && dataLineOld.value.length > 0){
+      //   currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+      //   findAllShelfOld()
+      // }
+      const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value.split('').slice(0,2).join(''))
+        const checkDataLine = dataLineOld.value.find(x => x == inputDataOld.value.split('').slice(2,4).join(''))
+        const checkDataShelfLoad = dataShelfOld.value.find(x => x.shelf == inputDataOld.value.split('').slice(4,6).join(''))
+
+        if(checkDataShelfLoad != null && checkDataAreaLoadOld != null && checkDataLine != null){
+          currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+          currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+          currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
+
+          selectLocation()
+        }else{
+          currentWarehouseOld.value = ''
+          currentLineOld.value = ''
+          currentShelfOld.value = ''
+          dataLocationOld.value = []
+          showlocationold.value = false
+          frameVisible.value = false
+          dataLineOld.value = []
+          dataShelfOld.value = []
+        }
+
+      dataPlan.value.location_old = ""
+      
+    }
+
+    else if(inputDataOld.value.length == 8){
+      // if(dataLineOld.value.length <= 0){
+      //     findAllLineOld()
+      //   }
+      if(dataLineOld.value.length <= 0){
+        currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+        findAllLineOld()
+        currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+        findAllShelfOld()
+        currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
+
+        if(dataLocationOld.value.length <= 0){
+          dataPlan.value.location_old = ""
+          BgOld.value = null
+          findAllLocationOld()
+      }
+        // OpenFrame(dataLocationOld.value.productbyShelf, inputDataOld.value.split('').slice(6,8).join(''))
+
+        return
+      }
+      // dataLocationOld.value = []
+      currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+        findAllLineOld()
+        currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+        findAllShelfOld()
+        currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
+
+          dataPlan.value.location_old = ""
+          BgOld.value = null
+          findAllLocationOld()
+
+      const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value.split('').slice(0,2).join(''))
+        const checkDataLine = dataLineOld.value.find(x => x == inputDataOld.value.split('').slice(2,4).join(''))
+        const checkDataShelfLoad = dataShelfOld.value.find(x => x.shelf == inputDataOld.value.split('').slice(4,6).join(''))
+
+      if(!checkDatamaTran(inputDataOld.value.split('').slice(6,8).join('')) || checkDataShelfLoad == null || checkDataAreaLoadOld == null || checkDataLine == null){
+        alert("No Location !!!")
+        dataLineOld.value = []
+          dataShelfOld.value = []
+        return
+      }
+
+      if(dataLocationOld.value.length <= 0){
+        currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+          currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+          currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
+
+          dataPlan.value.location_old = ""
+          BgOld.value = null
+          findAllLocationOld()
+      }
+
+      // OpenFrame(dataLocationOld.value.productbyShelf, inputDataOld.value.split('').slice(6,8).join(''))
+      
+    }
+
+    else if(inputDataOld.value.length > 8){
+      showlocationold.value = false
+      currentLineOld.value = ''
+        currentWarehouseOld.value = ''
+        currentShelfOld.value = ''
+        dataLocationOld.value = []
+      dataPlan.value.location_old = ""
+      frameVisible.value = false
+      dataLineOld.value = []
+          dataShelfOld.value = []
+
+    }
+
+    inputRef.value?.focus()
+  }
+
+  const checkDatamaTran = (n) => {
+    for(let i = 1; i <= 5; i++){
+      for(let y = 1; y <= 6; y++){
+        if(i + '' + y == n)
+          return true
+      }
+    }
+
+    return false
+  }
   const backData = () => {
     router.push("/AllPlanUpdatePage")
   }
 
   const showPlanNewData = () => {
     showPlanNew.value = !showPlanNew.value
+    dataWidthPlanOld.value = 600
+    dataAlign.value = 'center'
   }
   const findOnePlan = (item, location, area, line, shelf) => {
     
@@ -354,7 +725,18 @@ import {useRouter, useRoute} from 'vue-router'
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
-    Swal.fire("Success")
+
+  inputDataOld.value = ''
+  const chuyendoi = parseInt(currentLineOld.value)
+    const chuyendoiShelf = parseInt(currentShelfOld.value)
+    if(chuyendoi <= 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLineOld.value) && !/^0\d+/.test(currentShelfOld.value))
+        inputDataOld.value = currentWarehouseOld.value + '0' + currentLineOld.value + '0' + currentShelfOld.value + '' + location.slice(-2)
+    
+    else if(chuyendoi <= 9 && chuyendoiShelf > 9 && !/^0\d+/.test(currentLineOld.value) && !/^0\d+/.test(currentShelfOld.value))
+        inputDataOld.value = currentWarehouseOld.value + '0' + currentLineOld.value + '' + currentShelfOld.value + '' + location.slice(-2)
+    else if(chuyendoi > 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLineOld.value) && !/^0\d+/.test(currentShelfOld.value))
+        inputDataOld.value = currentWarehouseOld.value + '' + currentLineOld.value + '0' + currentShelfOld.value + '' + location.slice(-2)
+    else inputDataOld.value = currentWarehouseOld.value + '' + currentLineOld.value + '' + currentShelfOld.value + '' + location.slice(-2)
   }
 
   const countCharactersWithoutSpaces = (str) => str.replace(/\s/g, "").length
@@ -432,8 +814,6 @@ import {useRouter, useRoute} from 'vue-router'
       dataPlan.value.location_new = location
     }
     
-    
-    
     if(dataLocationNew?.value.productbyShelf.some(x => x.location == checkDataLocation.value)){
       if(BgNew.value != null)
         document.querySelector('.' + BgNew.value).style.backgroundColor = 'violet'
@@ -455,7 +835,18 @@ import {useRouter, useRoute} from 'vue-router'
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
-    Swal.fire("Success")
+
+  inputDataNew.value = ''
+  const chuyendoi = parseInt(currentLineNew.value)
+    const chuyendoiShelf = parseInt(currentShelfNew.value)
+    if(chuyendoi <= 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLineNew.value) && !/^0\d+/.test(currentShelfNew.value))
+      inputDataNew.value = currentWarehouseNew.value + '0' + currentLineNew.value + '0' + currentShelfNew.value + '' + location.slice(-2)
+    
+    else if(chuyendoi <= 9 && chuyendoiShelf > 9 && !/^0\d+/.test(currentLineNew.value) && !/^0\d+/.test(currentShelfNew.value))
+      inputDataNew.value = currentWarehouseNew.value + '0' + currentLineNew.value + '' + currentShelfNew.value + '' + location.slice(-2)
+    else if(chuyendoi > 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLineNew.value) && !/^0\d+/.test(currentShelfNew.value))
+      inputDataNew.value = currentWarehouseNew.value + '' + currentLineNew.value + '0' + currentShelfNew.value + '' + location.slice(-2)
+    else inputDataNew.value = currentWarehouseNew.value + '' + currentLineNew.value + '' + currentShelfNew.value + '' + location.slice(-2)
   }
   const OpenFrame = (list, location) => {
     frameData.value = []
@@ -475,6 +866,8 @@ import {useRouter, useRoute} from 'vue-router'
   }
   
   const OpenFrameNew = (list, location) => {
+    if(location == '' || location == null || location == undefined)
+        return
     frameDataNew.value = []
     frameVisibleNew.value = !frameVisibleNew.value
     if(list?.length >= 0 && list !== null && list !== undefined){
@@ -498,6 +891,7 @@ import {useRouter, useRoute} from 'vue-router'
     frameVisible.value = !frameVisible.value
   }
   const selectLine = () => {
+    inputDataOld.value = ""
     dataPlan.value.location_old = ""
     showlocationold.value = false
     BgOld.value = null
@@ -508,6 +902,8 @@ import {useRouter, useRoute} from 'vue-router'
     currentLineOld.value = null
     currentShelfOld.value = null
     findAllLineOld()
+
+    inputDataOld.value = currentWarehouseOld.value
   }
 
   const selectShelf = () => {
@@ -520,14 +916,31 @@ import {useRouter, useRoute} from 'vue-router'
     currentShelfOld.value = null
 
     findAllShelfOld()
-  }
 
+    const chuyendoi = parseInt(currentLineOld.value)
+    if(chuyendoi <= 9 && !/^0\d+/.test(currentLineOld.value) && !/^0\d+/.test(currentShelfOld.value))
+      inputDataOld.value = currentWarehouseOld.value + '0' + currentLineOld.value
+    else 
+    inputDataOld.value = currentWarehouseOld.value +  '' + currentLineOld.value
+  }
   const selectLocation = () => {
     dataPlan.value.location_old = ""
     showlocationold.value = false
     BgOld.value = null
     dataLocationOld.value = []
     findAllLocationOld()
+
+    const chuyendoi = parseInt(currentLineOld.value)
+    const chuyendoiShelf = parseInt(currentShelfOld.value)
+    if(chuyendoi <= 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLineOld.value) && !/^0\d+/.test(currentShelfOld.value))
+        inputDataOld.value = currentWarehouseOld.value + '0' + currentLineOld.value + '0' + currentShelfOld.value
+    
+    else if(chuyendoi <= 9 && chuyendoiShelf > 9 && !/^0\d+/.test(currentLineOld.value) && !/^0\d+/.test(currentShelfOld.value))
+        inputDataOld.value = currentWarehouseOld.value + '0' + currentLineOld.value + '' + currentShelfOld.value
+    else if(chuyendoi > 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLineOld.value) && !/^0\d+/.test(currentShelfOld.value))
+    inputDataOld.value = currentWarehouseOld.value + '' + currentLineOld.value + '0' + currentShelfOld.value
+    else inputDataOld.value = currentWarehouseOld.value + '' + currentLineOld.value + '' + currentShelfOld.value
+    
   }
 
   const findAllAreaOld = async () => {
@@ -582,6 +995,7 @@ import {useRouter, useRoute} from 'vue-router'
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
+
   }
 
   const findAllShelfOld = async () => {
@@ -622,6 +1036,9 @@ import {useRouter, useRoute} from 'vue-router'
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
+
+  await nextTick()
+  inputRef.value?.focus()
   }
 
   const findAllLocationOld = async () => {
@@ -649,6 +1066,7 @@ import {useRouter, useRoute} from 'vue-router'
       // })
     }
 
+    OpenFrame(dataLocationOld.value.productbyShelf, inputDataOld.value.split('').slice(6,8).join(''))
     showlocationold.value = true
 
     isLoading.value = false;
@@ -668,10 +1086,13 @@ import {useRouter, useRoute} from 'vue-router'
     currentLineNew.value = null
     currentShelfNew.value = null
 
+    inputDataNew.value = currentWarehouseNew.value
+
     findAllLineNew()
   }
 
   const selectShelfNew = () => {
+    inputDataNew.value = ""
     dataPlan.value.location_new = ""
     showDataLocationNew.value = false
     BgNew.value = null
@@ -680,13 +1101,31 @@ import {useRouter, useRoute} from 'vue-router'
 
     currentShelfNew.value = null
     findAllShelfNew()
+
+    const chuyendoi = parseInt(currentLineNew.value)
+    if(chuyendoi <= 9 && !/^0\d+/.test(currentLineNew.value) && !/^0\d+/.test(currentShelfNew.value))
+      inputDataNew.value = currentWarehouseNew.value + '0' + currentLineNew.value
+    else 
+    inputDataNew.value = currentWarehouseNew.value +  '' + currentLineNew.value
   }
 
   const selectLocationNew = () => {
+    inputDataNew.value = ""
     dataPlan.value.location_new = ""
     BgNew.value = null
     dataLocationNew.value = []
     findAllLocationNew()
+
+    const chuyendoi = parseInt(currentLineNew.value)
+    const chuyendoiShelf = parseInt(currentShelfNew.value)
+    if(chuyendoi <= 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLineNew.value) && !/^0\d+/.test(currentShelfNew.value))
+        inputDataNew.value = currentWarehouseNew.value + '0' + currentLineNew.value + '0' + currentShelfNew.value
+    
+    else if(chuyendoi <= 9 && chuyendoiShelf > 9 && !/^0\d+/.test(currentLineNew.value) && !/^0\d+/.test(currentShelfNew.value))
+      inputDataNew.value = currentWarehouseNew.value + '0' + currentLineNew.value + '' + currentShelfNew.value
+    else if(chuyendoi > 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLineNew.value) && !/^0\d+/.test(currentShelfNew.value))
+        inputDataNew.value = currentWarehouseNew.value + '' + currentLineNew.value + '0' + currentShelfNew.value
+    else inputDataNew.value = currentWarehouseNew.value + '' + currentLineNew.value + '' + currentShelfNew.value
   }
 
   const findAllAreaNew = async () => {
@@ -716,6 +1155,9 @@ import {useRouter, useRoute} from 'vue-router'
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
+
+  await nextTick()
+  inputRef.value?.focus()
   }
 
   const findAllLineNew = async () => {
@@ -739,6 +1181,7 @@ import {useRouter, useRoute} from 'vue-router'
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
+
   }
 
   const findAllShelfNew = async () => {
@@ -778,6 +1221,9 @@ import {useRouter, useRoute} from 'vue-router'
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
+
+  await nextTick()
+  inputRefNew.value?.focus()
   }
 
   // const loadDataFirst = () => {
@@ -812,12 +1258,10 @@ import {useRouter, useRoute} from 'vue-router'
     }
 
     showDataLocationNew.value = true
-
+OpenFrameNew(dataLocationNew.value.productbyShelf, inputDataNew.value.split('').slice(6,8).join(''))
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
-
-  console.log(dataLocationNew.value)
   }
    const updatePlan = async () => {
     isLoading.value = true;
@@ -883,13 +1327,15 @@ import {useRouter, useRoute} from 'vue-router'
       findAllAreaNew()
       findAllLineNew()
       findAllShelfNew()
-      findAllLocationNew()
+      findAllLocationNew()  
       
       loadDataLast()
       
       // document.querySelector('.' + BgNew.value).style.backgroundColor = 'violet'
     
       showPlanNew.value = !showPlanNew.value
+      inputDataOld.value = dataPlan.value.location_old
+      inputDataNew.value = dataPlan.value.location_new
     }
 
 

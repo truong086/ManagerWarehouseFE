@@ -18,21 +18,21 @@
                         </li> -->
                   <li class="b1" @click="SwapBackGroupColor('b1')">
                       <router-link to="/PlanUpdatePage" class="waves-effect waves-dark">
-                          <i class="fa fa-paper-plane"></i>
+                          <i class="fa fa-plus"></i>
                           <span class="hide-menu">新增計劃</span>
                       </router-link>
                   </li>
 
                   <li class="b2" @click="SwapBackGroupColor('b2')">
                       <router-link to="/SearechProductUpdatePage" class="waves-effect waves-dark">
-                          <i class="fa fa-search"></i>
+                          <i class="fa fa-box"></i>
                           <span class="hide-menu">搜尋產品</span>
                       </router-link>
                   </li>
 
                   <li class="b3" @click="SwapBackGroupColor('b3')">
                       <router-link to="/SearchLocationUpdatePage" class="waves-effect waves-dark">
-                          <i class="fa fa-search"></i>
+                          <i class="fa fa-map-marker-alt"></i>
                           <span class="hide-menu">搜尋儲位</span>
                       </router-link>
                   </li>
