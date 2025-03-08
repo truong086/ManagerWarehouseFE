@@ -39,6 +39,7 @@ import SearechProductUpdatePage from "./components/SearechProductUpdate.vue";
 import SearchLocationUpdatePage from "./components/SearchLocationUpdate.vue";
 import DashboardPageData from "./components/DashboardPage.vue";
 import AllPlanUpdatePage from "./components/Plan/AllPlanUpdate.vue";
+import AllPlanUpdatePageTable from "./components/Plan/AllPlanUpdateTable.vue";
 
 import { useCounterStore } from "./store";
 // import { path } from "ramda";
@@ -96,6 +97,11 @@ const routes = [
         path: "/AddDataAreasPage",
         name: "addDataAreasPage",
         component: AddDataAreasPage,
+      },
+      {
+        path: "/AllPlanUpdatePageTable",
+        name: "allPlanUpdatePageTable",
+        component: AllPlanUpdatePageTable,
       },
       {
         path: "/DashboardPageData",

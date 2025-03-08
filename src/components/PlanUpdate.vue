@@ -70,7 +70,7 @@
             </div>
           </div>
           <div :style="{textAlign: dataAlign}">
-            <button @click="showPlanNewData" class="btn" style="font-weight: bold; background-color: aqua; padding: 10px 30px; margin: 15px 0;">交換至新儲位 <i class="fa fa-sign-language" aria-hidden="true"></i></button>
+            <button @click="showPlanNewData" class="btn" style="font-weight: bold; background-color: aqua; padding: 10px 30px; margin: 15px 0;">交換至新儲位 <i class="fa fa-exchange" aria-hidden="true"></i></button>
           </div>
           
         </div>
@@ -148,11 +148,11 @@
               
             </div>
           </div>
-          <button v-if="!route.query.id" class="btn" style="border: 1px solid greenyellow; margin: 20px 10px;" @click="addplan">
+          <button v-if="!route.query.id" class="btn" style="border: 1px solid black; background-color: cornflowerblue; color: white; margin: 0 10px;" @click="addplan">
             新增計劃
               </button>
 
-              <button v-else class="btn" style="border: 1px solid greenyellow; margin: 20px 10px;" @click="updatePlan">
+              <button v-else class="btn" style="border: 1px solid black; background-color: cornflowerblue; color: white; margin: 0 10px;" @click="updatePlan">
                 更新計劃
               </button>
               <button class="btn" style="border: 1px solid black; margin: 20px 0;" @click="backData">
@@ -160,13 +160,8 @@
                 </button>
           </div>
         </div>
-        
-        
         <div>
-          
         </div>
-        
-        
     </div>
 
     <!-- Frame hiển thị thông tin -->
@@ -295,6 +290,7 @@ import {useRouter, useRoute} from 'vue-router'
     shelfNew: "",
   })
 
+  const dataInvalive = ref(null)
   onMounted(async () => {
     dataPlan.value.location_new = ""
     dataPlan.value.location_old = ""
@@ -308,6 +304,57 @@ import {useRouter, useRoute} from 'vue-router'
 
     await nextTick()
     inputRef.value?.focus()
+
+    dataInvalive.value = setInterval(() => {
+      if(!inputDataNew.value.trim() || inputDataNew.value.length <= 0){
+        currentLineNew.value = ''
+          currentWarehouseNew.value = ''
+          currentShelfNew.value = ''
+          dataLocationNew.value = []
+        dataPlan.value.location_new = ""
+        showDataLocationNew.value = false
+        frameVisibleNew.value = false
+        dataShelfNew.value = []
+        dataLineNew.value = []
+      }
+
+      if(!inputDataOld.value.trim() || inputDataOld.value.length <= 0){
+      currentLineOld.value = ''
+        currentWarehouseOld.value = ''
+        currentShelfOld.value = ''
+        dataLocationOld.value = []
+      dataPlan.value.location_old = ""
+      showlocationold.value = false
+      frameVisible.value = false
+      dataLineOld.value = []
+          dataShelfOld.value = []
+    }
+
+    if(inputDataNew.value.length > 8){
+      frameVisibleNew.value = false
+      currentLineNew.value = ''
+        currentWarehouseNew.value = ''
+        currentShelfNew.value = ''
+        dataLocationNew.value = []
+        showDataLocationNew.value = false
+        dataPlan.value.location_new = ""
+        dataShelfNew.value = []
+        dataLineNew.value = []
+    }
+
+    if(inputDataOld.value.length > 8){
+      showlocationold.value = false
+      currentLineOld.value = ''
+        currentWarehouseOld.value = ''
+        currentShelfOld.value = ''
+        dataLocationOld.value = []
+      dataPlan.value.location_old = ""
+      frameVisible.value = false
+      dataLineOld.value = []
+          dataShelfOld.value = []
+
+    }
+    }, 300)
   })
 
   onUpdated(() => { // Kiểm tra khi giao diện đã load hết dữ liệu lên
@@ -321,12 +368,24 @@ import {useRouter, useRoute} from 'vue-router'
   })
 
   watch(inputDataNew.value, async () => {
+    if(!inputDataNew.value.trim() || inputDataNew.value.length <= 0){
+      currentLineNew.value = ''
+        currentWarehouseNew.value = ''
+        currentShelfNew.value = ''
+        dataLocationNew.value = []
+      dataPlan.value.location_new = ""
+      showDataLocationNew.value = false
+      frameVisibleNew.value = false
+      dataShelfNew.value = []
+      dataLineNew.value = []
+      return
+    }
     await nextTick()
     inputRefNew.value?.focus()
   })
 
   const loadDataOldNew = () =>{
-    if(!inputDataNew.value.trim()){
+    if(!inputDataNew.value.trim() || inputDataNew.value.length <= 0){
       currentLineNew.value = ''
         currentWarehouseNew.value = ''
         currentShelfNew.value = ''
@@ -488,10 +547,22 @@ import {useRouter, useRoute} from 'vue-router'
   }
 
   watch(inputDataOld.value, () => {
+    if(!inputDataOld.value.trim() || inputDataOld.value.length <= 0){
+      currentLineOld.value = ''
+        currentWarehouseOld.value = ''
+        currentShelfOld.value = ''
+        dataLocationOld.value = []
+      dataPlan.value.location_old = ""
+      showlocationold.value = false
+      frameVisible.value = false
+      dataLineOld.value = []
+          dataShelfOld.value = []
+      return
+    }
     loadDataOldSearch()
   })
   const loadDataOldSearch = () => {
-    if(!inputDataOld.value.trim()){
+    if(!inputDataOld.value.trim() || inputDataOld.value.length <= 0){
       currentLineOld.value = ''
         currentWarehouseOld.value = ''
         currentShelfOld.value = ''
@@ -609,7 +680,6 @@ import {useRouter, useRoute} from 'vue-router'
         currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
 
           dataPlan.value.location_old = ""
-          BgOld.value = null
           findAllLocationOld()
 
       const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value.split('').slice(0,2).join(''))
@@ -629,7 +699,6 @@ import {useRouter, useRoute} from 'vue-router'
           currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
 
           dataPlan.value.location_old = ""
-          BgOld.value = null
           findAllLocationOld()
       }
 
@@ -689,8 +758,6 @@ import {useRouter, useRoute} from 'vue-router'
     frameVisibleNew.value = !frameVisibleNew.value
   }
   const ClickDataOld = async (location) => {
-    
-
     if(checkLocationExsis(location) == dataPlan.value.location_new){
       alert("Data Exsis")
       return
@@ -814,10 +881,15 @@ import {useRouter, useRoute} from 'vue-router'
       dataPlan.value.location_new = location
     }
     
+    console.log(BgNew.value)
     if(dataLocationNew?.value.productbyShelf.some(x => x.location == checkDataLocation.value)){
+      if(checkDataLocation.value != "")
+        document.querySelector('.bg_new' + checkDataLocation.value.slice(-2)).style.backgroundColor = 'violet'
       if(BgNew.value != null)
         document.querySelector('.' + BgNew.value).style.backgroundColor = 'violet'
     }else{
+      if(checkDataLocation.value != "")
+        document.querySelector('.bg_new' + checkDataLocation.value.slice(-2)).style.backgroundColor = 'white'
       if(BgNew.value != null)
         document.querySelector('.' + BgNew.value).style.backgroundColor = 'white'
     }
@@ -848,24 +920,12 @@ import {useRouter, useRoute} from 'vue-router'
       inputDataNew.value = currentWarehouseNew.value + '' + currentLineNew.value + '0' + currentShelfNew.value + '' + location.slice(-2)
     else inputDataNew.value = currentWarehouseNew.value + '' + currentLineNew.value + '' + currentShelfNew.value + '' + location.slice(-2)
   }
-  const OpenFrame = (list, location) => {
-    frameData.value = []
-
-    if(list?.length <= 0 || list === null || list === undefined)
-      return
-
-    const checkList = list.filter((l) => l.location.slice(-2) == location)
-    if(checkList.length <= 0)
-      return
-
-    checkList.forEach(element => {
-      frameData.value.push(element)
-    });
-
-    frameVisible.value = !frameVisible.value
-  }
-  
+ 
   const OpenFrameNew = (list, location) => {
+
+    if(!checkDatamaTran(location.slice(-2)))
+        return
+
     if(location == '' || location == null || location == undefined)
         return
     frameDataNew.value = []
@@ -886,6 +946,27 @@ import {useRouter, useRoute} from 'vue-router'
       frameDataNew.value.push({location: currentWarehouseNew.value + '' + currentLineNew.value + '' + currentShelfNew.value + '' + location})
     }
   }
+
+  const OpenFrame = (list, location) => {
+    frameData.value = []
+
+    if(!checkDatamaTran(location.slice(-2)))
+        return
+
+    if(list?.length <= 0 || list === null || list === undefined)
+      return
+
+    const checkList = list.filter((l) => l.location.slice(-2) == location)
+    if(checkList.length <= 0)
+      return
+
+    checkList.forEach(element => {
+      frameData.value.push(element)
+    });
+
+    frameVisible.value = !frameVisible.value
+  }
+  
 
   const closeFrame = () => {
     frameVisible.value = !frameVisible.value

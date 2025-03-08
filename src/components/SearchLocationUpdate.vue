@@ -559,7 +559,7 @@ import {ref, getCurrentInstance, watch, onMounted} from 'vue';
   }
 </script>
 
-<style>
+<style scoped>
 .table-page {
   padding: 20px;
   font-family: 'Arial', sans-serif;

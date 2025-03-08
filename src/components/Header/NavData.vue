@@ -38,7 +38,7 @@
                   </li>
 
                   <li class="b4" @click="SwapBackGroupColor('b4')">
-                      <router-link to="/AllPlanUpdatePage" class="waves-effect waves-dark">
+                      <router-link to="/AllPlanUpdatePageTable" class="waves-effect waves-dark">
                           <i class="fa fa-paper-plane"></i>
                           <span class="hide-menu">搜尋計劃</span>
                       </router-link>
