@@ -1429,8 +1429,13 @@ import {useRouter, useRoute} from 'vue-router'
         const checkDataShelfLoad = dataShelfOld.value.find(x => x.shelf == inputDataOld.value.split('').slice(4,6).join(''))
 
         if(inputDataOld.value.length == 6 || inputDataOld.value.length == 8){
-          if((checkDataShelfLoad == null || checkDataLine == null) 
-            || dataLineOld.value.length <= 0){
+          // if((checkDataShelfLoad == null || checkDataLine == null) 
+          //   || dataLineOld.value.length <= 0){
+          //   resetData()
+          // }
+
+          if(checkDataShelfLoad == null){
+              // alert("Null checkDataShelfLoad == null || checkDataLine == null) || dataLineOld.value.length <= 0 2222")
             resetData()
           }
         }
@@ -1690,8 +1695,12 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
         const checkDataShelfLoad = dataShelfNew.value.find(x => x.shelf == inputDataNew.value.split('').slice(4,6).join(''))
 
         if(inputDataNew.value.length == 6 || inputDataNew.value.length == 8){
-          if((checkDataShelfLoad == null || checkDataLine == null) 
-            || dataLineNew.value.length <= 0){
+          // if((checkDataShelfLoad == null || checkDataLine == null) 
+          //   || dataLineNew.value.length <= 0){
+          //     resetDataNew()
+          // }
+
+          if(checkDataShelfLoad == null){
               resetDataNew()
           }
         }
