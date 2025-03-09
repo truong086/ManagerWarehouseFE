@@ -171,8 +171,28 @@ margin-right: 0;
 
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import {useRoute} from 'vue-router'
 
+const route = useRoute()
+
+onMounted(() => {
+    checkDataPath(route.path)
+})
+watch(() => route.path, (newPath) => {
+    checkDataPath(newPath)
+})
+
+const checkDataPath = (newPath) => {
+    if(newPath === '/PlanUpdatePage')
+        SwapBackGroupColor('b1')
+    if(newPath === '/SearechProductUpdatePage')
+        SwapBackGroupColor('b2')
+    if(newPath === '/SearchLocationUpdatePage')
+        SwapBackGroupColor('b3')
+    if(newPath === '/AllPlanUpdatePageTable')
+        SwapBackGroupColor('b4')
+}
 const isSidebarOpen = ref(true) // Trạng thái sidebar
 
 const toggleSidebar = () => {

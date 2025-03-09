@@ -95,7 +95,7 @@
 
                 <button
                 class="btn btn-location"
-                style="background-color: rgba(11, 176, 217, 0.8)"
+                style="background-color: rgba(11, 176, 217, 0.8); margin-left: 10px;"
                 @click="deleteData(itemData.id)"
                 >
                 刪除計劃

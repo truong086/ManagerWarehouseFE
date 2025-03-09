@@ -17,15 +17,22 @@
 
           <div style="display: flex; margin: 0 20px;">
             <h2 style="margin: 0 10px;">舊排: </h2>
-            <select v-model="currentLineOld" @change="selectShelf" style="width: 100px; height: 35px;">
+            <select v-model="currentLineOld" v-if="dataLineOld.length > 0" @change="selectShelf" style="width: 100px; height: 35px;">
               <option v-for="(item, index) in dataLineOld" :key="index" :value="item">{{ item }}</option>
+            </select>
+            <select v-model="currentLineOld" v-else style="width: 100px; height: 35px;">
+              <option>No Data</option>
             </select>
           </div>
 
           <div style="display: flex;">
             <h2 style="margin: 0 10px;">舊架: </h2>
-            <select v-model="currentShelfOld" @change="selectLocation" style="width: 100px; height: 35px;">
+            <select v-model="currentShelfOld" v-if="dataShelfOld.length > 0" @change="selectLocation" style="width: 100px; height: 35px;">
               <option v-for="(item, index) in dataShelfOld" :key="index" :value="item.shelf">{{ item.shelf }}</option>
+            </select>
+
+            <select v-model="currentShelfOld" v-else style="width: 100px; height: 35px;">
+              <option>No Data</option>
             </select>
           </div>
             </div>
@@ -230,7 +237,7 @@
 
 <script setup>
 import axios from 'axios';
-import {ref, getCurrentInstance, onMounted, onUpdated, watch, nextTick} from 'vue';
+import {ref, getCurrentInstance, onMounted, onUpdated, watch, nextTick, onUnmounted} from 'vue';
 import {useRouter, useRoute} from 'vue-router'
   import {useToast} from 'vue-toastification'
   import Swal from "sweetalert2";
@@ -273,6 +280,7 @@ import {useRouter, useRoute} from 'vue-router'
   const BgNew = ref(null)
   const showDataLocationNew = ref(false)
   const checkDataLocation = ref("")
+  const checkDataLocationOld = ref("")
   const inputDataOld = ref('')
   const inputDataNew = ref('')
   const inputRef = ref(null)
@@ -362,6 +370,9 @@ import {useRouter, useRoute} from 'vue-router'
     console.log("Hello World")
   })
 
+  onUnmounted(() => {
+    clearInterval(dataInvalive.value) // Xóa "Interval" khi component bị hủy
+  })
   watch(inputDataOld.value, async () => {
     await nextTick()
     inputRef.value?.focus()
@@ -384,6 +395,15 @@ import {useRouter, useRoute} from 'vue-router'
     inputRefNew.value?.focus()
   })
 
+  const resetDataNew = () => {
+    currentLineNew.value = '';
+    currentShelfNew.value = '';
+    dataLocationNew.value = [];
+    dataLineNew.value = [];
+    dataShelfNew.value = [];
+    showDataLocationNew.value = false;
+    frameVisibleNew.value = false;
+  }
   const loadDataOldNew = () =>{
     if(!inputDataNew.value.trim() || inputDataNew.value.length <= 0){
       currentLineNew.value = ''
@@ -421,7 +441,6 @@ import {useRouter, useRoute} from 'vue-router'
           currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
           selectShelfNew()
           dataPlan.value.location_new = ""
-          return
       }
       const checkDataAreaLoadNew = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2, 4).join(''))
@@ -430,11 +449,7 @@ import {useRouter, useRoute} from 'vue-router'
           currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
           selectShelfNew()
         }else{
-          currentLineNew.value = ''
-          dataLocationNew.value = []
-          frameVisibleNew.value = false
-          showDataLocationNew.value = false
-          dataLineNew.value = []
+          resetDataNew()
         }
       dataPlan.value.location_new = ""
       
@@ -447,25 +462,59 @@ import {useRouter, useRoute} from 'vue-router'
         findAllLineNew()
       }
 
+      if(dataShelfNew.value.length <= 0){
+        currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+        findAllShelfNew()
+
+        currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
+
+        selectLocationNew()
+      }
       const checkDataAreaLoadNew = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2,4).join(''))
         const checkDataShelfLoad = dataShelfNew.value.find(x => x.shelf == inputDataNew.value.split('').slice(4,6).join(''))
-        if(checkDataShelfLoad != null && checkDataAreaLoadNew != null && checkDataLine != null){
-          currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+        
+        if(checkDataShelfLoad == null){
+          currentShelfNew.value = ''
+          dataLocationNew.value = []
+          dataShelfNew.value = []
+          showDataLocationNew.value = false
+          frameVisibleNew.value = false
+          return
+        }
+
+        if(checkDataAreaLoadNew == null){
+          resetDataNew()
+          return
+        }
+
+        if(checkDataLine == null){
+          resetDataNew()
+          return
+        }
+        
+        // if(checkDataShelfLoad != null && checkDataAreaLoadNew != null && checkDataLine != null){
+        //   currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+        //   currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+        //   currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
+
+        //   selectLocationNew()
+        // }else{
+        //   currentWarehouseNew.value = ''
+        //   currentLineNew.value = ''
+        //   currentShelfNew.value = ''
+        //   dataLocationNew.value = []
+        //   frameVisibleNew.value = false
+        //   showDataLocationNew.value = false
+        //   dataShelfNew.value = []
+        //   dataLineNew.value = []
+        // }
+
+        currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
           currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
           currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
 
           selectLocationNew()
-        }else{
-          currentWarehouseNew.value = ''
-          currentLineNew.value = ''
-          currentShelfNew.value = ''
-          dataLocationNew.value = []
-          frameVisibleNew.value = false
-          showDataLocationNew.value = false
-          dataShelfNew.value = []
-          dataLineNew.value = []
-        }
 
       dataPlan.value.location_new = ""
       
@@ -473,56 +522,98 @@ import {useRouter, useRoute} from 'vue-router'
 
     else if(inputDataNew.value.length == 8){
 
-      if(dataLineNew.value.length <= 0){
+      BgNew.value = null
+      if(dataLineNew.value.length <= 0 || dataShelfNew.value.length <= 0){
         currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
         findAllLineNew()
         currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
         findAllShelfNew()
         currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
 
-        if(dataLocationNew.value.length <= 0){
-          dataPlan.value.location_new = ""
-          BgNew.value = null
-          findAllLocationNew()
-      }
+        findAllLocationNew()
         // OpenFrameNew(dataLocationNew.value.productbyShelf, inputDataNew.value.split('').slice(6,8).join(''))
-
-        return
       }
-      // dataLocationOld.value = []
-      currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
-        findAllLineNew()
-        currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
-        findAllShelfNew()
-        currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
-
-          dataPlan.value.location_new = ""
-          BgNew.value = null
-          findAllLocationNew()
-
 
       const checkDataAreaLoadOld = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2,4).join(''))
         const checkDataShelfLoad = dataShelfNew.value.find(x => x.shelf == inputDataNew.value.split('').slice(4,6).join(''))
-      if(!checkDatamaTran(inputDataNew.value.split('').slice(6,8).join('')) || checkDataShelfLoad == null || checkDataAreaLoadOld == null || checkDataLine == null){
-        alert("No Location")
-        showDataLocationNew.value = false
-        frameVisibleNew.value = false
-        dataShelfNew.value = []
-        dataLineNew.value = []
-        return
-      }
+      
+      
+        if(checkDataShelfLoad == null){
+          showDataLocationNew.value = false
+          dataPlan.value.location_new = ""
+          frameVisibleNew.value = false
+          currentShelfNew.value = ''
+          dataShelfNew.value = []
+          dataLocationNew.value = []
 
-      if(dataLocationNew.value.length <= 0){
-        currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+          return
+        }
+
+        if(checkDataAreaLoadOld == null){
+          showDataLocationNew.value = false
+          dataPlan.value.location_new = ""
+          frameVisibleNew.value = false
+          currentShelfNew.value = ''
+          dataShelfNew.value = []
+          dataLocationNew.value = []
+          currentLineNew.value = ''
+          dataLineNew.value = []
+          
+
+          if(BgNew.value !== null)
+              document.querySelector('.' + BgNew.value).style.backgroundColor = 'violet'
+
+          return
+        }
+
+        if(checkDataLine == null){
+          showDataLocationNew.value = false
+          dataPlan.value.location_new = ""
+          frameVisibleNew.value = false
+          currentShelfNew.value = ''
+          dataShelfNew.value = []
+          dataLocationNew.value = []
+          currentLineNew.value = ''
+          
+
+          if(BgNew.value !== null)
+              document.querySelector('.' + BgNew.value).style.backgroundColor = 'violet'
+
+          return
+        }
+        if(!checkDatamaTran(inputDataNew.value.split('').slice(6,8).join('')) || checkDataShelfLoad == null || checkDataAreaLoadOld == null || checkDataLine == null){
+          alert("No Location !!!")
+        
+        dataLocationNew.value = []
+        showDataLocationNew.value = false
+          dataPlan.value.location_new = ""
+          frameVisibleNew.value = false
+
+          if(BgNew.value !== null)
+              document.querySelector('.' + BgNew.value).style.backgroundColor = 'violet'
+          
+          BgNew.value = null
+        return
+        }
+
+      // if(dataLocationNew.value.length <= 0){
+      //   currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+      //     currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+      //     currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
+
+      //     dataPlan.value.location_new = ""
+      //   BgNew.value = null
+      //   findAllLocationNew()
+      // }
+      
+
+      currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
           currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
           currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
 
           dataPlan.value.location_new = ""
-        BgNew.value = null
         findAllLocationNew()
-      }
-      
 
 
       // OpenFrameNew(dataLocationNew.value.productbyShelf, inputDataNew.value.split('').slice(6,8).join(''))
@@ -561,6 +652,18 @@ import {useRouter, useRoute} from 'vue-router'
     }
     loadDataOldSearch()
   })
+  
+  const resetData = () => {
+    // currentWarehouseOld.value = '';
+    currentLineOld.value = '';
+    currentShelfOld.value = '';
+    dataLocationOld.value = [];
+    dataLineOld.value = [];
+    dataShelfOld.value = [];
+    showlocationold.value = false;
+    frameVisible.value = false;
+};
+
   const loadDataOldSearch = () => {
     if(!inputDataOld.value.trim() || inputDataOld.value.length <= 0){
       currentLineOld.value = ''
@@ -595,10 +698,9 @@ import {useRouter, useRoute} from 'vue-router'
         currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
         findAllLineOld()
         currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
-          currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
           selectShelf()
           dataPlan.value.location_old = ""
-          return
+
       }
       const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineOld.value.find(x => x == inputDataOld.value.split('').slice(2,4).join(''))
@@ -607,11 +709,7 @@ import {useRouter, useRoute} from 'vue-router'
           currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
           selectShelf()
         }else{
-          currentLineOld.value = ''
-          dataLocationOld.value = []
-          showlocationold.value = false
-          frameVisible.value = false
-          dataLineOld.value = []
+          resetData()
         }
       dataPlan.value.location_old = ""
     }
@@ -623,6 +721,28 @@ import {useRouter, useRoute} from 'vue-router'
         findAllLineOld()
       }
 
+      if(dataShelfOld.value.length <= 0){
+        currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+        findAllShelfOld()
+
+        currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
+
+        selectLocation()
+      }
+      if(dataLineOld.value.length <= 0 && dataShelfOld.value.length <= 0){
+        currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+        findAllLineOld()
+
+        currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+        findAllShelfOld()
+
+        currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
+
+        selectLocation()
+      }
+
+
+
       // if(dataShelfOld.value.length <= 0 && dataLineOld.value.length > 0){
       //   currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
       //   findAllShelfOld()
@@ -631,23 +751,45 @@ import {useRouter, useRoute} from 'vue-router'
         const checkDataLine = dataLineOld.value.find(x => x == inputDataOld.value.split('').slice(2,4).join(''))
         const checkDataShelfLoad = dataShelfOld.value.find(x => x.shelf == inputDataOld.value.split('').slice(4,6).join(''))
 
-        if(checkDataShelfLoad != null && checkDataAreaLoadOld != null && checkDataLine != null){
-          currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+        if(checkDataShelfLoad == null){
+          currentShelfOld.value = ''
+          dataLocationOld.value = []
+          dataShelfOld.value = []
+          showlocationold.value = false
+          frameVisible.value = false
+          return
+        }
+
+        if(checkDataAreaLoadOld == null){
+          resetData()
+          return
+        }
+
+        if(checkDataLine == null){
+          resetData()
+          return
+        }
+        // if(checkDataShelfLoad != null && checkDataAreaLoadOld != null && checkDataLine != null){
+        //   currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+        //   currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+        //   currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
+
+        //   selectLocation()
+        // }else{
+        //   currentLineOld.value = ''
+        //   currentShelfOld.value = ''
+        //   dataLocationOld.value = []
+        //   showlocationold.value = false
+        //   frameVisible.value = false
+        //   dataLineOld.value = []
+        //   dataShelfOld.value = []
+        // }
+
+        currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
           currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
           currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
 
           selectLocation()
-        }else{
-          currentWarehouseOld.value = ''
-          currentLineOld.value = ''
-          currentShelfOld.value = ''
-          dataLocationOld.value = []
-          showlocationold.value = false
-          frameVisible.value = false
-          dataLineOld.value = []
-          dataShelfOld.value = []
-        }
-
       dataPlan.value.location_old = ""
       
     }
@@ -656,51 +798,115 @@ import {useRouter, useRoute} from 'vue-router'
       // if(dataLineOld.value.length <= 0){
       //     findAllLineOld()
       //   }
-      if(dataLineOld.value.length <= 0){
+      // if(dataLineOld.value.length <= 0){
+      //   currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+      //   findAllLineOld()
+      //   currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+      //   findAllShelfOld()
+      //   currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
+
+      //   if(dataLocationOld.value.length <= 0){
+      //     dataPlan.value.location_old = ""
+      //     BgOld.value = null
+      //     findAllLocationOld()
+      // }
+      //   // OpenFrame(dataLocationOld.value.productbyShelf, inputDataOld.value.split('').slice(6,8).join(''))
+
+      //   return
+      // }
+      // dataLocationOld.value = []
+      
+      BgOld.value = null
+      if(dataLineOld.value.length <= 0 || dataShelfOld.value.length <= 0){
         currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
         findAllLineOld()
         currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
         findAllShelfOld()
         currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
 
-        if(dataLocationOld.value.length <= 0){
-          dataPlan.value.location_old = ""
-          BgOld.value = null
-          findAllLocationOld()
+        findAllLocationOld()
       }
-        // OpenFrame(dataLocationOld.value.productbyShelf, inputDataOld.value.split('').slice(6,8).join(''))
-
-        return
-      }
-      // dataLocationOld.value = []
-      currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
-        findAllLineOld()
-        currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
-        findAllShelfOld()
-        currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
-
-          dataPlan.value.location_old = ""
-          findAllLocationOld()
 
       const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineOld.value.find(x => x == inputDataOld.value.split('').slice(2,4).join(''))
         const checkDataShelfLoad = dataShelfOld.value.find(x => x.shelf == inputDataOld.value.split('').slice(4,6).join(''))
 
+        if(checkDataShelfLoad == null){
+          showlocationold.value = false
+          dataPlan.value.location_old = ""
+          frameVisible.value = false
+          currentShelfOld.value = ''
+          dataShelfOld.value = []
+          dataLocationOld.value = []
+
+          return
+        }
+
+        if(checkDataAreaLoadOld == null){
+          showlocationold.value = false
+          dataPlan.value.location_old = ""
+          frameVisible.value = false
+          currentShelfOld.value = ''
+          dataShelfOld.value = []
+          dataLocationOld.value = []
+          currentLineOld.value = ''
+          dataLineOld.value = []
+          
+
+          if(BgOld.value !== null)
+              document.querySelector('.' + BgOld.value).style.backgroundColor = 'violet'
+
+          return
+        }
+
+        if(checkDataLine == null){
+          showlocationold.value = false
+          dataPlan.value.location_old = ""
+          frameVisible.value = false
+          currentShelfOld.value = ''
+          dataShelfOld.value = []
+          dataLocationOld.value = []
+          currentLineOld.value = ''
+          
+
+          if(BgOld.value !== null)
+              document.querySelector('.' + BgOld.value).style.backgroundColor = 'violet'
+
+          return
+        }
       if(!checkDatamaTran(inputDataOld.value.split('').slice(6,8).join('')) || checkDataShelfLoad == null || checkDataAreaLoadOld == null || checkDataLine == null){
         alert("No Location !!!")
-        dataLineOld.value = []
-          dataShelfOld.value = []
+        
+        dataLocationOld.value = []
+        showlocationold.value = false
+          dataPlan.value.location_old = ""
+          frameVisible.value = false
+
+          if(BgOld.value !== null)
+              document.querySelector('.' + BgOld.value).style.backgroundColor = 'violet'
+          
+          BgOld.value = null
         return
       }
 
-      if(dataLocationOld.value.length <= 0){
+      currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+        // findAllLineOld()
         currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
-          currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
-          currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
+        // findAllShelfOld()
+        currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
 
-          dataPlan.value.location_old = ""
+      dataPlan.value.location_old = ""
           findAllLocationOld()
-      }
+
+          
+      // if(dataLocationOld.value.length <= 0){
+      //   currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+      //     currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+      //     currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
+
+      //     dataPlan.value.location_old = ""
+      //     findAllLocationOld()
+      // }
 
       // OpenFrame(dataLocationOld.value.productbyShelf, inputDataOld.value.split('').slice(6,8).join(''))
       
@@ -733,7 +939,7 @@ import {useRouter, useRoute} from 'vue-router'
     return false
   }
   const backData = () => {
-    router.push("/AllPlanUpdatePage")
+    router.push("/AllPlanUpdatePageTable")
   }
 
   const showPlanNewData = () => {
@@ -780,11 +986,27 @@ import {useRouter, useRoute} from 'vue-router'
     }
 
     dataPlan.value.location_old = location
-    if(BgOld.value !== null)
-        document.querySelector('.' + BgOld.value).style.backgroundColor = 'violet'
+    if(checkDataLocationOld.value.trim()){
+      if(dataLocationOld?.value.productbyShelf.some(x => x.location == checkDataLocationOld.value)){
+        document.querySelector('.bg_old' + checkDataLocationOld.value.slice(-2)).style.backgroundColor = 'violet'
+        if(BgOld.value !== null)
+          document.querySelector('.' + BgOld.value).style.backgroundColor = 'violet'
+      }else{
+        document.querySelector('.bg_old' + checkDataLocationOld.value.slice(-2)).style.backgroundColor = 'white'
+        if(BgOld.value !== null)
+          document.querySelector('.' + BgOld.value).style.backgroundColor = 'white'
+      }
+    }else{
+      if(BgOld.value !== null)
+          document.querySelector('.' + BgOld.value).style.backgroundColor = 'violet'
+    }
+    
+    
+    
     
     document.querySelector('.bg_old' + location.slice(-2)).style.backgroundColor = 'yellow'
 
+    checkDataLocationOld.value = location
     BgOld.value = 'bg_old' + location.slice(-2)
 
     frameVisible.value = !frameVisible.value
@@ -930,6 +1152,9 @@ import {useRouter, useRoute} from 'vue-router'
         return
     frameDataNew.value = []
     frameVisibleNew.value = !frameVisibleNew.value
+
+    console.log(list)
+    console.log(location)
     if(list?.length >= 0 && list !== null && list !== undefined){
       const checkList = list.filter((l) => l.location.slice(-2) == location)
       if(checkList.length <= 0){
@@ -1005,6 +1230,8 @@ import {useRouter, useRoute} from 'vue-router'
     inputDataOld.value = currentWarehouseOld.value +  '' + currentLineOld.value
   }
   const selectLocation = () => {
+    
+
     dataPlan.value.location_old = ""
     showlocationold.value = false
     BgOld.value = null
@@ -1071,6 +1298,13 @@ import {useRouter, useRoute} from 'vue-router'
       const missingNumbers = fullRange.filter(num => !dataLineOld.value.includes(num));
 
       dataLineOld.value = [...dataLineOld.value, ...missingNumbers].sort((a, b) => a - b);
+      
+      const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value.split('').slice(0,2).join(''))
+        const checkDataLine = dataLineOld.value.find(x => x == inputDataOld.value.split('').slice(2,4).join(''))
+        if(checkDataAreaLoadOld == null || checkDataLine == null){
+          resetData()
+          
+        }
     }
 
     isLoading.value = false;
@@ -1103,22 +1337,57 @@ import {useRouter, useRoute} from 'vue-router'
       const missingItems = missingNumbers.map(num => ({ shelf: num }));
 
       dataShelfOld.value = [...dataShelfOld.value, ...missingItems].sort((a, b) => a.shelf - b.shelf);
-      }else{
+        currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+          currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+          currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
+
+          const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value.split('').slice(0,2).join(''))
+        const checkDataLine = dataLineOld.value.find(x => x == inputDataOld.value.split('').slice(2,4).join(''))
+        const checkDataShelfLoad = dataShelfOld.value.find(x => x.shelf == inputDataOld.value.split('').slice(4,6).join(''))
+
+        if(inputDataOld.value.length == 6 || inputDataOld.value.length == 8){
+          if(checkDataShelfLoad == null){
+            dataShelfOld.value = []
+          }
+        }
+
+        if(checkDataAreaLoadOld == null && checkDataLine == null){
+          resetData()
+        }
+    }else{
         for(let i = 1; i <= 20; i++){
           dataShelfOld.value.push({shelf: '' + i})
         }
         
+        currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+          currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+          currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
+
+          const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value.split('').slice(0,2).join(''))
+        const checkDataLine = dataLineOld.value.find(x => x == inputDataOld.value.split('').slice(2,4).join(''))
+        const checkDataShelfLoad = dataShelfOld.value.find(x => x.shelf == inputDataOld.value.split('').slice(4,6).join(''))
+
+        if(inputDataOld.value.length == 6 || inputDataOld.value.length == 8){
+          if(checkDataShelfLoad == null){
+            dataShelfOld.value = []
+          }
+        }
+
+        if(checkDataAreaLoadOld == null && checkDataLine == null){
+          resetData()
+          showlocationold.value = false
+        }
       }
       
     }else{
       dataShelfOld.value = []
     }
 
+    
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
 
-  await nextTick()
   inputRef.value?.focus()
   }
 
@@ -1138,6 +1407,14 @@ import {useRouter, useRoute} from 'vue-router'
         return numA - numB
       }) 
 
+
+
+      if(dataLocationOld.value.productbyShelf.length > 0 && inputDataOld.value.length == 6)
+          showlocationold.value = true
+
+      if(dataLocationOld.value.productbyShelf.length > 0 && inputDataOld.value.length == 8 && checkDatamaTran(inputDataOld.value.split('').slice(6,8).join('')))
+          showlocationold.value = true
+
       // dataLocationOld.value.findAllPlanDatas.map((item) => {
       //   return {
       //     ...item,
@@ -1147,9 +1424,12 @@ import {useRouter, useRoute} from 'vue-router'
       // })
     }
 
+    
     OpenFrame(dataLocationOld.value.productbyShelf, inputDataOld.value.split('').slice(6,8).join(''))
-    showlocationold.value = true
-
+    
+currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+          currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+          currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
@@ -1257,6 +1537,12 @@ import {useRouter, useRoute} from 'vue-router'
       const missingNumbers = fullRange.filter(num => !dataLineNew.value.includes(num));
 
       dataLineNew.value = [...dataLineNew.value, ...missingNumbers].sort((a, b) => a - b);
+      const checkDataAreaLoadNew = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
+        const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2, 4).join(''))
+        if(checkDataAreaLoadNew == null || checkDataLine == null){
+          resetDataNew()
+          
+        }
     }
 
     isLoading.value = false;
@@ -1289,9 +1575,39 @@ import {useRouter, useRoute} from 'vue-router'
       const missingItems = missingNumbers.map(num => ({ shelf: num }));
 
       dataShelfNew.value = [...dataShelfNew.value, ...missingItems].sort((a, b) => a.shelf - b.shelf);
-      }else{
+        
+      const checkDataAreaLoadOld = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
+        const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2,4).join(''))
+        const checkDataShelfLoad = dataShelfNew.value.find(x => x.shelf == inputDataNew.value.split('').slice(4,6).join(''))
+
+        if(inputDataNew.value.length == 6 || inputDataNew.value.length == 8){
+          if(checkDataShelfLoad == null){
+            dataShelfNew.value = []
+          }
+        }
+
+        if(checkDataAreaLoadOld == null && checkDataLine == null){
+          resetDataNew()
+          showDataLocationNew.value = false
+        }
+    
+    }else{
         for(let i = 1; i <= 20; i++){
           dataShelfNew.value.push({shelf: '' + i})
+        }
+
+        const checkDataAreaLoadOld = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
+        const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2,4).join(''))
+        const checkDataShelfLoad = dataShelfNew.value.find(x => x.shelf == inputDataNew.value.split('').slice(4,6).join(''))
+
+        if(inputDataNew.value.length == 6 || inputDataNew.value.length == 8){
+          if(checkDataShelfLoad == null){
+            dataShelfNew.value = []
+          }
+        }
+
+        if(checkDataAreaLoadOld == null && checkDataLine == null){
+          resetDataNew()
         }
       }
       
@@ -1336,11 +1652,33 @@ import {useRouter, useRoute} from 'vue-router'
 
         return numA - numB
       }) 
+
+      if(dataLocationNew.value.productbyShelf.length > 0 && inputDataNew.value.length == 6)
+          showDataLocationNew.value = true
+
+      if(dataLocationNew.value.productbyShelf.length > 0 && inputDataNew.value.length == 8 && checkDatamaTran(inputDataNew.value.split('').slice(6,8).join('')))
+          showDataLocationNew.value = true
+
+      // if(dataLocationNew.value.productbyShelf.length > 0)
+      //     showDataLocationNew.value = true
+      
     }
 
-    showDataLocationNew.value = true
-OpenFrameNew(dataLocationNew.value.productbyShelf, inputDataNew.value.split('').slice(6,8).join(''))
-    isLoading.value = false;
+    currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+          currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+          currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
+
+    if(showDataLocationNew.value == true && currentLineNew.value != null && currentLineNew.value != null && currentShelfNew.value != null){
+      OpenFrameNew(dataLocationNew.value.productbyShelf, inputDataNew.value.split('').slice(6,8).join(''))
+    }
+
+    
+
+
+currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+          currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+          currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
+isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
   }
@@ -1363,7 +1701,7 @@ OpenFrameNew(dataLocationNew.value.productbyShelf, inputDataNew.value.split('').
     const res = await axios.put(hostname + `/api/Plan/UpdateData?id=${route.query.id}`, dataPlan.value)
     if(res.data.success){
       Toast.success("Success")
-      router.push("/AllPlanUpdatePage")
+      router.push("/AllPlanUpdatePageTable")
       alert("Successs")
     }else{
       alert("error")
@@ -1457,7 +1795,7 @@ OpenFrameNew(dataLocationNew.value.productbyShelf, inputDataNew.value.split('').
     if(res.data.success){
         Toast.success("Success")
         alert("Successs")
-        router.push("/AllPlanUpdatePage")
+        router.push("/AllPlanUpdatePageTable")
     }else{
         Toast.error(res.data.error)
         alert(res.data.error)
