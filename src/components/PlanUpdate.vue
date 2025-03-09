@@ -307,8 +307,12 @@ import {useRouter, useRoute} from 'vue-router'
       findOneData(route.query.id)
     }
 
-    findAllAreaOld()
-    findAllAreaNew()
+    
+    if(!route.query.id){
+      findAllAreaOld()
+      findAllAreaNew()
+    }
+      
 
     await nextTick()
     inputRef.value?.focus()
@@ -402,7 +406,7 @@ import {useRouter, useRoute} from 'vue-router'
     dataLineNew.value = [];
     dataShelfNew.value = [];
     showDataLocationNew.value = false;
-    frameVisibleNew.value = false;
+    // frameVisibleNew.value = false;
   }
   const loadDataOldNew = () =>{
     if(!inputDataNew.value.trim() || inputDataNew.value.length <= 0){
@@ -532,7 +536,7 @@ import {useRouter, useRoute} from 'vue-router'
     }
 
     else if(inputDataNew.value.length == 8){
-
+      
       BgNew.value = null
       if(dataLineNew.value.length <= 0){
         currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
@@ -1193,7 +1197,7 @@ import {useRouter, useRoute} from 'vue-router'
     if(location == '' || location == null || location == undefined)
         return
     frameDataNew.value = []
-    frameVisibleNew.value = !frameVisibleNew.value
+    frameVisibleNew.value = true
 
     console.log(list)
     console.log(location)
@@ -1231,7 +1235,7 @@ import {useRouter, useRoute} from 'vue-router'
       frameData.value.push(element)
     });
 
-    frameVisible.value = !frameVisible.value
+    frameVisible.value = true
   }
   
 
@@ -1320,6 +1324,8 @@ import {useRouter, useRoute} from 'vue-router'
 
         return letterA.localeCompare(letterb)
       })
+
+      findAllLineOld()
     }
 
     isLoading.value = false;
@@ -1334,7 +1340,8 @@ import {useRouter, useRoute} from 'vue-router'
     isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
-    const res = await axios.get(hostname + `/api/location_addr/FindAllDataLine?area=${currentWarehouseOld.value}`)
+  if(currentWarehouseOld.value != null && currentWarehouseOld.value != ""){
+const res = await axios.get(hostname + `/api/location_addr/FindAllDataLine?area=${currentWarehouseOld.value}`)
     if(res.data.success){
       Swal.fire("Success")
       dataLineOld.value = res.data.content
@@ -1346,6 +1353,10 @@ import {useRouter, useRoute} from 'vue-router'
 
       dataLineOld.value = [...dataLineOld.value, ...missingNumbers].sort((a, b) => a - b);
       
+      currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+          currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+
+      findAllShelfOld()
       const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineOld.value.find(x => x == inputDataOld.value.split('').slice(2,4).join(''))
         if(checkDataAreaLoadOld == null){
@@ -1362,6 +1373,8 @@ import {useRouter, useRoute} from 'vue-router'
             
           }
     }
+  }  
+  
 
     isLoading.value = false;
   document.body.classList.remove("loading");
@@ -1378,6 +1391,7 @@ import {useRouter, useRoute} from 'vue-router'
     isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
+  if(currentLineOld.value != null && currentWarehouseOld.value != null && currentLineOld.value != "" && currentWarehouseOld.value != ""){
     const res = await axios.get(hostname + `/api/location_addr/FindAllDataShelfOne?line=${currentLineOld.value}&area=${currentWarehouseOld.value}`)
     if(res.data.success){
       if(res.data.content.length > 0){
@@ -1400,6 +1414,7 @@ import {useRouter, useRoute} from 'vue-router'
           currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
           currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
 
+          findAllLocationOld()
           const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineOld.value.find(x => x == inputDataOld.value.split('').slice(2,4).join(''))
         const checkDataShelfLoad = dataShelfOld.value.find(x => x.shelf == inputDataOld.value.split('').slice(4,6).join(''))
@@ -1407,6 +1422,10 @@ import {useRouter, useRoute} from 'vue-router'
         if(inputDataOld.value.length == 6 || inputDataOld.value.length == 8){
           if(checkDataShelfLoad == null){
               // alert("Null checkDataShelfLoad == null || checkDataLine == null) || dataLineOld.value.length <= 0 2222")
+            resetData()
+          }
+
+          if(checkDataLine == null || dataLineOld.value.length <= 0){
             resetData()
           }
         }
@@ -1424,6 +1443,7 @@ import {useRouter, useRoute} from 'vue-router'
           currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
           currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
 
+          findAllLocationOld()
           const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineOld.value.find(x => x == inputDataOld.value.split('').slice(2,4).join(''))
         const checkDataShelfLoad = dataShelfOld.value.find(x => x.shelf == inputDataOld.value.split('').slice(4,6).join(''))
@@ -1438,6 +1458,10 @@ import {useRouter, useRoute} from 'vue-router'
               // alert("Null checkDataShelfLoad == null || checkDataLine == null) || dataLineOld.value.length <= 0 2222")
             resetData()
           }
+
+          if(checkDataLine == null || dataLineOld.value.length <= 0){
+            resetData()
+          }
         }
 
         if(checkDataAreaLoadOld == null && checkDataLine == null){
@@ -1448,6 +1472,8 @@ import {useRouter, useRoute} from 'vue-router'
     }else{
       dataShelfOld.value = []
     }
+  }
+    
 
     
     isLoading.value = false;
@@ -1462,6 +1488,7 @@ import {useRouter, useRoute} from 'vue-router'
     isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
+  if(currentLineOld.value != null && currentWarehouseOld.value != null && currentLineOld.value != "" && currentWarehouseOld.value != "" && currentShelfOld.value != null && currentShelfOld.value != ""){
     const res = await axios.get(hostname + `/api/location_addr/FindAllDataLocation?line=${currentLineOld.value}&area=${currentWarehouseOld.value}&shelf=${currentShelfOld.value}`)
     if(res.data.success){
       Swal.fire("Success")
@@ -1506,6 +1533,8 @@ import {useRouter, useRoute} from 'vue-router'
 currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
           currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
           currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
+  }
+    
     isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
@@ -1591,6 +1620,8 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
 
         return letterA.localeCompare(letterb)
       })
+
+      findAllLineNew()
     }
 
     isLoading.value = false;
@@ -1607,6 +1638,8 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
     isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
+
+  if(currentWarehouseNew.value != null && currentWarehouseNew.value != ""){
     const res = await axios.get(hostname + `/api/location_addr/FindAllDataLine?area=${currentWarehouseNew.value}`)
     if(res.data.success){
       Swal.fire("Success")
@@ -1615,8 +1648,13 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
 
       // Tìm các số bị thiếu
       const missingNumbers = fullRange.filter(num => !dataLineNew.value.includes(num));
-
       dataLineNew.value = [...dataLineNew.value, ...missingNumbers].sort((a, b) => a - b);
+
+      currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+          currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+
+      findAllShelfNew()
+      
       const checkDataAreaLoadNew = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2, 4).join(''))
         if(checkDataAreaLoadNew == null){
@@ -1630,6 +1668,8 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
           }
     }
 
+  }
+    
     isLoading.value = false;
     document.body.classList.remove("loading");
     document.body.style.overflow = "auto";
@@ -1644,6 +1684,7 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
     isLoading.value = true;
   document.body.classList.add("loading"); // Add Lớp "loading"
   document.body.style.overflow = "hidden";
+  if(currentLineNew.value != null && currentWarehouseNew.value != null && currentLineNew.value != "" && currentWarehouseNew.value != ""){
     const res = await axios.get(hostname + `/api/location_addr/FindAllDataShelfOne?line=${currentLineNew.value}&area=${currentWarehouseNew.value}`)
     if(res.data.success){
 
@@ -1667,6 +1708,7 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
           currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
           currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
 
+          findAllLocationNew()
       const checkDataAreaLoadOld = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2,4).join(''))
         const checkDataShelfLoad = dataShelfNew.value.find(x => x.shelf == inputDataNew.value.split('').slice(4,6).join(''))
@@ -1674,6 +1716,10 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
         if(inputDataNew.value.length == 6 || inputDataNew.value.length == 8){
           if(checkDataShelfLoad == null){
               resetDataNew()
+          }
+
+          if(checkDataLine == null || dataLineNew.value.length <= 0){
+            resetDataNew()
           }
         }
 
@@ -1690,6 +1736,7 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
           currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
           currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
 
+          findAllLocationNew()
         const checkDataAreaLoadOld = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2,4).join(''))
         const checkDataShelfLoad = dataShelfNew.value.find(x => x.shelf == inputDataNew.value.split('').slice(4,6).join(''))
@@ -1703,6 +1750,10 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
           if(checkDataShelfLoad == null){
               resetDataNew()
           }
+
+          if(checkDataLine == null || dataLineNew.value.length <= 0){
+            resetDataNew()
+          }
         }
 
         if(checkDataAreaLoadOld == null && checkDataLine == null){
@@ -1713,6 +1764,8 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
     }else{
       dataShelfNew.value = []
     }
+  }
+    
 
     isLoading.value = false;
   document.body.classList.remove("loading");
@@ -1739,8 +1792,8 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
   document.body.style.overflow = "hidden";
 
 
-
-    const res = await axios.get(hostname + `/api/location_addr/FindAllDataLocation?line=${currentLineNew.value}&area=${currentWarehouseNew.value}&shelf=${currentShelfNew.value}`)
+if(currentLineNew.value != null && currentWarehouseNew.value != null && currentLineNew.value != "" && currentWarehouseNew.value != "" && currentShelfNew.value != null && currentShelfNew.value != ""){
+  const res = await axios.get(hostname + `/api/location_addr/FindAllDataLocation?line=${currentLineNew.value}&area=${currentWarehouseNew.value}&shelf=${currentShelfNew.value}`)
     if(res.data.success){
       Swal.fire("Success")
       dataLocationNew.value = res.data.content
@@ -1786,6 +1839,8 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
 currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
           currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
           currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
+}
+    
 isLoading.value = false;
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
@@ -1851,12 +1906,12 @@ isLoading.value = false;
       checkDataLocation.value = dataPlan.value.location_new
       findAllAreaOld()
       findAllAreaNew()
-      findAllLineOld()
-      findAllLineNew()
-      findAllShelfOld()
-      findAllShelfNew()
-      findAllLocationOld()
-      findAllLocationNew()  
+      // findAllLineOld()
+      // findAllLineNew()
+      // findAllShelfOld()
+      // findAllShelfNew()
+      // findAllLocationOld()
+      // findAllLocationNew()  
       
       loadDataLast()
       
