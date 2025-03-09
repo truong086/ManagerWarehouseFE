@@ -456,13 +456,24 @@ import {useRouter, useRoute} from 'vue-router'
     }
 
     else if(inputDataNew.value.length == 6){
-
       if(dataLineNew.value.length <= 0){
         currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
         findAllLineNew()
       }
 
-      if(dataShelfNew.value.length <= 0){
+      if(dataShelfNew.value.length <= 0 && dataLineNew.value.length > 0){
+        currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+        findAllShelfNew()
+
+        currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
+
+        selectLocationNew()
+      }
+
+      if(dataLineNew.value.length <= 0 && dataShelfNew.value.length <= 0){
+        currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+        findAllLineNew()
+
         currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
         findAllShelfNew()
 
@@ -523,15 +534,30 @@ import {useRouter, useRoute} from 'vue-router'
     else if(inputDataNew.value.length == 8){
 
       BgNew.value = null
-      if(dataLineNew.value.length <= 0 || dataShelfNew.value.length <= 0){
+      if(dataLineNew.value.length <= 0){
         currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
         findAllLineNew()
+      }
+
+      if(dataShelfNew.value.length <= 0 && dataLineNew.value.length > 0){
         currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
         findAllShelfNew()
+
         currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
 
         findAllLocationNew()
-        // OpenFrameNew(dataLocationNew.value.productbyShelf, inputDataNew.value.split('').slice(6,8).join(''))
+      }
+
+      if(dataLineNew.value.length <= 0 && dataShelfNew.value.length <= 0){
+        currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+        findAllLineNew()
+
+        currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+        findAllShelfNew()
+
+        currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
+
+        findAllLocationNew()
       }
 
       const checkDataAreaLoadOld = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
@@ -719,9 +745,10 @@ import {useRouter, useRoute} from 'vue-router'
       if(dataLineOld.value.length <= 0){
         currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
         findAllLineOld()
+
       }
 
-      if(dataShelfOld.value.length <= 0){
+      if(dataShelfOld.value.length <= 0 && dataLineOld.value.length > 0){
         currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
         findAllShelfOld()
 
@@ -817,16 +844,31 @@ import {useRouter, useRoute} from 'vue-router'
       // dataLocationOld.value = []
       
       BgOld.value = null
-      if(dataLineOld.value.length <= 0 || dataShelfOld.value.length <= 0){
+      if(dataLineOld.value.length <= 0){
         currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
         findAllLineOld()
+
+      }
+
+      if(dataShelfOld.value.length <= 0 && dataLineOld.value.length > 0){
         currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
         findAllShelfOld()
+
         currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
 
         findAllLocationOld()
       }
+      if(dataLineOld.value.length <= 0 && dataShelfOld.value.length <= 0){
+        currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
+        findAllLineOld()
 
+        currentLineOld.value = inputDataOld.value.split('').slice(2,4).join('')
+        findAllShelfOld()
+
+        currentShelfOld.value = inputDataOld.value.split('').slice(4,6).join('')
+
+        findAllLocationOld()
+      }
       const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineOld.value.find(x => x == inputDataOld.value.split('').slice(2,4).join(''))
         const checkDataShelfLoad = dataShelfOld.value.find(x => x.shelf == inputDataOld.value.split('').slice(4,6).join(''))
@@ -1207,9 +1249,10 @@ import {useRouter, useRoute} from 'vue-router'
 
     currentLineOld.value = null
     currentShelfOld.value = null
+    inputDataOld.value = currentWarehouseOld.value
     findAllLineOld()
 
-    inputDataOld.value = currentWarehouseOld.value
+    
   }
 
   const selectShelf = () => {
@@ -1220,14 +1263,15 @@ import {useRouter, useRoute} from 'vue-router'
     dataLocationOld.value = []
     
     currentShelfOld.value = null
-
-    findAllShelfOld()
-
     const chuyendoi = parseInt(currentLineOld.value)
     if(chuyendoi <= 9 && !/^0\d+/.test(currentLineOld.value) && !/^0\d+/.test(currentShelfOld.value))
       inputDataOld.value = currentWarehouseOld.value + '0' + currentLineOld.value
     else 
     inputDataOld.value = currentWarehouseOld.value +  '' + currentLineOld.value
+
+    findAllShelfOld()
+
+    
   }
   const selectLocation = () => {
     
@@ -1236,7 +1280,6 @@ import {useRouter, useRoute} from 'vue-router'
     showlocationold.value = false
     BgOld.value = null
     dataLocationOld.value = []
-    findAllLocationOld()
 
     const chuyendoi = parseInt(currentLineOld.value)
     const chuyendoiShelf = parseInt(currentShelfOld.value)
@@ -1248,6 +1291,10 @@ import {useRouter, useRoute} from 'vue-router'
     else if(chuyendoi > 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLineOld.value) && !/^0\d+/.test(currentShelfOld.value))
     inputDataOld.value = currentWarehouseOld.value + '' + currentLineOld.value + '0' + currentShelfOld.value
     else inputDataOld.value = currentWarehouseOld.value + '' + currentLineOld.value + '' + currentShelfOld.value
+
+    findAllLocationOld()
+
+    
     
   }
 
@@ -1301,10 +1348,19 @@ import {useRouter, useRoute} from 'vue-router'
       
       const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineOld.value.find(x => x == inputDataOld.value.split('').slice(2,4).join(''))
-        if(checkDataAreaLoadOld == null || checkDataLine == null){
+        if(checkDataAreaLoadOld == null){
           resetData()
           
         }
+
+        if(inputDataOld.value.length == 4 || inputDataOld.value.length == 6 || inputDataOld.value.length == 8){
+          if(checkDataLine == null){
+            resetData()
+            
+          }
+          
+            
+          }
     }
 
     isLoading.value = false;
@@ -1350,12 +1406,14 @@ import {useRouter, useRoute} from 'vue-router'
 
         if(inputDataOld.value.length == 6 || inputDataOld.value.length == 8){
           if(checkDataShelfLoad == null){
-            dataShelfOld.value = []
+              // alert("Null checkDataShelfLoad == null || checkDataLine == null) || dataLineOld.value.length <= 0 2222")
+            resetData()
           }
         }
 
         if(checkDataAreaLoadOld == null && checkDataLine == null){
           resetData()
+          
         }
     }else{
         for(let i = 1; i <= 20; i++){
@@ -1371,14 +1429,14 @@ import {useRouter, useRoute} from 'vue-router'
         const checkDataShelfLoad = dataShelfOld.value.find(x => x.shelf == inputDataOld.value.split('').slice(4,6).join(''))
 
         if(inputDataOld.value.length == 6 || inputDataOld.value.length == 8){
-          if(checkDataShelfLoad == null){
-            dataShelfOld.value = []
+          if((checkDataShelfLoad == null || checkDataLine == null) 
+            || dataLineOld.value.length <= 0){
+            resetData()
           }
         }
 
         if(checkDataAreaLoadOld == null && checkDataLine == null){
           resetData()
-          showlocationold.value = false
         }
       }
       
@@ -1412,6 +1470,15 @@ import {useRouter, useRoute} from 'vue-router'
       }) 
 
 
+
+      const checkDataAreaLoadOld = dataAreaOld.value.find(x => x == inputDataOld.value.split('').slice(0,2).join(''))
+        const checkDataLine = dataLineOld.value.find(x => x == inputDataOld.value.split('').slice(2,4).join(''))
+        const checkDataShelfLoad = dataShelfOld.value.find(x => x.shelf == inputDataOld.value.split('').slice(4,6).join(''))
+
+        if(checkDataAreaLoadOld != null && checkDataLine != null && checkDataShelfLoad != null 
+        && (inputDataOld.value.length == 6 
+        || (inputDataOld.value.length == 8 && checkDatamaTran(inputDataOld.value.split('').slice(6,8).join('')))))
+          showlocationold.value = true
 
       if(dataLocationOld.value.productbyShelf.length > 0 && inputDataOld.value.length == 6)
           showlocationold.value = true
@@ -1465,13 +1532,15 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
     dataLocationNew.value = []
 
     currentShelfNew.value = null
-    findAllShelfNew()
 
     const chuyendoi = parseInt(currentLineNew.value)
     if(chuyendoi <= 9 && !/^0\d+/.test(currentLineNew.value) && !/^0\d+/.test(currentShelfNew.value))
       inputDataNew.value = currentWarehouseNew.value + '0' + currentLineNew.value
     else 
     inputDataNew.value = currentWarehouseNew.value +  '' + currentLineNew.value
+    findAllShelfNew()
+
+    
   }
 
   const selectLocationNew = () => {
@@ -1479,7 +1548,6 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
     dataPlan.value.location_new = ""
     BgNew.value = null
     dataLocationNew.value = []
-    findAllLocationNew()
 
     const chuyendoi = parseInt(currentLineNew.value)
     const chuyendoiShelf = parseInt(currentShelfNew.value)
@@ -1491,6 +1559,9 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
     else if(chuyendoi > 9 && chuyendoiShelf <= 9 && !/^0\d+/.test(currentLineNew.value) && !/^0\d+/.test(currentShelfNew.value))
         inputDataNew.value = currentWarehouseNew.value + '' + currentLineNew.value + '0' + currentShelfNew.value
     else inputDataNew.value = currentWarehouseNew.value + '' + currentLineNew.value + '' + currentShelfNew.value
+    findAllLocationNew()
+
+    
   }
 
   const findAllAreaNew = async () => {
@@ -1543,10 +1614,15 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
       dataLineNew.value = [...dataLineNew.value, ...missingNumbers].sort((a, b) => a - b);
       const checkDataAreaLoadNew = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2, 4).join(''))
-        if(checkDataAreaLoadNew == null || checkDataLine == null){
+        if(checkDataAreaLoadNew == null){
           resetDataNew()
           
         }
+
+        if(inputDataNew.value.length == 4 || inputDataNew.value.length == 6 || inputDataNew.value.length == 8){
+          if(checkDataLine == null)
+            resetDataNew()
+          }
     }
 
     isLoading.value = false;
@@ -1582,19 +1658,22 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
 
       dataShelfNew.value = [...dataShelfNew.value, ...missingItems].sort((a, b) => a.shelf - b.shelf);
         
+      currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+          currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+          currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
+
       const checkDataAreaLoadOld = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2,4).join(''))
         const checkDataShelfLoad = dataShelfNew.value.find(x => x.shelf == inputDataNew.value.split('').slice(4,6).join(''))
 
         if(inputDataNew.value.length == 6 || inputDataNew.value.length == 8){
           if(checkDataShelfLoad == null){
-            dataShelfNew.value = []
+              resetDataNew()
           }
         }
 
         if(checkDataAreaLoadOld == null && checkDataLine == null){
           resetDataNew()
-          showDataLocationNew.value = false
         }
     
     }else{
@@ -1602,13 +1681,18 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
           dataShelfNew.value.push({shelf: '' + i})
         }
 
+        currentLineNew.value = inputDataNew.value.split('').slice(2,4).join('')
+          currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
+          currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
+
         const checkDataAreaLoadOld = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
         const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2,4).join(''))
         const checkDataShelfLoad = dataShelfNew.value.find(x => x.shelf == inputDataNew.value.split('').slice(4,6).join(''))
 
         if(inputDataNew.value.length == 6 || inputDataNew.value.length == 8){
-          if(checkDataShelfLoad == null){
-            dataShelfNew.value = []
+          if((checkDataShelfLoad == null || checkDataLine == null) 
+            || dataLineNew.value.length <= 0){
+              resetDataNew()
           }
         }
 
@@ -1659,6 +1743,15 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
         return numA - numB
       }) 
 
+      const checkDataAreaLoadOld = dataAreaNew.value.find(x => x == inputDataNew.value.split('').slice(0,2).join(''))
+        const checkDataLine = dataLineNew.value.find(x => x == inputDataNew.value.split('').slice(2,4).join(''))
+        const checkDataShelfLoad = dataShelfNew.value.find(x => x.shelf == inputDataNew.value.split('').slice(4,6).join(''))
+
+        if(checkDataAreaLoadOld != null && checkDataLine != null && checkDataShelfLoad != null 
+        && (inputDataNew.value.length == 6 
+        || (inputDataNew.value.length == 8 && checkDatamaTran(inputDataNew.value.split('').slice(6,8).join('')))))
+          showDataLocationNew.value = true
+
       if(dataLocationNew.value.productbyShelf.length > 0 && inputDataNew.value.length == 6)
           showDataLocationNew.value = true
 
@@ -1674,7 +1767,7 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
           currentWarehouseNew.value = inputDataNew.value.split('').slice(0,2).join('')
           currentShelfNew.value = inputDataNew.value.split('').slice(4,6).join('')
 
-    if(showDataLocationNew.value == true && currentLineNew.value != null && currentLineNew.value != null && currentShelfNew.value != null){
+    if(showDataLocationNew.value == true && currentLineNew.value != null && currentWarehouseNew.value != null && currentShelfNew.value != null){
       OpenFrameNew(dataLocationNew.value.productbyShelf, inputDataNew.value.split('').slice(6,8).join(''))
     }
 
@@ -1733,6 +1826,9 @@ isLoading.value = false;
   document.body.style.overflow = "hidden";
     const res = await axios.get(hostname + `/api/Plan/FindOne?id=${id}`)
     if(res.data.success){
+      inputDataOld.value = res.data.content.locationOld
+      inputDataNew.value = res.data.content.locationNew
+
       dataPlan.value.location_new = res.data.content.locationNew
       dataPlan.value.location_old = res.data.content.locationOld
 
@@ -1745,13 +1841,12 @@ isLoading.value = false;
 
       checkDataLocation.value = dataPlan.value.location_new
       findAllAreaOld()
-      findAllLineOld()
-      findAllShelfOld()
-      findAllLocationOld()
-
       findAllAreaNew()
+      findAllLineOld()
       findAllLineNew()
+      findAllShelfOld()
       findAllShelfNew()
+      findAllLocationOld()
       findAllLocationNew()  
       
       loadDataLast()
@@ -1759,10 +1854,11 @@ isLoading.value = false;
       // document.querySelector('.' + BgNew.value).style.backgroundColor = 'violet'
     
       showPlanNew.value = !showPlanNew.value
-      inputDataOld.value = currentWarehouseOld.value + '' + currentLineOld.value + '' + currentShelfOld.value + '' + dataPlan.value.location_old.slice(-2)
-      inputDataNew.value = currentWarehouseNew.value + '' + currentLineNew.value + '' + currentShelfNew.value + '' + dataPlan.value.location_new.slice(-2)
+      
+      
     }
 
+    
 
     BgNew.value = 'bg_new' + dataPlan.value.location_new.slice(-2)
     BgOld.value = 'bg_old' + dataPlan.value.location_old.slice(-2)
