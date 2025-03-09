@@ -1311,6 +1311,9 @@ import {useRouter, useRoute} from 'vue-router'
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
 
+  await nextTick()
+    inputRef.value?.focus()
+
   }
 
   const findAllShelfOld = async () => {
@@ -1388,7 +1391,8 @@ import {useRouter, useRoute} from 'vue-router'
   document.body.classList.remove("loading");
   document.body.style.overflow = "auto";
 
-  inputRef.value?.focus()
+  await nextTick()
+    inputRef.value?.focus()
   }
 
   const findAllLocationOld = async () => {
@@ -1546,9 +1550,11 @@ currentWarehouseOld.value = inputDataOld.value.split('').slice(0,2).join('')
     }
 
     isLoading.value = false;
-  document.body.classList.remove("loading");
-  document.body.style.overflow = "auto";
+    document.body.classList.remove("loading");
+    document.body.style.overflow = "auto";
 
+    await nextTick()
+    inputRefNew.value?.focus()
   }
 
   const findAllShelfNew = async () => {
@@ -1753,8 +1759,8 @@ isLoading.value = false;
       // document.querySelector('.' + BgNew.value).style.backgroundColor = 'violet'
     
       showPlanNew.value = !showPlanNew.value
-      inputDataOld.value = dataPlan.value.location_old
-      inputDataNew.value = dataPlan.value.location_new
+      inputDataOld.value = currentWarehouseOld.value + '' + currentLineOld.value + '' + currentShelfOld.value + '' + dataPlan.value.location_old.slice(-2)
+      inputDataNew.value = currentWarehouseNew.value + '' + currentLineNew.value + '' + currentShelfNew.value + '' + dataPlan.value.location_new.slice(-2)
     }
 
 
